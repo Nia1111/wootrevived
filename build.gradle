@@ -1,0 +1,142 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'maven-publish'
+
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'com.modrinth.minotaur' version "2.+"
+
+    id 'net.neoforged.gradle' version '6.0.21'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of("${java_version}")
+java.withSourcesJar()
+
+sourceSets.main.resources.srcDirs += "src/main/generated"
+
+group = 'fr.pharuxtan'
+archivesBaseName = "${mod_id}"
+def buildVersion = "${mod_version}"
+version = "${mc_version}-${buildVersion}"
+
+minecraft {
+    mappings channel: 'official', version: "${mc_version}"
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        data {
+            workingDirectory project.file('run-data')
+
+            args '--mod', mod_id, '--all', '--output', file('src/main/generated/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+processResources {
+    filesMatching('META-INF/mods.toml') {
+        expand 'file': ['jarVersion': mod_version],
+                'mc_version': mc_version,
+                'neo_version': neo_version,
+                'neo_major_version': neo_version.split('\\.')[0]
+    }
+}
+
+configurations {
+    annotationProcessor.extendsFrom minecraft
+    shadowIn
+    implementation.extendsFrom shadowIn
+}
+
+repositories {
+    mavenLocal()
+    maven { url = "https://maven.blamejared.com/" }
+    maven { url = "https://modmaven.dev" }
+    maven { url = "https://api.modrinth.com/maven" }
+}
+
+dependencies {
+    minecraft "net.neoforged:forge:${mc_version}-${neo_version}"
+
+    compileOnly 'org.jetbrains:annotations:22.0.0'
+
+    compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
+
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+
+    implementation fg.deobf("maven.modrinth:jade:${jade_version}")
+}
+
+reobf {
+    shadowJar {}
+    jar { enabled = false } // Disable jar.
+}
+
+jar.enabled = false
+shadowJar {
+    finalizedBy 'reobfShadowJar'
+    archiveClassifier = 'universal'
+    manifest {
+        attributes([
+                'Specification-Title'     : "${mod_name}",
+                'Specification-Vendor'    : 'pharuxtan',
+                'Specification-Version'   : "${mc_version}",
+                'Implementation-Title'    : "${mod_id}",
+                'Implementation-Vendor'   : 'pharuxtan',
+                'Implementation-Version'  : "${mod_version}",
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+    configurations = [project.configurations.shadowIn]
+
+    doFirst {
+        exclude '.cache/**'
+    }
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
