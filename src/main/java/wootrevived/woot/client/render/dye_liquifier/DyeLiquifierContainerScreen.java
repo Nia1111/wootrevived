@@ -1,0 +1,98 @@
+package wootrevived.woot.client.render.dye_liquifier;
+
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.DyeColor;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.blocks.dye_liquifier.DyeLiquifierBlockEntity;
+import wootrevived.woot.util.Config;
+import wootrevived.woot.util.render.WootContainerScreen;
+
+@OnlyIn(Dist.CLIENT)
+public class DyeLiquifierContainerScreen extends WootContainerScreen<DyeLiquifierContainerMenu> {
+    private static final int ENERGY_X = 10;
+    private static final int ENERGY_Y = 20;
+
+    private static final int INPUT_SLOT_X = 39;
+    private static final int INPUT_SLOT_Y = 38;
+    private static final int INPUT_SLOT_COLOR = 0xFF253192;
+
+    private static final int COLOR_BAR_X = 82;
+
+    private static final int RED_COLOR_BAR_Y = 24;
+    private static final int YELLOW_COLOR_BAR_Y = 36;
+    private static final int BLUE_COLOR_BAR_Y = 48;
+    private static final int WHITE_COLOR_BAR_Y = 60;
+
+    private static final int OUTPUT_FLUID_X = GUI_XSIZE - 28;
+    private static final int OUTPUT_FLUID_Y = 20;
+    private static final int OUTPUT_FLUID_COLOR = 0xFF99488F;
+
+    private static final int PROGRESS_X = 61;
+    private static final int PROGRESS_Y = 26;
+
+    public DyeLiquifierContainerScreen(DyeLiquifierContainerMenu container, Inventory playerInventory, Component name) {
+        super(container, playerInventory, name);
+    }
+
+    @Override
+    protected void initButtons() {
+        createSlotSideButton(INPUT_SLOT_X, INPUT_SLOT_Y, INPUT_SLOT_COLOR, DyeLiquifierBlockEntity.INGREDIENT_PROPERTY, Component.translatable("info.woot_revived.dye_liquifier.input"));
+        createFluidSideButton(OUTPUT_FLUID_X, OUTPUT_FLUID_Y, OUTPUT_FLUID_COLOR, DyeLiquifierBlockEntity.OUTPUT_FLUID_PROPERTY, Component.translatable("info.woot_revived.dye_liquifier.output"));
+    }
+
+    @Override
+    protected void renderMenuBackground(@NotNull GuiGraphics gui) {
+        renderSlot(gui, INPUT_SLOT_X, INPUT_SLOT_Y, INPUT_SLOT_COLOR);
+        renderColorBarBg(gui, COLOR_BAR_X, RED_COLOR_BAR_Y, DyeColor.RED.getTextureDiffuseColors());
+        renderColorBarBg(gui, COLOR_BAR_X, YELLOW_COLOR_BAR_Y, DyeColor.YELLOW.getTextureDiffuseColors());
+        renderColorBarBg(gui, COLOR_BAR_X, BLUE_COLOR_BAR_Y, DyeColor.BLUE.getTextureDiffuseColors());
+        renderColorBarBg(gui, COLOR_BAR_X, WHITE_COLOR_BAR_Y, DyeColor.WHITE.getTextureDiffuseColors());
+        renderEnergyBg(gui, ENERGY_X, ENERGY_Y);
+        renderFluidBg(gui, OUTPUT_FLUID_X, OUTPUT_FLUID_Y);
+        renderProgressBg(gui, PROGRESS_X, PROGRESS_Y);
+    }
+
+    @Override
+    protected void renderState(@NotNull GuiGraphics gui) {
+        renderEnergy(gui, ENERGY_X, ENERGY_Y, menu.getEnergy(), Config.DyeLiquifier.ENERGY_CAPACITY);
+        renderColorBar(gui, COLOR_BAR_X, RED_COLOR_BAR_Y, menu.getRedDyeAmount(), Config.DyeLiquifier.RED_TANK_CAPACITY, DyeColor.RED.getTextureDiffuseColors());
+        renderColorBar(gui, COLOR_BAR_X, YELLOW_COLOR_BAR_Y, menu.getYellowDyeAmount(), Config.DyeLiquifier.YELLOW_TANK_CAPACITY, DyeColor.YELLOW.getTextureDiffuseColors());
+        renderColorBar(gui, COLOR_BAR_X, BLUE_COLOR_BAR_Y, menu.getBlueDyeAmount(), Config.DyeLiquifier.BLUE_TANK_CAPACITY, DyeColor.BLUE.getTextureDiffuseColors());
+        renderColorBar(gui, COLOR_BAR_X, WHITE_COLOR_BAR_Y, menu.getWhiteDyeAmount(), Config.DyeLiquifier.WHITE_TANK_CAPACITY, DyeColor.WHITE.getTextureDiffuseColors());
+        renderFluid(gui, OUTPUT_FLUID_X, OUTPUT_FLUID_Y, menu.getOutputFluid(), Config.DyeLiquifier.OUTPUT_TANK_CAPACITY);
+        renderProgress(gui, PROGRESS_X, PROGRESS_Y, menu.getProgress());
+    }
+
+    @Override
+    protected void renderTooltip(@NotNull GuiGraphics gui, int mouseX, int mouseY){
+        renderEnergyTooltip(gui, mouseX, mouseY, ENERGY_X, ENERGY_Y, menu.getEnergy(), Config.DyeLiquifier.ENERGY_CAPACITY);
+        renderColorBarTooltip(gui, mouseX, mouseY, COLOR_BAR_X, RED_COLOR_BAR_Y, menu.getRedDyeAmount(), Config.DyeLiquifier.RED_TANK_CAPACITY, Component.translatable("info.woot_revived.dye.red"));
+        renderColorBarTooltip(gui, mouseX, mouseY, COLOR_BAR_X, YELLOW_COLOR_BAR_Y, menu.getYellowDyeAmount(), Config.DyeLiquifier.YELLOW_TANK_CAPACITY, Component.translatable("info.woot_revived.dye.yellow"));
+        renderColorBarTooltip(gui, mouseX, mouseY, COLOR_BAR_X, BLUE_COLOR_BAR_Y, menu.getBlueDyeAmount(), Config.DyeLiquifier.BLUE_TANK_CAPACITY, Component.translatable("info.woot_revived.dye.blue"));
+        renderColorBarTooltip(gui, mouseX, mouseY, COLOR_BAR_X, WHITE_COLOR_BAR_Y, menu.getWhiteDyeAmount(), Config.DyeLiquifier.WHITE_TANK_CAPACITY, Component.translatable("info.woot_revived.dye.white"));
+        renderFluidTooltip(gui, mouseX, mouseY, OUTPUT_FLUID_X, OUTPUT_FLUID_Y, menu.getOutputFluid(), Config.DyeLiquifier.OUTPUT_TANK_CAPACITY);
+        renderProgressTooltip(gui, mouseX, mouseY, PROGRESS_X, PROGRESS_Y, menu.getProgress(), menu.getLeftSeconds(), menu.getEnergyProcessTransfer());
+    }
+
+    public static void renderProgressBg(@NotNull GuiGraphics gui, int x, int y){
+        gui.blit(GUI, x, y, 177, 132, 18, 43);
+    }
+
+    public static void renderProgress(@NotNull GuiGraphics gui, int x, int y, int progress){
+        int fillWidth = Mth.clamp(progress * 18 / 100, 0, 18);
+        gui.blit(GUI, x, y, 196, 132, fillWidth, 44);
+    }
+
+    public void renderProgressTooltip(@NotNull GuiGraphics gui, int mouseX, int mouseY, int x, int y, int progress, float eta, int usage){
+        renderProgressTooltip(gui, mouseX, mouseY, x, y, 18, 44, progress, eta, usage);
+    }
+
+    public static void _renderProgressTooltip(@NotNull GuiGraphics gui, int mouseX, int mouseY, int x, int y, int progress, float eta, int usage, boolean skipHover){
+        _renderProgressTooltip(gui, mouseX, mouseY, x, y, 18, 44, progress, eta, usage, skipHover);
+    }
+}

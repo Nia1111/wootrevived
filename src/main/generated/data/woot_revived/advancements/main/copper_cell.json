@@ -1,0 +1,39 @@
+{
+  "parent": "woot_revived:main/enchanted_copper_plate",
+  "criteria": {
+    "copper_cell": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "woot_revived:copper_cell"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.copper_cell.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "woot_revived:copper_cell"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.copper_cell.title"
+    }
+  },
+  "requirements": [
+    [
+      "copper_cell"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

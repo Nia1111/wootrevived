@@ -1,21 +1,20 @@
 modLoader = "javafml"
 loaderVersion = "[${neo_major_version},)"
 issueTrackerURL = "https://github.com/pharuxtan/woot"
-license = "MIT"
+license = "LGPLv3"
 
 [[mods]]
 modId = "woot_revived"
 version = "${file.jarVersion}"
 displayName = "Woot Revived"
-logoFile = "woot_revived.png"
 authors = "pharuxtan"
-credits = "Ipsis, McJty, Draco18s, Forge Devs"
+credits = "Ipsis"
 description = '''A big, bad, magic, multiblock for mob drops. Aparrently you will either love it or hate it. There is no inbetween.'''
 
 [[dependencies.woot_revived]]
 modId = "minecraft"
 mandatory = true
-versionRange = "1.20.1"
+versionRange = "${mc_version}"
 ordering = "AFTER"
 side = "BOTH"
 

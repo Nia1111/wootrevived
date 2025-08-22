@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "woot_revived:block/item_infuser",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "woot_revived:block/item_infuser"
+    },
+    "facing=south": {
+      "model": "woot_revived:block/item_infuser",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "woot_revived:block/item_infuser",
+      "y": 270
+    }
+  }
+}

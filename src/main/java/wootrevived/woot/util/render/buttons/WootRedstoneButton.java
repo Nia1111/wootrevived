@@ -1,0 +1,45 @@
+package wootrevived.woot.util.render.buttons;
+
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import wootrevived.woot.util.common.RedstoneMode;
+import wootrevived.woot.util.render.WootButton;
+import wootrevived.woot.util.render.WootContainerScreen;
+
+public class WootRedstoneButton extends WootButton {
+    protected final OnPress onPress;
+    protected RedstoneMode mode;
+
+    public WootRedstoneButton(int x, int y, RedstoneMode mode, OnPress onPress) {
+        super(x, y, 14, 14);
+        this.onPress = onPress;
+        this.mode = mode;
+    }
+
+    @Override
+    protected void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+        int uOffset = mode == RedstoneMode.ALWAYS_ON ? 215 : mode == RedstoneMode.WITH_NO_SIGNAL ? 230 : mode == RedstoneMode.WITH_SIGNAL ? 215 : 230;
+        int vOffset = mode == RedstoneMode.ALWAYS_ON ? 132 : mode == RedstoneMode.WITH_NO_SIGNAL ? 132 : mode == RedstoneMode.WITH_SIGNAL ? 147 : 147;
+        gui.blit(WootContainerScreen.GUI, getX(), getY(), uOffset, vOffset, getWidth(), getHeight());
+        if(isHovered()) {
+            gui.fill(getX() + 1, getY() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, 0x80FFFFFF);
+            gui.renderTooltip(WootContainerScreen.getFont(), mode.getComponent(), mouseX, mouseY);
+        }
+    }
+
+    public RedstoneMode nextMode(){
+        mode = mode.getNext();
+        return mode;
+    }
+
+    @Override
+    public void onPress() {
+        onPress.onPress(this);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public interface OnPress {
+        void onPress(WootRedstoneButton button);
+    }
+}

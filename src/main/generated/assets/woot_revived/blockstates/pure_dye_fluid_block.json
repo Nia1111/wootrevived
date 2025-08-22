@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "woot_revived:block/pure_dye_fluid_block"
+    }
+  }
+}

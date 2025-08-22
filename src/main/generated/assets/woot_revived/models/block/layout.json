@@ -1,0 +1,64 @@
+{
+  "parent": "minecraft:block/block",
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        135,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  },
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "rotation": 180,
+          "texture": "#end"
+        },
+        "east": {
+          "cullface": "south",
+          "texture": "#secondary"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#primary"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#secondary"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#end"
+        },
+        "west": {
+          "cullface": "south",
+          "texture": "#secondary"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "end": "woot_revived:block/layout",
+    "particle": "woot_revived:block/layout",
+    "primary": "woot_revived:block/layout_primary",
+    "secondary": "woot_revived:block/layout_secondary"
+  }
+}

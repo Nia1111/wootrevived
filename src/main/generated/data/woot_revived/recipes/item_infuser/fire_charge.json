@@ -1,0 +1,33 @@
+{
+  "type": "woot_revived:item_infuser",
+  "energy": 1000,
+  "inputs": [
+    {
+      "type": "ingredient",
+      "ingredients": [
+        {
+          "item": "minecraft:gunpowder"
+        },
+        {
+          "tag": "minecraft:coals"
+        }
+      ]
+    },
+    {
+      "type": "fluid",
+      "fluids": [
+        {
+          "amount": 1000,
+          "id": "minecraft:lava"
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "type": "item",
+      "count": 3,
+      "id": "minecraft:fire_charge"
+    }
+  ]
+}

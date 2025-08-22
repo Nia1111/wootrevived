@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "woot_revived:import",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "enabled": "true"
+              }
+            }
+          ],
+          "name": "woot_revived:import"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "woot_revived:blocks/import"
+}

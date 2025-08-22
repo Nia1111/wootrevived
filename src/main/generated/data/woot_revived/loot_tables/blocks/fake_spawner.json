@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "woot_revived:fake_spawner",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "enabled": "true"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "Mob",
+                  "target": "BlockEntityTag.Mob"
+                }
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "woot_revived:fake_spawner"
+        }
+      ],
+      "name": "woot_revived:fake_spawner",
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "woot_revived:blocks/fake_spawner"
+}

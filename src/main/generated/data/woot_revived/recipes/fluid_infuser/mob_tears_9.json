@@ -1,0 +1,30 @@
+{
+  "type": "woot_revived:fluid_infuser",
+  "energy": 1000,
+  "inputs": [
+    {
+      "type": "ingredient",
+      "ingredients": [
+        {
+          "item": "minecraft:shulker_shell"
+        }
+      ]
+    },
+    {
+      "type": "fluid",
+      "fluids": [
+        {
+          "amount": 1000,
+          "id": "minecraft:water"
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "type": "fluid",
+      "amount": 6000,
+      "id": "woot_revived:mob_tears_fluid"
+    }
+  ]
+}

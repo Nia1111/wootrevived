@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "woot_revived:factory_ctr_base_sec",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "enabled": "true"
+              }
+            }
+          ],
+          "name": "woot_revived:factory_ctr_base_sec"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "woot_revived:blocks/factory_ctr_base_sec"
+}

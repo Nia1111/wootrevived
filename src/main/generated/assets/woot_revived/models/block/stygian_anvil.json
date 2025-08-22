@@ -1,0 +1,206 @@
+{
+  "parent": "minecraft:block/block",
+  "display": {
+    "fixed": {
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  },
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "rotation": 180,
+          "texture": "#base"
+        },
+        "east": {
+          "rotation": 270,
+          "texture": "#base",
+          "uv": [
+            4.0,
+            2.0,
+            0.0,
+            14.0
+          ]
+        },
+        "north": {
+          "texture": "#base"
+        },
+        "south": {
+          "texture": "#base"
+        },
+        "up": {
+          "rotation": 180,
+          "texture": "#base"
+        },
+        "west": {
+          "rotation": 90,
+          "texture": "#base",
+          "uv": [
+            0.0,
+            2.0,
+            4.0,
+            14.0
+          ]
+        }
+      },
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        4,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "rotation": 270,
+          "texture": "#body",
+          "uv": [
+            5.0,
+            3.0,
+            4.0,
+            13.0
+          ]
+        },
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "up": {
+          "rotation": 180,
+          "texture": "#body"
+        },
+        "west": {
+          "rotation": 90,
+          "texture": "#body",
+          "uv": [
+            4.0,
+            3.0,
+            5.0,
+            13.0
+          ]
+        }
+      },
+      "from": [
+        4,
+        4,
+        3
+      ],
+      "to": [
+        12,
+        5,
+        13
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "rotation": 270,
+          "texture": "#body",
+          "uv": [
+            10.0,
+            4.0,
+            5.0,
+            12.0
+          ]
+        },
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "rotation": 90,
+          "texture": "#body",
+          "uv": [
+            5.0,
+            4.0,
+            10.0,
+            12.0
+          ]
+        }
+      },
+      "from": [
+        6,
+        5,
+        4
+      ],
+      "to": [
+        10,
+        10,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "rotation": 180,
+          "texture": "#body"
+        },
+        "east": {
+          "rotation": 270,
+          "texture": "#body",
+          "uv": [
+            16.0,
+            0.0,
+            10.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "up": {
+          "rotation": 180,
+          "texture": "#top"
+        },
+        "west": {
+          "rotation": 90,
+          "texture": "#body",
+          "uv": [
+            10.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        3,
+        10,
+        0
+      ],
+      "to": [
+        13,
+        16,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "base": "minecraft:block/crying_obsidian",
+    "body": "woot_revived:block/stygian_anvil",
+    "particle": "woot_revived:block/stygian_anvil",
+    "top": "woot_revived:block/stygian_anvil_top"
+  }
+}

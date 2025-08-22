@@ -1,0 +1,19 @@
+{
+  "type": "woot_revived:dye_liquifier",
+  "blue": 36,
+  "energy": 500,
+  "inputs": [
+    {
+      "type": "ingredient",
+      "ingredients": [
+        {
+          "tag": "forge:dyes/purple"
+        }
+      ]
+    }
+  ],
+  "outputs": [],
+  "red": 36,
+  "white": 0,
+  "yellow": 0
+}

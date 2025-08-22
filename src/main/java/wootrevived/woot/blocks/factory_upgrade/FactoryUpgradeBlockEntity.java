@@ -1,0 +1,162 @@
+package wootrevived.woot.blocks.factory_upgrade;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.ModelData;
+import org.jetbrains.annotations.NotNull;
+import wootrevived.api.WootUpgradeItem;
+import wootrevived.woot.client.model.factory_upgrade.FactoryUpgradeBakedModel;
+import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.registries.UpgradeItemsRegistry;
+
+import org.jetbrains.annotations.Nullable;
+import wootrevived.woot.util.block.FactoryBlockBaseEntity;
+import wootrevived.woot.util.entity.WootTags;
+
+public class FactoryUpgradeBlockEntity extends FactoryBlockBaseEntity {
+    public FactoryUpgradeBlockEntity(BlockPos pos, BlockState state) {
+        super(BlocksRegistry.FACTORY_UPGRADE_BLOCK_ENTITY.get(), pos, state);
+        this.upgradeItem = null;
+    }
+
+    private WootUpgradeItem upgradeItem;
+
+    public @Nullable WootUpgradeItem getUpgradeItem() {
+        return upgradeItem;
+    }
+
+    public String getUpgradeItemName() {
+        return upgradeItem == null ? "" : UpgradeItemsRegistry.getNameFromItem(upgradeItem);
+    }
+
+    public ItemStack getUpgradeItemStack() {
+        return upgradeItem == null ? ItemStack.EMPTY : upgradeItem.getDefaultInstance();
+    }
+
+    public void addUpgrade(Level level, Player player, InteractionHand hand, ItemStack stack, WootUpgradeItem newUpgradeItem){
+        if(upgradeItem == newUpgradeItem)
+            return;
+
+        WootUpgradeItem oldUpgradeItem = upgradeItem;
+        upgradeItem = newUpgradeItem;
+        setChanged();
+        player.swing(hand);
+
+        if (!player.isCreative()){
+            stack.shrink(1);
+            if(oldUpgradeItem != null){
+                if(stack.isEmpty()){
+                    player.setItemInHand(hand, oldUpgradeItem.getDefaultInstance());
+                } else {
+                    dropItem(level, player.getOnPos().above(), oldUpgradeItem);
+                }
+            }
+        }
+    }
+
+    public void removeUpgrade(Level level, Player player, InteractionHand hand){
+        WootUpgradeItem oldUpgradeItem = upgradeItem;
+        upgradeItem = null;
+        setChanged();
+        player.swing(hand);
+
+        if(oldUpgradeItem != null){
+            if(player.getItemInHand(hand).isEmpty()){
+                player.setItemInHand(hand, oldUpgradeItem.getDefaultInstance());
+            } else {
+                dropItem(level, player.getOnPos().above(), oldUpgradeItem);
+            }
+        }
+    }
+
+    public void dropItem(Level level, BlockPos pos) {
+        if (upgradeItem == null)
+            return;
+
+        dropItem(level, pos, upgradeItem);
+    }
+
+    public void dropItem(Level level, BlockPos pos, WootUpgradeItem upgradeItem){
+        ItemStack stack = upgradeItem.getDefaultInstance();
+        Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
+    }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag tag){
+        super.saveAdditional(tag);
+        tag.put(WootTags.Factory.UPGRADE_ITEM, StringTag.valueOf(getUpgradeItemName()));
+    }
+
+    @Override
+    public void load(@NotNull CompoundTag tag){
+        super.load(tag);
+
+        if(tag.contains(WootTags.Factory.UPGRADE_ITEM)) {
+            String item = tag.getString(WootTags.Factory.UPGRADE_ITEM);
+            this.upgradeItem = !item.isEmpty() && UpgradeItemsRegistry.has(item) ? UpgradeItemsRegistry.get(item).get() : null;
+        } else {
+            this.upgradeItem = null;
+        }
+    }
+
+    @NotNull
+    @Override
+    public CompoundTag getUpdateTag(){
+        CompoundTag tag = super.getUpdateTag();
+        saveAdditional(tag);
+        return tag;
+    }
+
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag){
+        super.handleUpdateTag(tag);
+        load(tag);
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+
+        if(level == null && level.isClientSide) return;
+        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+    }
+
+    @Override
+    public @NotNull ModelData getModelData(){
+        BlockState state = getBlockState();
+
+        BlockRenderDispatcher renderer = Minecraft.getInstance().getBlockRenderer();
+        BakedModel model = renderer.getBlockModel(state);
+
+        return model.getModelData(level, getBlockPos(), getBlockState(), super.getModelData());
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SuppressWarnings("UnstableApiUsage")
+    public void tryRequestModelDataUpdate(){
+        ModelData data = level.getModelDataManager().getAt(getBlockPos());
+        if(data != null && data.has(FactoryUpgradeBakedModel.UPGRADE_PROPERTY)){
+            if(upgradeItem == null && !data.get(FactoryUpgradeBakedModel.UPGRADE_PROPERTY).isEmpty()){
+                requestModelDataUpdate();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+            } else if(upgradeItem != null && !data.get(FactoryUpgradeBakedModel.UPGRADE_PROPERTY).equalsIgnoreCase(UpgradeItemsRegistry.getNameFromItem(upgradeItem))){
+                requestModelDataUpdate();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+            }
+        }
+    }
+}

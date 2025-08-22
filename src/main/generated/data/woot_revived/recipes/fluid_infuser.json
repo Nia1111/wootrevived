@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "woot_revived",
+  "key": {
+    "a": {
+      "item": "minecraft:brewing_stand"
+    },
+    "b": {
+      "item": "minecraft:cauldron"
+    },
+    "c": {
+      "item": "minecraft:bucket"
+    },
+    "d": {
+      "item": "woot_revived:factory_base"
+    }
+  },
+  "pattern": [
+    " a ",
+    "cdc",
+    " b "
+  ],
+  "result": {
+    "item": "woot_revived:fluid_infuser"
+  },
+  "show_notification": true
+}

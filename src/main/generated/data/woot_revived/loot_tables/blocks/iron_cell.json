@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "woot_revived:iron_cell",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "enabled": "true"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "InputTank",
+                  "target": "BlockEntityTag.InputTank"
+                }
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "woot_revived:iron_cell"
+        }
+      ],
+      "name": "woot_revived:iron_cell",
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "woot_revived:blocks/iron_cell"
+}

@@ -1,0 +1,337 @@
+package wootrevived.woot.blocks.dye_liquifier;
+
+import com.google.common.collect.Maps;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.client.render.dye_liquifier.DyeLiquifierContainerMenu;
+import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.registries.FluidsRegistry;
+import wootrevived.woot.recipes.dye_liquifier.DyeLiquifierRecipe;
+import wootrevived.woot.registries.RecipesRegistry;
+import wootrevived.woot.util.Config;
+import wootrevived.woot.util.common.MachineSide;
+import wootrevived.woot.util.common.MachineSideProperty;
+import wootrevived.woot.util.handlers.WootFluidTankHandlerWrapper;
+import wootrevived.woot.util.handlers.WootItemStackHandler;
+import wootrevived.woot.util.entity.WootTags;
+import wootrevived.woot.util.common.DyeMakeup;
+import wootrevived.woot.util.entity.WootMachineBlockEntity;
+
+
+import org.jetbrains.annotations.Nullable;
+import wootrevived.woot.util.handlers.WootItemStackHandlerWrapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+
+public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements MenuProvider {
+    private int red = 0;
+    private int yellow = 0;
+    private int blue = 0;
+    private int white = 0;
+
+    private final List<Map<MachineSide, MachineSideProperty>> directionsProperties = new ArrayList<>(2);
+
+    public static final int OUTPUT_FLUID_PROPERTY = 0;
+    public static final int INGREDIENT_PROPERTY = 1;
+
+    public DyeLiquifierBlockEntity(BlockPos pos, BlockState state) {
+        super(BlocksRegistry.DYE_LIQUIFIER_BLOCK_ENTITY.get(), pos, state);
+        for(int i = 0; i < 2; i++){
+            Map<MachineSide, MachineSideProperty> properties = Maps.newEnumMap(MachineSide.class);
+            for(MachineSide side : MachineSide.values()){
+                properties.put(side, MachineSideProperty.ENABLED);
+            }
+            directionsProperties.add(properties);
+        }
+    }
+
+    public static void ticker(Level level, BlockPos pos, BlockState state, BlockEntity blockEntity){
+        if(blockEntity instanceof DyeLiquifierBlockEntity dyeLiquifierBlockEntity){
+            dyeLiquifierBlockEntity.tick(level, pos, state, blockEntity);
+        }
+    }
+
+    @Override
+    public void tick(Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull BlockEntity blockEntity) {
+        super.tick(level, pos, state, blockEntity);
+
+        if(level.isClientSide)
+            return;
+
+        tickFluid(outputTankHandler, pos, side -> getProperties(side).getOutputFluidProperty());
+    }
+
+    public final WootItemStackHandler inventoryHandler = new WootItemStackHandler(false) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            DyeLiquifierBlockEntity.this.onContentsChanged(slot);
+            setChanged();
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+            return DyeLiquifierRecipe.Validator.isIngredientValid(stack);
+        }
+    };
+
+    public static int INPUT_SLOT = 0;
+    private final LazyOptional<IItemHandler> inventory = LazyOptional.of(() -> inventoryHandler);
+    public IItemHandler getInventory() { return inventoryHandler; }
+
+    public record Properties(DyeLiquifierBlockEntity entity, MachineSide machineSide){
+        public MachineSideProperty getIngredientProperty(){
+            return entity.directionsProperties.get(INGREDIENT_PROPERTY).get(machineSide);
+        }
+
+        public MachineSideProperty getOutputFluidProperty(){
+            return entity.directionsProperties.get(OUTPUT_FLUID_PROPERTY).get(machineSide);
+        }
+    }
+
+    private Properties getProperties(Direction side){
+        Direction facing = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+        return new Properties(this, MachineSide.getMachineSide(facing, side));
+    }
+
+    @NotNull
+    @Override
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @org.jetbrains.annotations.Nullable Direction side){
+        if(side == null)
+            return super.getCapability(cap, side);
+
+        Properties properties = getProperties(side);
+
+        if(ForgeCapabilities.ITEM_HANDLER.equals(cap)){
+            MachineSideProperty ingredientProperty = properties.getIngredientProperty();
+            if(ingredientProperty != MachineSideProperty.DISABLED)
+                return inventory.lazyMap(handler -> new WootItemStackHandlerWrapper((WootItemStackHandler) handler, properties::getIngredientProperty)).cast();
+        }
+
+        if(ForgeCapabilities.FLUID_HANDLER.equals(cap)){
+            MachineSideProperty property = properties.getOutputFluidProperty();
+            if(property != MachineSideProperty.DISABLED && property != MachineSideProperty.PULL)
+                return outputTank.lazyMap(tank -> new WootFluidTankHandlerWrapper(tank, properties::getOutputFluidProperty)).cast();
+        }
+
+        return super.getCapability(cap, side);
+    }
+
+    @Override
+    public void load(@NotNull CompoundTag tag){
+        super.load(tag);
+
+        if(tag.contains(WootTags.INPUT_INVENTORY_TAG))
+            inventoryHandler.deserializeNBT(tag.getCompound(WootTags.INPUT_INVENTORY_TAG));
+
+        if(tag.contains(WootTags.DyeLiquifier.INTERNAL_DYE_TANKS_TAG)){
+            CompoundTag dyeTag = tag.getCompound(WootTags.DyeLiquifier.INTERNAL_DYE_TANKS_TAG);
+            red = dyeTag.getInt(WootTags.DyeLiquifier.RED_TAG);
+            yellow = dyeTag.getInt(WootTags.DyeLiquifier.YELLOW_TAG);
+            blue = dyeTag.getInt(WootTags.DyeLiquifier.BLUE_TAG);
+            white = dyeTag.getInt(WootTags.DyeLiquifier.WHITE_TAG);
+        }
+    }
+
+    @Override
+    public void saveAdditional(@NotNull CompoundTag tag){
+        super.saveAdditional(tag);
+
+        tag.put(WootTags.INPUT_INVENTORY_TAG, inventoryHandler.serializeNBT());
+
+        CompoundTag dyeTag = new CompoundTag();
+        dyeTag.putInt(WootTags.DyeLiquifier.RED_TAG, red);
+        dyeTag.putInt(WootTags.DyeLiquifier.YELLOW_TAG, yellow);
+        dyeTag.putInt(WootTags.DyeLiquifier.BLUE_TAG, blue);
+        dyeTag.putInt(WootTags.DyeLiquifier.WHITE_TAG, white);
+        tag.put(WootTags.DyeLiquifier.INTERNAL_DYE_TANKS_TAG, dyeTag);
+    }
+
+    public void dropContents(Level level, BlockPos pos) {
+        List<ItemStack> drops = new ArrayList<>();
+        ItemStack itemStack = inventoryHandler.getStackInSlot(INPUT_SLOT).copy();
+        if (!itemStack.isEmpty()) {
+            drops.add(itemStack);
+            inventoryHandler.insertItem(INPUT_SLOT, ItemStack.EMPTY, false);
+        }
+        super.dropContents(drops);
+    }
+
+    @Override
+    public @NotNull Component getDisplayName() {
+        return Component.translatable("gui.woot_revived.dye_liquifier.name");
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
+        return new DyeLiquifierContainerMenu(containerId, level, getBlockPos(), playerInventory, player);
+    }
+
+    @Override
+    public Map<MachineSide, MachineSideProperty> getMachineSideProperties(int index) {
+        return directionsProperties.get(index);
+    }
+
+    @Override
+    public List<Map<MachineSide, MachineSideProperty>> getAllMachineSidesProperties() {
+        return directionsProperties;
+    }
+
+    @Override
+    public void setAllMachineSidesProperties(List<Map<MachineSide, MachineSideProperty>> directionsProperties){
+        for(int i = 0; i < directionsProperties.size(); i++){
+            this.directionsProperties.set(i, directionsProperties.get(i));
+        }
+    }
+
+    private DyeLiquifierRecipe recipe = null;
+
+    @Override
+    protected boolean hasEnergy() { return energyHandler.getEnergyStored() > 0; }
+
+    @Override
+    protected int useEnergy(){
+        return energyHandler.extractEnergy(getEnergyProcessTransfer(), false);
+    }
+
+    @Override
+    protected void clearRecipe() {
+        recipe = null;
+    }
+
+    @Override
+    protected int getRecipeEnergy() {
+        return recipe != null ? recipe.getEnergy() : 0;
+    }
+
+    private void generatePureFluid() {
+        while (canCreateOutput() && canStoreOutput()) {
+            outputTankHandler.fill(new FluidStack(FluidsRegistry.SOURCE_PURE_DYE_FLUID.get(), DyeMakeup.LCM * 4), IFluidHandler.FluidAction.EXECUTE);
+            red -= DyeMakeup.LCM;
+            yellow -= DyeMakeup.LCM;
+            blue -= DyeMakeup.LCM;
+            white -= DyeMakeup.LCM;
+            setChanged();
+        }
+    }
+
+    @Override
+    protected void processFinished() {
+        if (recipe == null)
+            getRecipe();
+        if (recipe == null) {
+            processOff();
+            return;
+        }
+
+        DyeLiquifierRecipe finishedRecipe = recipe;
+
+        red += finishedRecipe.getRed();
+        yellow += finishedRecipe.getYellow();
+        blue += finishedRecipe.getBlue();
+        white += finishedRecipe.getWhite();
+
+        red = Mth.clamp(red, 0, Config.DyeLiquifier.RED_TANK_CAPACITY);
+        yellow = Mth.clamp(yellow, 0, Config.DyeLiquifier.YELLOW_TANK_CAPACITY);
+        blue = Mth.clamp(blue, 0, Config.DyeLiquifier.BLUE_TANK_CAPACITY);
+        white = Mth.clamp(white, 0, Config.DyeLiquifier.WHITE_TANK_CAPACITY);
+
+        inventoryHandler.extractItem(INPUT_SLOT, 1, false);
+        generatePureFluid();
+        setChanged();
+    }
+
+    @Override
+    protected boolean canProcess(boolean checkEnergy) {
+        if (checkEnergy && energyHandler.getEnergyStored() <= 0)
+            return false;
+
+        getRecipe();
+        return recipe != null && canStoreInternal(recipe);
+    }
+    //endregion
+
+    private void getRecipe() {
+        recipe = level.getRecipeManager().getRecipeFor(RecipesRegistry.DYE_LIQUIFIER_RECIPE_TYPE.get(),
+                new SimpleContainer(inventoryHandler.getStackInSlot(INPUT_SLOT)),
+                level).orElse(null);
+    }
+
+    public int getRed() { return this.red; }
+    public int getYellow() { return this.yellow; }
+    public int getBlue() { return this.blue; }
+    public int getWhite() { return this.white; }
+
+    private boolean canStoreInternal(DyeLiquifierRecipe recipe) {
+        boolean redHasSpace = recipe.getRed() + red <= Config.DyeLiquifier.RED_TANK_CAPACITY;
+        boolean yellowHasSpace = recipe.getYellow() + yellow <= Config.DyeLiquifier.YELLOW_TANK_CAPACITY;
+        boolean blueHasSpace = recipe.getBlue() + blue <= Config.DyeLiquifier.BLUE_TANK_CAPACITY;
+        boolean whiteHasSpace = recipe.getWhite() + white <= Config.DyeLiquifier.WHITE_TANK_CAPACITY;
+
+        return recipe.getRed() > 0 && redHasSpace ||
+                recipe.getYellow() > 0 && yellowHasSpace ||
+                recipe.getBlue() > 0 && blueHasSpace ||
+                recipe.getWhite() > 0 && whiteHasSpace;
+    }
+
+    private boolean canCreateOutput() { return red >= DyeMakeup.LCM && yellow >= DyeMakeup.LCM && blue >= DyeMakeup.LCM && white >= DyeMakeup.LCM; }
+    private boolean canStoreOutput() { return outputTankHandler.fill(new FluidStack(FluidsRegistry.SOURCE_PURE_DYE_FLUID.get(), DyeMakeup.LCM * 4), IFluidHandler.FluidAction.SIMULATE ) == DyeMakeup.LCM * 4; }
+
+    public int getEnergyCapacity(){
+        return Config.DyeLiquifier.ENERGY_CAPACITY;
+    }
+
+    public int getEnergyMaxTransfer(){
+        return Config.DyeLiquifier.ENERGY_MAX_TRANSFER;
+    }
+
+    public int getEnergyProcessTransfer(){
+        return Config.DyeLiquifier.ENERGY_PROCESS_TRANSFER;
+    }
+
+    public boolean hasEnergyCapability() {
+        return true;
+    }
+
+    public int getInputTankCapacity() {
+        return 0;
+    }
+
+    public boolean hasInputFluidCapability() {
+        return false;
+    }
+
+    public Predicate<FluidStack> getInputFluidValidator() {
+        return null;
+    }
+
+    public int getOutputTankCapacity() {
+        return Config.DyeLiquifier.OUTPUT_TANK_CAPACITY;
+    }
+
+    public boolean hasOutputFluidCapability() {
+        return true;
+    }
+}

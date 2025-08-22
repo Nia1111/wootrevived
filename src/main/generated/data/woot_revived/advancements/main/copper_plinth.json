@@ -1,0 +1,39 @@
+{
+  "parent": "woot_revived:main/copper_shard",
+  "criteria": {
+    "copper_plinth": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "woot_revived:copper_plinth"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.copper_plinth.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "woot_revived:copper_plinth"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.copper_plinth.title"
+    }
+  },
+  "requirements": [
+    [
+      "copper_plinth"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

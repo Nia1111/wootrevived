@@ -1,0 +1,55 @@
+package wootrevived.woot.drops.mobs;
+
+import net.minecraft.world.entity.EntityType;
+import wootrevived.api.WootFactoryMob;
+import wootrevived.api.registrations.WootFactoryMobRegistration;
+
+public class BlacklistedMobs {
+    public static void register(WootFactoryMobRegistration registration) {
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.AREA_EFFECT_CLOUD, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.ARMOR_STAND, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.ARROW, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.BLOCK_DISPLAY, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.BOAT, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.CHEST_BOAT, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.CHEST_MINECART, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.COMMAND_BLOCK_MINECART, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.DRAGON_FIREBALL, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.EGG, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.END_CRYSTAL, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.ENDER_PEARL, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.EVOKER_FANGS, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.EXPERIENCE_BOTTLE, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.EXPERIENCE_ORB, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.EYE_OF_ENDER, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.FALLING_BLOCK, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.FIREWORK_ROCKET, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.FURNACE_MINECART, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.GLOW_ITEM_FRAME, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.HOPPER_MINECART, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.INTERACTION, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.ITEM, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.ITEM_DISPLAY, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.ITEM_FRAME, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.FIREBALL, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.LEASH_KNOT, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.LIGHTNING_BOLT, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.LLAMA_SPIT, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.MARKER, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.MINECART, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.PAINTING, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.POTION, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.SHULKER_BULLET, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.SMALL_FIREBALL, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.SNOWBALL, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.SPAWNER_MINECART, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.SPECTRAL_ARROW, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.TEXT_DISPLAY, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.TNT, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.TNT_MINECART, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.TRIDENT, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.WITHER_SKULL, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.PLAYER, new WootFactoryMob.Properties().blacklist(true)));
+        registration.registerFactoryMob(new WootFactoryMob<>(EntityType.FISHING_BOBBER, new WootFactoryMob.Properties().blacklist(true)));
+    }
+}

@@ -1,0 +1,35 @@
+package wootrevived.woot.events;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import wootrevived.woot.Woot;
+import wootrevived.woot.drops.simulator.DropSimulatorDimension;
+
+@Mod.EventBusSubscriber(modid = Woot.MOD_ID)
+public class DropSimulatorDimensionGuard {
+    @SubscribeEvent
+    public static void onDimensionChange(EntityTravelToDimensionEvent event){
+        ResourceKey<Level> dimension = event.getDimension();
+        if(DropSimulatorDimension.DROP_SIMULATOR_LEVEL == dimension){
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEntityJoin(EntityJoinLevelEvent event){
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        if(DropSimulatorDimension.DROP_SIMULATOR_LEVEL == player.level().dimension()){
+            ServerLevel overworld = player.getServer().overworld();
+            BlockPos respawnPos = overworld.getSharedSpawnPos();
+            player.teleportTo(overworld, respawnPos.getX(), respawnPos.getY(), respawnPos.getZ(), player.getYRot(), player.getXRot());
+        }
+    }
+}

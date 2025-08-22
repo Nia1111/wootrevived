@@ -1,0 +1,33 @@
+{
+  "type": "woot_revived:item_infuser",
+  "energy": 1000,
+  "inputs": [
+    {
+      "type": "ingredient",
+      "ingredients": [
+        {
+          "item": "woot_revived:stygian_plate"
+        },
+        {
+          "item": "woot_revived:copper_shard"
+        }
+      ]
+    },
+    {
+      "type": "fluid",
+      "fluids": [
+        {
+          "amount": 1000,
+          "id": "woot_revived:enchanted_fluid"
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "type": "item",
+      "count": 1,
+      "id": "woot_revived:copper_enchanted_plate"
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+package wootrevived.woot.compat.jei.categories;
+
+import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import wootrevived.woot.compat.jei.WootJeiCustomFluidRenderer;
+import wootrevived.woot.compat.jei.WootJeiPluginTypes;
+import wootrevived.woot.events.client.GlobalClientTicker;
+import wootrevived.woot.recipes.item_infuser.ItemInfuserRecipe;
+import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.util.Config;
+import wootrevived.woot.util.render.WootContainerScreen;
+
+public class ItemInfuserRecipeCategory implements IRecipeCategory<ItemInfuserRecipe> {
+    private static IDrawable icon;
+
+    private static final int GUI_WIDTH = 124;
+    private static final int GUI_HEIGHT = 56;
+
+    private static final int ENERGY_X = 0;
+    private static final int ENERGY_Y = 0;
+
+    private static final int INPUT_FLUID_X = 21;
+    private static final int INPUT_FLUID_Y = 0;
+
+    private static final int INGREDIENT_SLOT_X = 42;
+    private static final int INGREDIENT_SLOT_Y = 19;
+
+    private static final int AUGMENT_SLOT_X = 60;
+    private static final int AUGMENT_SLOT_Y = 19;
+
+    private static final int OUTPUT_SLOT_X = 106;
+    private static final int OUTPUT_SLOT_Y = 19;
+
+    private static final int PROGRESS_X = 81;
+    private static final int PROGRESS_Y = 20;
+
+    public ItemInfuserRecipeCategory(IGuiHelper guiHelper) {
+        icon = guiHelper.createDrawableItemLike(BlocksRegistry.ITEM_INFUSER_BLOCK.get());
+    }
+
+    @Override
+    public void draw(ItemInfuserRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics gui, double mouseX, double mouseY) {
+        int totalProgressTick = recipe.getEnergy() / Config.ItemInfuser.ENERGY_PROCESS_TRANSFER;
+        int progress = (GlobalClientTicker.tickCounter % totalProgressTick) * 100 / totalProgressTick;
+
+        WootContainerScreen.renderVanillaSlot(gui, INGREDIENT_SLOT_X, INGREDIENT_SLOT_Y);
+        WootContainerScreen.renderVanillaSlot(gui, AUGMENT_SLOT_X, AUGMENT_SLOT_Y);
+        WootContainerScreen.renderVanillaSlot(gui, OUTPUT_SLOT_X, OUTPUT_SLOT_Y);
+        WootContainerScreen.renderEnergyBg(gui, ENERGY_X, ENERGY_Y);
+        WootContainerScreen.renderFluidBg(gui, INPUT_FLUID_X, INPUT_FLUID_Y);
+        WootContainerScreen.renderProgressArrowBg(gui, PROGRESS_X, PROGRESS_Y);
+
+        WootContainerScreen.renderEnergy(gui, ENERGY_X, ENERGY_Y, recipe.getEnergy(), Config.ItemInfuser.ENERGY_CAPACITY);
+        WootContainerScreen.renderProgressArrow(gui, PROGRESS_X, PROGRESS_Y, progress);
+
+        WootContainerScreen._renderEnergyTooltip(gui, (int)mouseX, (int)mouseY, ENERGY_X, ENERGY_Y, recipe.getEnergy(), Config.ItemInfuser.ENERGY_CAPACITY, false, false);
+        WootContainerScreen._renderProgressArrowTooltip(gui, (int)mouseX, (int)mouseY, PROGRESS_X, PROGRESS_Y, progress, Math.max(0F, totalProgressTick/ 20F), Config.ItemInfuser.ENERGY_PROCESS_TRANSFER, false);
+    }
+
+    @Override
+    public int getWidth() {
+        return GUI_WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return GUI_HEIGHT;
+    }
+
+    @Override
+    public @NotNull RecipeType<ItemInfuserRecipe> getRecipeType() {
+        return WootJeiPluginTypes.ITEM_INFUSER_TYPE;
+    }
+
+    @Override
+    public @NotNull Component getTitle() {
+        return Component.translatable("gui.woot_revived.item_infuser.name");
+    }
+
+    @Override
+    public @Nullable IDrawable getIcon() {
+        return icon;
+    }
+
+    @Override
+    public void setRecipe(IRecipeLayoutBuilder builder, ItemInfuserRecipe recipe, @NotNull IFocusGroup focuses) {
+        FluidStack inputFluid = recipe.getInputFluid();
+
+        builder.addInputSlot(INPUT_FLUID_X + 3, INPUT_FLUID_Y + 3)
+                .addFluidStack(inputFluid.getFluid(), inputFluid.getAmount())
+                .setCustomRenderer(ForgeTypes.FLUID_STACK, new WootJeiCustomFluidRenderer(Config.ItemInfuser.INPUT_TANK_CAPACITY));
+
+        builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+               .addItemLike(inputFluid.getFluid().getBucket());
+
+        builder.addInputSlot(INGREDIENT_SLOT_X + 1, INGREDIENT_SLOT_Y + 1)
+               .addIngredients(recipe.getInputIngredient());
+
+        if(!recipe.getAugmentIngredient().isEmpty()){
+            builder.addInputSlot(AUGMENT_SLOT_X + 1, AUGMENT_SLOT_Y + 1)
+                   .addIngredients(recipe.getAugmentIngredient());
+        }
+
+        builder.addOutputSlot(OUTPUT_SLOT_X + 1, OUTPUT_SLOT_Y + 1)
+               .addItemStack(recipe.getOutputItem());
+    }
+}

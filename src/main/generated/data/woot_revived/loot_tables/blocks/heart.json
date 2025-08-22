@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "woot_revived:heart",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "enabled": "true"
+              }
+            }
+          ],
+          "name": "woot_revived:heart"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "woot_revived:blocks/heart"
+}

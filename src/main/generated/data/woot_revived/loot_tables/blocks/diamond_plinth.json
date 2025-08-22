@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "woot_revived:diamond_plinth",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "enabled": "true"
+              }
+            }
+          ],
+          "name": "woot_revived:diamond_plinth"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "woot_revived:blocks/diamond_plinth"
+}

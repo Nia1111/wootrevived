@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "woot_revived:block/dye_liquifier",
+    "side": "woot_revived:block/factory_base",
+    "top": "woot_revived:block/factory_base"
+  }
+}

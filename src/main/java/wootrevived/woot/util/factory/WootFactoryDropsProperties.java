@@ -1,0 +1,95 @@
+package wootrevived.woot.util.factory;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
+import wootrevived.api.enums.Tier;
+import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
+import wootrevived.api.interfaces.WootDropsProperties;
+import wootrevived.api.WootFactoryMob;
+import wootrevived.api.interfaces.WootSpawnProperties;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class WootFactoryDropsProperties implements WootDropsProperties {
+    private final WootSpawnProperties wootSpawnProperties;
+    private final List<ItemStack> itemDrops = new ArrayList<>();
+    private final List<FluidStack> fluidDrops = new ArrayList<>();
+    private int experience = 0;
+
+    public WootFactoryDropsProperties(WootSpawnProperties properties) {
+        wootSpawnProperties = properties;
+    }
+
+    @Override
+    public @NotNull ItemStack getMainHandItem() {
+        return wootSpawnProperties.getMainHandItem().copy();
+    }
+
+    @Override
+    public @NotNull ItemStack getOffHandItem() {
+        return wootSpawnProperties.getOffHandItem().copy();
+    }
+
+    @Override
+    public float getLuck() {
+        return wootSpawnProperties.getLuck();
+    }
+
+    @Override
+    public boolean doSimulateChargedCreeper() {
+        return wootSpawnProperties.doSimulateChargedCreeper();
+    }
+
+    @Override
+    public boolean isEnderDragonAlreadyKilled() {
+        return wootSpawnProperties.isEnderDragonAlreadyKilled();
+    }
+
+    @Override
+    public boolean isInFire() {
+        return wootSpawnProperties.isInFire();
+    }
+
+    @Override
+    public List<ItemStack> getItemDrops() {
+        return itemDrops;
+    }
+
+    @Override
+    public List<FluidStack> getFluidDrops() {
+        return fluidDrops;
+    }
+
+    @Override
+    public int getExperience() {
+        return experience;
+    }
+
+    @Override
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
+
+    @Override
+    public @NotNull RandomSource getRandom() {
+        return wootSpawnProperties.getRandom();
+    }
+
+    @Override
+    public @NotNull Tier getFactoryTier() {
+        return wootSpawnProperties.getFactoryTier();
+    }
+
+    @Override
+    public @NotNull WootFactoryMob<?> getFactoryMob() {
+        return wootSpawnProperties.getFactoryMob();
+    }
+
+    @Override
+    public @NotNull CompoundTag getFactoryMobTag() {
+        return wootSpawnProperties.getFactoryMobTag().copy();
+    }
+}

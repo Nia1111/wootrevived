@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "InputTank",
+                  "target": "BlockEntityTag.InputTank"
+                }
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "woot_revived:creative_tank"
+        }
+      ],
+      "name": "woot_revived:creative_tank",
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "woot_revived:blocks/creative_tank"
+}

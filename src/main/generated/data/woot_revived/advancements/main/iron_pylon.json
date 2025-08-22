@@ -1,0 +1,39 @@
+{
+  "parent": "woot_revived:main/iron_shard",
+  "criteria": {
+    "iron_pylon": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "woot_revived:iron_pylon"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.iron_pylon.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "woot_revived:iron_pylon"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.iron_pylon.title"
+    }
+  },
+  "requirements": [
+    [
+      "iron_pylon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

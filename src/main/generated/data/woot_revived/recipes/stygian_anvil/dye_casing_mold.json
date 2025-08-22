@@ -1,0 +1,27 @@
+{
+  "type": "woot_revived:stygian_anvil",
+  "energy": 0,
+  "inputs": [
+    {
+      "type": "ingredient",
+      "ingredients": [
+        {
+          "tag": "forge:dyes"
+        },
+        {
+          "item": "minecraft:quartz"
+        },
+        {
+          "item": "woot_revived:stygian_ingot"
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "type": "item",
+      "count": 1,
+      "id": "woot_revived:dye_casing_mold"
+    }
+  ]
+}

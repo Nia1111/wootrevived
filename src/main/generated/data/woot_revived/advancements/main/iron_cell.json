@@ -1,0 +1,39 @@
+{
+  "parent": "woot_revived:main/enchanted_iron_plate",
+  "criteria": {
+    "iron_cell": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "woot_revived:iron_cell"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.iron_cell.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "woot_revived:iron_cell"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.iron_cell.title"
+    }
+  },
+  "requirements": [
+    [
+      "iron_cell"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

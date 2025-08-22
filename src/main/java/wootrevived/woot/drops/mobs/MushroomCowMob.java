@@ -1,0 +1,38 @@
+package wootrevived.woot.drops.mobs;
+
+import com.google.common.base.CaseFormat;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.MushroomCow;
+import wootrevived.api.WootFactoryMob;
+import wootrevived.api.registrations.WootFactoryMobRegistration;
+
+public class MushroomCowMob extends WootFactoryMob<MushroomCow> {
+    public MushroomCowMob(EntityType<MushroomCow> entityType, Properties properties) {
+        super(entityType, properties);
+    }
+
+    @Override
+    public MutableComponent getDisplayName(CompoundTag mobTag) {
+        MutableComponent tip = Component.literal(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, mobTag.getString("Type")).replaceAll("([a-z])([A-Z])", "$1 $2") + " ");
+        return tip.append(super.getDisplayName(mobTag));
+    }
+
+    @Override
+    public MutableComponent getTooltipKillName(CompoundTag mobTag) {
+        return super.getDisplayName(mobTag);
+    }
+
+    @Override
+    public CompoundTag saveTag(CompoundTag mobTag){
+        CompoundTag tag = super.saveTag(mobTag);
+        tag.putString("Type", mobTag.getString("Type"));
+        return tag;
+    }
+
+    public static void register(WootFactoryMobRegistration registration) {
+        registration.registerFactoryMob(new MushroomCowMob(EntityType.MOOSHROOM, new Properties()));
+    }
+}

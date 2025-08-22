@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "woot_revived:block/vitality_fuel_fluid_block"
+    }
+  }
+}

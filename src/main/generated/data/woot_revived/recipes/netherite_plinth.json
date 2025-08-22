@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "woot_revived",
+  "key": {
+    "a": {
+      "tag": "forge:ingots/netherite"
+    },
+    "b": {
+      "item": "woot_revived:netherite_shard"
+    },
+    "c": {
+      "item": "woot_revived:factory_base"
+    }
+  },
+  "pattern": [
+    "aaa",
+    "bcb",
+    "aaa"
+  ],
+  "result": {
+    "item": "woot_revived:netherite_plinth"
+  },
+  "show_notification": true
+}

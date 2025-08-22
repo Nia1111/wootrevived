@@ -1,0 +1,39 @@
+{
+  "parent": "woot_revived:main/gold_shard_upgrade",
+  "criteria": {
+    "gold_shard": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "woot_revived:gold_shard"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.gold_shard.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "woot_revived:gold_shard"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.gold_shard.title"
+    }
+  },
+  "requirements": [
+    [
+      "gold_shard"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

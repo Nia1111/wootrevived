@@ -1,0 +1,19 @@
+{
+  "type": "woot_revived:dye_liquifier",
+  "blue": 72,
+  "energy": 500,
+  "inputs": [
+    {
+      "type": "ingredient",
+      "ingredients": [
+        {
+          "item": "minecraft:cornflower"
+        }
+      ]
+    }
+  ],
+  "outputs": [],
+  "red": 0,
+  "white": 0,
+  "yellow": 0
+}

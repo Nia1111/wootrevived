@@ -1,0 +1,39 @@
+{
+  "parent": "woot_revived:main/enchanted_diamond_plate",
+  "criteria": {
+    "diamond_cell": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "woot_revived:diamond_cell"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.diamond_cell.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "woot_revived:diamond_cell"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.diamond_cell.title"
+    }
+  },
+  "requirements": [
+    [
+      "diamond_cell"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

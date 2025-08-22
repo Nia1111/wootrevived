@@ -1,0 +1,19 @@
+{
+  "type": "woot_revived:dye_liquifier",
+  "blue": 0,
+  "energy": 500,
+  "inputs": [
+    {
+      "type": "ingredient",
+      "ingredients": [
+        {
+          "item": "minecraft:torchflower"
+        }
+      ]
+    }
+  ],
+  "outputs": [],
+  "red": 36,
+  "white": 0,
+  "yellow": 36
+}

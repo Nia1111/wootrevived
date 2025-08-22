@@ -1,0 +1,19 @@
+{
+  "type": "woot_revived:dye_liquifier",
+  "blue": 0,
+  "energy": 500,
+  "inputs": [
+    {
+      "type": "ingredient",
+      "ingredients": [
+        {
+          "item": "minecraft:pink_petals"
+        }
+      ]
+    }
+  ],
+  "outputs": [],
+  "red": 36,
+  "white": 36,
+  "yellow": 0
+}

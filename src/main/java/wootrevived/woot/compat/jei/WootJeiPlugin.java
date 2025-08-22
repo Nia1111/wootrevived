@@ -1,0 +1,160 @@
+package wootrevived.woot.compat.jei;
+
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
+import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.Woot;
+import wootrevived.woot.compat.jei.categories.*;
+import wootrevived.woot.recipes.stygian_anvil.StygianAnvilRecipe;
+import wootrevived.woot.recipes.dye_liquifier.DyeLiquifierRecipe;
+import wootrevived.woot.recipes.enchanted_liquifier.EnchantedLiquifierRecipe;
+import wootrevived.woot.recipes.fluid_infuser.FluidInfuserRecipe;
+import wootrevived.woot.recipes.item_infuser.ItemInfuserRecipe;
+import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.registries.FluidsRegistry;
+import wootrevived.woot.registries.ItemsRegistry;
+import wootrevived.woot.util.Config;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@JeiPlugin
+public class WootJeiPlugin implements IModPlugin {
+    @Override
+    public @NotNull ResourceLocation getPluginUid() {
+        return ResourceLocation.tryBuild(Woot.MOD_ID, "jei");
+    }
+
+    @Override
+    public void registerCategories(IRecipeCategoryRegistration registration) {
+        registration.addRecipeCategories(
+                new StygianAnvilRecipeCategory(registration.getJeiHelpers().getGuiHelper()),
+                new DyeLiquifierRecipeCategory(registration.getJeiHelpers().getGuiHelper()),
+                new FluidInfuserRecipeCategory(registration.getJeiHelpers().getGuiHelper()),
+                new ItemInfuserRecipeCategory(registration.getJeiHelpers().getGuiHelper()),
+                new EnchantedLiquifierRecipeCategory(registration.getJeiHelpers().getGuiHelper())
+        );
+    }
+
+    @Override
+    public void registerRecipes(@NotNull IRecipeRegistration registration) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if(level == null) return;
+        RecipeManager recipeManager = level.getRecipeManager();
+
+        List<StygianAnvilRecipe> stygianAnvilRecipes = new ArrayList<>();
+        List<DyeLiquifierRecipe> dyeLiquifierRecipes = new ArrayList<>();
+        List<FluidInfuserRecipe> fluidInfuserRecipes = new ArrayList<>();
+        List<ItemInfuserRecipe> itemInfuserRecipes = new ArrayList<>();
+
+        for(Recipe<?> recipe : recipeManager.getRecipes()) {
+            if(recipe instanceof StygianAnvilRecipe stygianAnvilRecipe) {
+                stygianAnvilRecipes.add(stygianAnvilRecipe);
+            } else if(recipe instanceof DyeLiquifierRecipe dyeLiquifierRecipe) {
+                dyeLiquifierRecipes.add(dyeLiquifierRecipe);
+            } else if(recipe instanceof FluidInfuserRecipe fluidInfuserRecipe) {
+                fluidInfuserRecipes.add(fluidInfuserRecipe);
+            } else if(recipe instanceof ItemInfuserRecipe itemInfuserRecipe) {
+                itemInfuserRecipes.add(itemInfuserRecipe);
+            }
+        }
+
+        registration.addRecipes(WootJeiPluginTypes.STYGIAN_ANVIL_TYPE, stygianAnvilRecipes);
+        registration.addRecipes(WootJeiPluginTypes.DYE_LIQUIFIER_TYPE, dyeLiquifierRecipes);
+        registration.addRecipes(WootJeiPluginTypes.FLUID_INFUSER_TYPE, fluidInfuserRecipes);
+        registration.addRecipes(WootJeiPluginTypes.ITEM_INFUSER_TYPE, itemInfuserRecipes);
+
+        List<EnchantedLiquifierRecipe> enchantedLiquifierRecipes = new ArrayList<>();
+
+        Map<Integer, List<ItemStack>> booksMap = new HashMap<>();
+        for(Enchantment enchantment : ForgeRegistries.ENCHANTMENTS.getValues()){
+            for(int enchantLevel = enchantment.getMinLevel(); enchantLevel <= enchantment.getMaxLevel(); ++enchantLevel) {
+                ItemStack itemStack = Items.ENCHANTED_BOOK.getDefaultInstance();
+                itemStack.enchant(enchantment, enchantLevel);
+                enchantLevel = Mth.clamp(enchantLevel, 1, Config.EnchantedLiquifier.MAX_ENCHANT_LVL);
+                booksMap.computeIfAbsent(enchantLevel, k -> new ArrayList<>());
+                booksMap.get(enchantLevel).add(itemStack);
+            }
+        }
+
+        for(Integer enchantLevel : booksMap.keySet()) {
+            List<ItemStack> books = booksMap.get(enchantLevel);
+            Ingredient ingredient = Ingredient.of(books.stream());
+            int amount = enchantLevel * Config.EnchantedLiquifier.PER_ENCHANT_FLUID;
+            int energy = enchantLevel * Config.EnchantedLiquifier.PER_ENCHANT_ENERGY;
+            enchantedLiquifierRecipes.add(
+                    new EnchantedLiquifierRecipe(
+                            energy,
+                            List.of(ingredient),
+                            new FluidStack(FluidsRegistry.SOURCE_ENCHANTED_FLUID.get(), amount)
+                    )
+            );
+        }
+
+        registration.addRecipes(WootJeiPluginTypes.ENCHANTED_LIQUIFIER_TYPE, enchantedLiquifierRecipes);
+
+        registration.addItemStackInfo(
+                List.of(
+                        ItemsRegistry.IRON_SHARD_ITEM.get().getDefaultInstance(),
+                        ItemsRegistry.GOLD_SHARD_ITEM.get().getDefaultInstance(),
+                        ItemsRegistry.DIAMOND_SHARD_ITEM.get().getDefaultInstance(),
+                        ItemsRegistry.NETHERITE_SHARD_ITEM.get().getDefaultInstance()
+                ),
+                Component.translatable("jei.woot_revived.shard")
+        );
+
+        registration.addIngredientInfo(
+                BlocksRegistry.STYGIAN_ANVIL_BLOCK.get(),
+                Component.translatable("jei.woot_revived.anvil.0"),
+                Component.translatable("jei.woot_revived.anvil.1"),
+                Component.translatable("jei.woot_revived.anvil.2"),
+                Component.translatable("jei.woot_revived.anvil.3")
+        );
+
+        registration.addItemStackInfo(
+                ItemsRegistry.MOB_SHARD_ITEM.get().getDefaultInstance(),
+                Component.translatable("jei.woot_revived.mob_shard.0"),
+                Component.translatable("jei.woot_revived.mob_shard.1"),
+                Component.translatable("jei.woot_revived.mob_shard.2")
+        );
+
+        registration.addItemStackInfo(
+                FluidsRegistry.PURE_DYE_FLUID_BUCKET.get().getDefaultInstance(),
+                Component.translatable("jei.woot_revived.pure_dye_fluid")
+        );
+
+        registration.addIngredientInfo(
+                new FluidStack(FluidsRegistry.SOURCE_PURE_DYE_FLUID.get(), 1),
+                ForgeTypes.FLUID_STACK,
+                Component.translatable("jei.woot_revived.pure_dye_fluid")
+        );
+    }
+
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        registration.addRecipeCatalyst(BlocksRegistry.STYGIAN_ANVIL_BLOCK.get(), WootJeiPluginTypes.STYGIAN_ANVIL_TYPE);
+        registration.addRecipeCatalyst(BlocksRegistry.DYE_LIQUIFIER_BLOCK.get(), WootJeiPluginTypes.DYE_LIQUIFIER_TYPE);
+        registration.addRecipeCatalyst(BlocksRegistry.FLUID_INFUSER_BLOCK.get(), WootJeiPluginTypes.FLUID_INFUSER_TYPE);
+        registration.addRecipeCatalyst(BlocksRegistry.ITEM_INFUSER_BLOCK.get(), WootJeiPluginTypes.ITEM_INFUSER_TYPE);
+        registration.addRecipeCatalyst(BlocksRegistry.ENCHANTED_LIQUIFIER_BLOCK.get(), WootJeiPluginTypes.ENCHANTED_LIQUIFIER_TYPE);
+    }
+}

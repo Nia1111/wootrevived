@@ -1,0 +1,39 @@
+{
+  "parent": "woot_revived:main/factory_base",
+  "criteria": {
+    "enchanted_liquifier": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "woot_revived:enchanted_liquifier"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.enchanted_liquifier.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "woot_revived:enchanted_liquifier"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.enchanted_liquifier.title"
+    }
+  },
+  "requirements": [
+    [
+      "enchanted_liquifier"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

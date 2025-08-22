@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "woot_revived",
+  "key": {
+    "a": {
+      "item": "minecraft:chest"
+    },
+    "b": {
+      "item": "woot_revived:stygian_ingot"
+    },
+    "c": {
+      "item": "woot_revived:factory_base"
+    }
+  },
+  "pattern": [
+    "bab",
+    "bcb",
+    "bab"
+  ],
+  "result": {
+    "item": "woot_revived:export"
+  },
+  "show_notification": true
+}

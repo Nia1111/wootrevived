@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "woot_revived",
+  "key": {
+    "a": {
+      "tag": "forge:gems/diamond"
+    },
+    "b": {
+      "item": "woot_revived:diamond_shard"
+    },
+    "c": {
+      "item": "woot_revived:factory_base"
+    }
+  },
+  "pattern": [
+    "aba",
+    "aca",
+    "aba"
+  ],
+  "result": {
+    "item": "woot_revived:diamond_pylon"
+  },
+  "show_notification": true
+}

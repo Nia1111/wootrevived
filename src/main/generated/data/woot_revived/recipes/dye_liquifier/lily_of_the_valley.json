@@ -1,0 +1,19 @@
+{
+  "type": "woot_revived:dye_liquifier",
+  "blue": 0,
+  "energy": 500,
+  "inputs": [
+    {
+      "type": "ingredient",
+      "ingredients": [
+        {
+          "item": "minecraft:lily_of_the_valley"
+        }
+      ]
+    }
+  ],
+  "outputs": [],
+  "red": 0,
+  "white": 72,
+  "yellow": 0
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "woot_revived",
+  "key": {
+    "a": {
+      "item": "woot_revived:stygian_block"
+    },
+    "b": {
+      "item": "woot_revived:stygian_ingot"
+    },
+    "c": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    " ba",
+    " cb",
+    "c  "
+  ],
+  "result": {
+    "item": "woot_revived:stygian_hammer"
+  },
+  "show_notification": true
+}

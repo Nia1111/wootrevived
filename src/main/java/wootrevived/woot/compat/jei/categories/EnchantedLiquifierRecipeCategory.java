@@ -1,0 +1,102 @@
+package wootrevived.woot.compat.jei.categories;
+
+import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import wootrevived.woot.compat.jei.WootJeiCustomFluidRenderer;
+import wootrevived.woot.compat.jei.WootJeiPluginTypes;
+import wootrevived.woot.events.client.GlobalClientTicker;
+import wootrevived.woot.recipes.enchanted_liquifier.EnchantedLiquifierRecipe;
+import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.util.Config;
+import wootrevived.woot.util.render.WootContainerScreen;
+
+public class EnchantedLiquifierRecipeCategory implements IRecipeCategory<EnchantedLiquifierRecipe> {
+    private static IDrawable icon;
+
+    private static final int GUI_WIDTH = 85;
+    private static final int GUI_HEIGHT = 56;
+
+    private static final int ENERGY_X = 0;
+    private static final int ENERGY_Y = 0;
+
+    private static final int INPUT_SLOT_X = 21;
+    private static final int INPUT_SLOT_Y = 19;
+
+    private static final int OUTPUT_FLUID_X = 67;
+    private static final int OUTPUT_FLUID_Y = 0;
+
+    private static final int PROGRESS_X = 42;
+    private static final int PROGRESS_Y = 20;
+
+    public EnchantedLiquifierRecipeCategory(IGuiHelper guiHelper) {
+        icon = guiHelper.createDrawableItemLike(BlocksRegistry.ENCHANTED_LIQUIFIER_BLOCK.get());
+    }
+
+    @Override
+    public void draw(EnchantedLiquifierRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics gui, double mouseX, double mouseY) {
+        int totalProgressTick = recipe.getEnergy() / Config.EnchantedLiquifier.ENERGY_PROCESS_TRANSFER;
+        int progress = (GlobalClientTicker.tickCounter % totalProgressTick) * 100 / totalProgressTick;
+
+        WootContainerScreen.renderVanillaSlot(gui, INPUT_SLOT_X, INPUT_SLOT_Y);
+        WootContainerScreen.renderEnergyBg(gui, ENERGY_X, ENERGY_Y);
+        WootContainerScreen.renderFluidBg(gui, OUTPUT_FLUID_X, OUTPUT_FLUID_Y);
+        WootContainerScreen.renderProgressArrowBg(gui, PROGRESS_X, PROGRESS_Y);
+
+        WootContainerScreen.renderEnergy(gui, ENERGY_X, ENERGY_Y, recipe.getEnergy(), Config.EnchantedLiquifier.ENERGY_CAPACITY);
+        WootContainerScreen.renderProgressArrow(gui, PROGRESS_X, PROGRESS_Y, progress);
+
+        WootContainerScreen._renderEnergyTooltip(gui, (int)mouseX, (int)mouseY, ENERGY_X, ENERGY_Y, recipe.getEnergy(), Config.EnchantedLiquifier.ENERGY_CAPACITY, false, false);
+        WootContainerScreen._renderProgressArrowTooltip(gui, (int)mouseX, (int)mouseY, PROGRESS_X, PROGRESS_Y, progress, Math.max(0F, totalProgressTick / 20F), Config.EnchantedLiquifier.ENERGY_PROCESS_TRANSFER, false);
+    }
+
+    @Override
+    public int getWidth() {
+        return GUI_WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return GUI_HEIGHT;
+    }
+
+    @Override
+    public @NotNull RecipeType<EnchantedLiquifierRecipe> getRecipeType() {
+        return WootJeiPluginTypes.ENCHANTED_LIQUIFIER_TYPE;
+    }
+
+    @Override
+    public @NotNull Component getTitle() {
+        return Component.translatable("gui.woot_revived.enchanted_liquifier.name");
+    }
+
+    @Override
+    public @Nullable IDrawable getIcon() {
+        return icon;
+    }
+
+    @Override
+    public void setRecipe(IRecipeLayoutBuilder builder, EnchantedLiquifierRecipe recipe, @NotNull IFocusGroup focuses) {
+        builder.addInputSlot(INPUT_SLOT_X + 1, INPUT_SLOT_Y + 1)
+                .addIngredients(recipe.getInputIngredient());
+
+        FluidStack outputFluid = recipe.getOutputFluid();
+        builder.addOutputSlot(OUTPUT_FLUID_X + 3, OUTPUT_FLUID_Y + 3)
+                .addFluidStack(outputFluid.getFluid(), outputFluid.getAmount())
+                .setCustomRenderer(ForgeTypes.FLUID_STACK, new WootJeiCustomFluidRenderer(Config.EnchantedLiquifier.OUTPUT_TANK_CAPACITY));
+
+        builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
+                .addItemLike(outputFluid.getFluid().getBucket());
+    }
+}
