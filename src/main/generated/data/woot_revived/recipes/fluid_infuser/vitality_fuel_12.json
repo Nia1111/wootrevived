@@ -6,7 +6,7 @@
       "type": "ingredient",
       "ingredients": [
         {
-          "item": "woot_revived:iron_shard"
+          "item": "woot_revived:netherite_enchanted_plate"
         }
       ]
     },
@@ -23,7 +23,7 @@
   "outputs": [
     {
       "type": "fluid",
-      "amount": 1500,
+      "amount": 6000,
       "id": "woot_revived:vitality_fuel_fluid"
     }
   ]

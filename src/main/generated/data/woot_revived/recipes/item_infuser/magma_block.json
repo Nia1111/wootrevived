@@ -6,7 +6,7 @@
       "type": "ingredient",
       "ingredients": [
         {
-          "item": "minecraft:stone"
+          "item": "minecraft:netherrack"
         },
         []
       ]

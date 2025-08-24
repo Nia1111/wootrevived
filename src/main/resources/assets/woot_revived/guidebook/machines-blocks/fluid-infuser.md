@@ -44,4 +44,11 @@ and can also be used to craft some items using the <ItemImage id="item_infuser" 
   <Recipe id="fluid_infuser/vitality_fuel_3" />
   <Recipe id="fluid_infuser/vitality_fuel_4" />
   <Recipe id="fluid_infuser/vitality_fuel_5" />
+  <Recipe id="fluid_infuser/vitality_fuel_6" />
+  <Recipe id="fluid_infuser/vitality_fuel_7" />
+  <Recipe id="fluid_infuser/vitality_fuel_8" />
+  <Recipe id="fluid_infuser/vitality_fuel_9" />
+  <Recipe id="fluid_infuser/vitality_fuel_10" />
+  <Recipe id="fluid_infuser/vitality_fuel_11" />
+  <Recipe id="fluid_infuser/vitality_fuel_12" />
 </Row>

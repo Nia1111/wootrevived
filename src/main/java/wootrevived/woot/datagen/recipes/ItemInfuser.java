@@ -52,7 +52,7 @@ public class ItemInfuser {
                 .save(consumer);
 
         ItemInfuserRecipeBuilder.itemInfuserRecipe(Items.MAGMA_BLOCK)
-                .ingredient(Ingredient.of(Items.STONE))
+                .ingredient(Ingredient.of(Items.NETHERRACK))
                 .fluid(Fluids.LAVA, 1000)
                 .energy(1000)
                 .save(consumer);

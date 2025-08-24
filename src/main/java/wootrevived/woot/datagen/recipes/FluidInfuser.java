@@ -40,9 +40,21 @@ public class FluidInfuser {
                 new IngredientRecipe(Ingredient.of(ItemsRegistry.XP_SHARD_ITEM.get()), 1000),
                 new IngredientRecipe(Ingredient.of(ItemsRegistry.XP_SPLINTER_ITEM.get()), 100),
                 new IngredientRecipe(Ingredient.of(Items.REDSTONE), 1000),
-                new IngredientRecipe(Ingredient.of(ItemsRegistry.COPPER_SHARD_ITEM.get()), 1000),
-                new IngredientRecipe(Ingredient.of(ItemsRegistry.IRON_SHARD_ITEM.get()), 1500),
-                new IngredientRecipe(Ingredient.of(ItemsRegistry.GOLD_SHARD_ITEM.get()), 2000),
+
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.COPPER_SHARD_ITEM.get()), 2000),
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.COPPER_ENCHANTED_PLATE_ITEM.get()), 4000),
+
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.IRON_SHARD_ITEM.get()), 2500),
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.IRON_ENCHANTED_PLATE_ITEM.get()), 5000),
+
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.GOLD_SHARD_ITEM.get()), 3000),
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.GOLD_ENCHANTED_PLATE_ITEM.get()), 6000),
+
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.DIAMOND_SHARD_ITEM.get()), 3500),
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.DIAMOND_ENCHANTED_PLATE_ITEM.get()), 7000),
+
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.NETHERITE_SHARD_ITEM.get()), 4000),
+                new IngredientRecipe(Ingredient.of(ItemsRegistry.NETHERITE_ENCHANTED_PLATE_ITEM.get()), 8000),
         };
 
         for (int i = 0; i < vitalityFuelIngredients.length; i++) {
