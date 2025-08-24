@@ -10,6 +10,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Provides access to the outcome of a mob simulation after it has completed.
+ * <p>
+ * This interface is passed into Woot API callbacks (e.g. upgrade items or plugins)
+ * to allow inspection and modification of generated drops.
+ * <p>
+ * Consumers can:
+ * <ul>
+ *   <li>Query the mob’s spawn context (equipment, flags, tier, etc.)</li>
+ *   <li>Inspect the generated drops (items, fluids, and experience)</li>
+ *   <li>Adjust the experience value or mutate the drop lists before they are finalized</li>
+ * </ul>
+ * <p>
+ * The implementation is provided by Woot; addon mods should not implement this
+ * interface themselves.
+ */
 public interface WootDropsProperties {
     @NotNull ItemStack getMainHandItem();
     @NotNull ItemStack getOffHandItem();

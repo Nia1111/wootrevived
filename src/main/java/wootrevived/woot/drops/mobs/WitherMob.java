@@ -52,7 +52,6 @@ public class WitherMob extends WootFactoryMob<WitherBoss> {
         registration.registerFactoryMob(new WitherMob(EntityType.WITHER,
                 new Properties()
                         .tier(Tier.TIER_5)
-                        .importItem(true)
         ));
     }
 }

@@ -7,6 +7,24 @@ import wootrevived.api.WootFactoryMob;
 import wootrevived.api.enums.Tier;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Provides access to the spawn properties of a mob before it is simulated
+ * by a Woot factory.
+ * <p>
+ * This interface is passed into Woot API callbacks (e.g. upgrade items or plugins)
+ * during the spawn stage. It allows inspection and modification of the mob’s
+ * equipment, status flags, and contextual data before the simulation begins.
+ * <p>
+ * Consumers can:
+ * <ul>
+ *   <li>Change the mob’s main hand or off-hand items</li>
+ *   <li>Adjust attributes such as luck or environmental flags (e.g. charged creeper, in fire, dragon killed)</li>
+ *   <li>Access the factory tier, associated mob, saved NBT, and random source</li>
+ * </ul>
+ * <p>
+ * The implementation is provided by Woot; addon mods should not implement this
+ * interface themselves.
+ */
 public interface WootSpawnProperties {
     @NotNull ItemStack getMainHandItem();
     void setMainHandItem(@NotNull ItemStack itemStack);

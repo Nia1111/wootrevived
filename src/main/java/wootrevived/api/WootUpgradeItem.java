@@ -10,9 +10,21 @@ import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.interfaces.WootGenerationProperties;
 import wootrevived.api.interfaces.WootSpawnProperties;
 
+/**
+ * Base class for Woot upgrade items.
+ * <p>
+ * Subclass this to influence factory behavior at three stages:
+ * <ul>
+ *   <li>Generation: before ingredients and vitality fuel are consumed</li>
+ *   <li>Spawn: before the mob is simulated</li>
+ *   <li>Drops: after simulation, when drops can be inspected/modified</li>
+ * </ul>
+ * The concrete Woot implementation invokes these hooks; integration mods
+ * typically override one or more methods to adjust behavior.
+ */
 public abstract class WootUpgradeItem extends Item {
     /**
-     * The current level of your {@link WootUpgradeItem upgrade item}.
+     * The current level of this {@link WootUpgradeItem upgrade item}.
      */
     protected final int level;
 
@@ -21,35 +33,56 @@ public abstract class WootUpgradeItem extends Item {
         this.level = level;
     }
 
+    /**
+     * Allows upgrades to adjust factory generation properties
+     * before any ingredients or vitality fuel are consumed.
+     *
+     * @param properties mutable generation properties
+     */
     public void applyGenerationProperties(WootGenerationProperties properties) {
     }
 
+    /**
+     * Allows upgrades to adjust the mob's spawn properties
+     * before the simulation begins.
+     *
+     * @param properties mutable spawn properties
+     */
     public void applySpawnProperties(WootSpawnProperties properties){
     }
 
+    /**
+     * Allows upgrades to inspect and modify drops produced by the simulation.
+     *
+     * @param properties mutable access to item/fluids/XP drops and context
+     */
     public void modifyDrops(WootDropsProperties properties) {
     }
 
     /**
-     * @return The level of the upgrade item
+     * Returns the upgrade level of this item.
+     *
+     * @return the level value
      */
     public int getLevel(){
         return this.level;
     }
 
     /**
-     * @return The location to your item.png texture based on the level
+     * Returns the resource location for this item's texture.
+     *
+     * @return the texture {@link ResourceLocation}
      */
     public ResourceLocation getTextureLocation(){
         return ForgeRegistries.ITEMS.getKey(this).withPrefix("textures/item/").withSuffix(".png");
     }
 
     /**
-     * This is called when the factory block side is generated on the atlas.
-     * The {@code NativeImage upgradeSide} will display on the block when
-     * your upgrade will be applied.
-     * @param upgradeSide The {@link NativeImage native image} of the factory upgrade block
-     * @param upgradeItem The {@link NativeImage native image} of your upgrade item
+     * Called on the client when the factory block's side texture is generated on the atlas.
+     * Draw your upgrade icon onto {@code upgradeSide} using pixels from {@code upgradeItem}.
+     *
+     * @param upgradeSide the target factory side {@link NativeImage}
+     * @param upgradeItem the source upgrade item {@link NativeImage}
      */
     @OnlyIn(Dist.CLIENT)
     public void applyUpgradeTexture(NativeImage upgradeSide, NativeImage upgradeItem){

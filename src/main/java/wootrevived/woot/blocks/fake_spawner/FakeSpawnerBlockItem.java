@@ -3,7 +3,6 @@ package wootrevived.woot.blocks.fake_spawner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -43,10 +42,7 @@ public class FakeSpawnerBlockItem extends FactoryBlockItem {
 
             WootFactoryMob<?> mob = WootFactoryMobsRegistry.getFactoryMob(mobTag);
             if(mob != null) {
-                MutableComponent tip = mob.getDisplayName(mobTag);
-                if(mob.showTooltipNBT())
-                    tip.append(Component.literal(" (+NBT)"));
-                tooltip.add(tip.setStyle(CAPTURED_STYLE));
+                tooltip.add(mob.getDisplayName(mobTag).setStyle(CAPTURED_STYLE));
                 String modId = ForgeRegistries.ENTITY_TYPES.getKey(mob.getEntityType()).getNamespace();
                 tooltip.add(ModNameHelper.getModName(modId).setStyle(MOD_NAME_STYLE));
             }

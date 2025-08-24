@@ -54,7 +54,6 @@ public class EnderDragonMob extends WootFactoryMob<EnderDragon> {
         registration.registerFactoryMob(new EnderDragonMob(EntityType.ENDER_DRAGON,
                 new Properties()
                         .tier(Tier.TIER_5)
-                        .importItem(true)
         ));
     }
 }

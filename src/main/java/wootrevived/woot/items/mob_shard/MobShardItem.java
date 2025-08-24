@@ -2,7 +2,6 @@ package wootrevived.woot.items.mob_shard;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -176,10 +175,7 @@ public class MobShardItem extends Item {
 
         WootFactoryMob<?> mob = WootFactoryMobsRegistry.getFactoryMob(mobTag);
         if(mob != null) {
-            MutableComponent tip = mob.getDisplayName(mobTag);
-            if(mob.showTooltipNBT())
-                tip.append(Component.literal(" (+NBT)"));
-            tooltip.add(tip.setStyle(CAPTURED_STYLE));
+            tooltip.add(mob.getDisplayName(mobTag).setStyle(CAPTURED_STYLE));
             String modId = ForgeRegistries.ENTITY_TYPES.getKey(mob.getEntityType()).getNamespace();
             tooltip.add(ModNameHelper.getModName(modId).setStyle(MOD_NAME_STYLE));
         }

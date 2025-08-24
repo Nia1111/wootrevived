@@ -12,6 +12,14 @@ import wootrevived.api.interfaces.WootDropsProperties;
 
 import java.util.List;
 
+/**
+ * Describes a mob type that can be simulated by a Woot factory.
+ * <p>
+ * Subclass this to customize display names, shard matching, import requirements,
+ * and to modify drops produced during simulation.
+ *
+ * @param <T> the concrete entity type
+ */
 public class WootFactoryMob<T extends Entity> {
     private final Properties properties;
     protected final EntityType<T> entityType;
@@ -24,42 +32,121 @@ public class WootFactoryMob<T extends Entity> {
             properties.vitalityCost = properties.tier.defaultVitalityCost();
     }
 
+    /**
+     * Returns the mob name to display in UI.
+     * <p>
+     * Override to provide a custom display name based on the mob's NBT.
+     *
+     * @param mobTag the mob's saved tag
+     * @return a localized display name
+     */
     public MutableComponent getDisplayName(CompoundTag mobTag) {
         return Component.translatable(entityType.getDescriptionId());
     }
 
+    /**
+     * Returns the name shown in the descriptive tooltip that instructs
+     * which mob to kill on the Mob Shard.
+     * <p>
+     * By default, delegates to {@link #getDisplayName(CompoundTag)}.
+     *
+     * @param mobTag the mob's saved tag
+     * @return a localized tooltip name
+     */
     public MutableComponent getTooltipKillName(CompoundTag mobTag) {
         return getDisplayName(mobTag);
     }
 
+    /**
+     * Produces the NBT used by Woot to identify/modify this mob's behavior and drops.
+     * <p>
+     * Override to store additional fields that affect display or drop logic.
+     * The default implementation copies the {@code id} from the supplied tag.
+     *
+     * @param mobTag the source tag from the captured entity
+     * @return a saved tag used by the factory
+     */
     public CompoundTag saveTag(CompoundTag mobTag){
         CompoundTag tag = new CompoundTag();
         tag.putString("id", mobTag.getString("id"));
         return tag;
     }
 
+    /**
+     * Compares a Mob Shard tag with a live/captured mob tag to determine if they represent
+     * the same target.
+     * <p>
+     * Override to customize matching rules (e.g., include variant, NBT flags, etc.).
+     * The default checks equality of the {@code id} field.
+     *
+     * @param shardTag the shard's stored tag
+     * @param mobTag   the candidate mob's tag
+     * @return {@code true} if they match; otherwise {@code false}
+     */
     public boolean isSame(CompoundTag shardTag, CompoundTag mobTag){
         return shardTag.getString("id").equals(mobTag.getString("id"));
     }
 
+    /**
+     * Allows modification of drops produced by the simulation.
+     * <p>
+     * This is invoked at well-defined points in the drop pipeline (see {@link Phase}).
+     * Use the provided {@code properties} to inspect context and add/replace drops.
+     *
+     * @param phase      current phase of the drop pipeline
+     * @param properties mutable access to generated drops and context
+     */
     public void modifyDrops(Phase phase, WootDropsProperties properties) {
     }
 
+    /**
+     * Specifies item inputs required to simulate this mob.
+     * <p>
+     * Called before simulation. The list size is limited to 36 stacks.
+     *
+     * @param mobTag the mob's saved tag
+     * @return a list of required item stacks (may be empty)
+     */
     public List<ItemStack> getImportItems(CompoundTag mobTag){
         return List.of();
     }
 
+    /**
+     * Specifies fluid inputs required to simulate this mob.
+     * <p>
+     * Called before simulation. The list size is limited to 8 stacks.
+     *
+     * @param mobTag the mob's saved tag
+     * @return a list of required fluid stacks (may be empty)
+     */
     public List<FluidStack> getImportFluids(CompoundTag mobTag){
         return List.of();
     }
 
+    /**
+     * @return the underlying {@link EntityType}
+     */
     public final EntityType<T> getEntityType() {
         return entityType;
     }
 
+    /**
+     * Phases within the drop-generation pipeline where {@link #modifyDrops} may be called.
+     */
     public enum Phase {
+        /**
+         * Invoked immediately before custom drop callbacks execute.
+         */
         BEFORE_DROP_CALLBACKS,
+
+        /**
+         * Invoked immediately after custom drop callbacks complete.
+         */
         AFTER_DROP_CALLBACKS,
+
+        /**
+         * Invoked after upgrade modules have applied their drop modifications.
+         */
         AFTER_UPGRADES;
 
         @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -78,51 +165,67 @@ public class WootFactoryMob<T extends Entity> {
         }
     }
 
+    /**
+     * Mutable configuration used to constrain or annotate simulation behavior
+     * for this mob type (blacklisting, timing, tier, and fuel cost).
+     * <p>
+     * Use the fluent setters to adjust behavior; values are validated/sanitized
+     * where applicable.
+     */
     public static final class Properties {
         boolean blacklist = false;
         boolean disabledSimulation = false;
         boolean showTooltipNBT = false; // Add (+NBT) to the Mob Shard & Controller entity name tooltip
-        boolean importItem = false;
-        boolean importFluid = false;
         int rate = 400; // 20 sec
         int vitalityCost = -1; // mB
         Tier tier = Tier.TIER_1;
 
+        /**
+         * Whether this mob is banned from capture/simulation.
+         *
+         * @param isBlacklisted true to blacklist, false otherwise
+         */
         public Properties blacklist(boolean isBlacklisted) {
             this.blacklist = isBlacklisted;
             return this;
         }
 
+        /**
+         * Whether the factory should skip vanilla drop simulation for this mob.
+         *
+         * @param isSimulationDisabled true to disable vanilla drops
+         */
         public Properties disabledSimulation(boolean isSimulationDisabled) {
             this.disabledSimulation = isSimulationDisabled;
             return this;
         }
 
-        public Properties showTooltipNBT(boolean showTooltipNBT) {
-            this.showTooltipNBT = showTooltipNBT;
-            return this;
-        }
-
-        public Properties importItem(boolean needItemImport){
-            this.importItem = needItemImport;
-            return this;
-        }
-
-        public Properties importFluid(boolean needFluidImport){
-            this.importFluid = needFluidImport;
-            return this;
-        }
-
+        /**
+         * Sets the number of ticks between simulations.
+         *
+         * @param spawnTickRate non-negative tick interval
+         */
         public Properties rate(int spawnTickRate){
             this.rate = Math.max(0, spawnTickRate);
             return this;
         }
 
+        /**
+         * Sets the vitality fuel cost (mB) required to simulate this mob.
+         *
+         * @param vitalityCost non-negative cost in millibuckets
+         */
         public Properties vitalityCost(int vitalityCost){
             this.vitalityCost = Math.max(0, vitalityCost);
             return this;
         }
 
+        /**
+         * Sets the minimum factory tier required to simulate this mob.
+         * {@link Tier#INVALID} is ignored.
+         *
+         * @param tier minimum required tier
+         */
         public Properties tier(Tier tier) {
             if(tier == Tier.INVALID) return this;
             this.tier = tier;
@@ -136,18 +239,6 @@ public class WootFactoryMob<T extends Entity> {
 
     public final boolean isSimulationDisabled(){
         return this.properties.disabledSimulation;
-    }
-
-    public final boolean showTooltipNBT(){
-        return this.properties.showTooltipNBT;
-    }
-
-    public final boolean needItemImport(){
-        return this.properties.importItem;
-    }
-
-    public final boolean needFluidImport(){
-        return this.properties.importFluid;
     }
 
     public final int getSpawnTickRate(){
