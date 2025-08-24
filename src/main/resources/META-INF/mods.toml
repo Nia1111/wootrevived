@@ -7,10 +7,11 @@ license = "LGPLv3"
 modId = "${file.modId}"
 version = "${file.jarVersion}"
 displayName = "Woot Revived"
-displayURL="https://github.com/pharuxtan/woot"
+displayURL = "https://github.com/pharuxtan/woot"
+logoFile = "woot_revived.png"
 authors = "pharuxtan"
 credits = "Ipsis"
-description = '''A formidable multiblock to harvest mob drops. You'll either fall in love or despise it! No middle ground.'''
+description = '''A formidable multiblock mod to harvest mob drops. You'll either fall in love or despise it! No middle ground.'''
 
 [[dependencies.${file.modId}]]
 modId = "minecraft"
