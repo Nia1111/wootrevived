@@ -108,10 +108,8 @@ dependencies {
     runtimeOnly fg.deobf("maven.modrinth:modernfix:${modernfix_version}")
     runtimeOnly fg.deobf("maven.modrinth:ferrite-core:${ferritecore_version}")
 
-    runtimeOnly fg.deobf("maven.modrinth:ae2:15.4.8-forge")
-
-    //compileOnly fg.deobf("org.appliedenergistics:guideme:${guideme_version}:api")
-    implementation fg.deobf("org.appliedenergistics:guideme:${guideme_version}")
+    compileOnly fg.deobf("org.appliedenergistics:guideme:${guideme_version}:api")
+    runtimeOnly fg.deobf("org.appliedenergistics:guideme:${guideme_version}")
 }
 
 shadowJar {
