@@ -17,7 +17,7 @@ public class Config {
         public static final int ENERGY_CAPACITY = 10000;
         public static final int ENERGY_MAX_TRANSFER = 1000;
         public static final int ENERGY_PROCESS_TRANSFER = 25;
-        public static final int OUTPUT_TANK_CAPACITY = 10000;
+        public static final int OUTPUT_TANK_CAPACITY = BUCKET_CAPACITY * 10;
 
         public static final int RED_TANK_CAPACITY = DyeMakeup.LCM * 100;
         public static final int YELLOW_TANK_CAPACITY = DyeMakeup.LCM * 100;
@@ -33,21 +33,21 @@ public class Config {
         public static final int ENERGY_CAPACITY = 50000;
         public static final int ENERGY_MAX_TRANSFER = 1000;
         public static final int ENERGY_PROCESS_TRANSFER = 100;
-        public static final int OUTPUT_TANK_CAPACITY = 25000;
+        public static final int OUTPUT_TANK_CAPACITY = BUCKET_CAPACITY * 25;
     }
 
     public static class FluidInfuser {
         public static final int ENERGY_CAPACITY = 10000;
         public static final int ENERGY_MAX_TRANSFER = 1000;
         public static final int ENERGY_PROCESS_TRANSFER = 50;
-        public static final int INPUT_TANK_CAPACITY = 10000;
-        public static final int OUTPUT_TANK_CAPACITY = 10000;
+        public static final int INPUT_TANK_CAPACITY = BUCKET_CAPACITY * 10;
+        public static final int OUTPUT_TANK_CAPACITY = BUCKET_CAPACITY * 10;
     }
 
     public static class ItemInfuser {
         public static final int ENERGY_CAPACITY = 10000;
         public static final int ENERGY_MAX_TRANSFER = 1000;
         public static final int ENERGY_PROCESS_TRANSFER = 50;
-        public static final int INPUT_TANK_CAPACITY = 10000;
+        public static final int INPUT_TANK_CAPACITY = BUCKET_CAPACITY * 10;
     }
 }

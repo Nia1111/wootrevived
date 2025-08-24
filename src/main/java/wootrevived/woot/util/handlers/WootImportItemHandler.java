@@ -2,6 +2,7 @@ package wootrevived.woot.util.handlers;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +55,7 @@ public class WootImportItemHandler implements IItemHandler {
         if(counts == null)
             return;
 
-        counts.replaceAll(ignored -> 0);
+        Collections.fill(counts, 0);
     }
 
     @Override
@@ -164,13 +165,13 @@ public class WootImportItemHandler implements IItemHandler {
         importItems.clear();
         items.clear();
 
-        ListTag list = tag.getList("ItemHandler", CompoundTag.TAG_COMPOUND);
+        ListTag list = tag.getList("ItemHandler", Tag.TAG_COMPOUND);
         for(int i = 0; i < 4; i++){
             CompoundTag compoundTag = list.getCompound(i);
             if(compoundTag.getBoolean("IsNull"))
                 continue;
 
-            ListTag stackListTag = compoundTag.getList("Stacks", CompoundTag.TAG_COMPOUND);
+            ListTag stackListTag = compoundTag.getList("Stacks", Tag.TAG_COMPOUND);
             List<ItemStack> stackList = new ArrayList<>();
             List<Integer> items = new ArrayList<>();
             for(int j = 0; j < stackListTag.size(); j++){

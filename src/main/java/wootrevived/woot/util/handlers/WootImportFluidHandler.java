@@ -2,6 +2,7 @@ package wootrevived.woot.util.handlers;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +54,7 @@ public class WootImportFluidHandler implements IFluidHandler {
         if(amounts == null)
             return;
 
-        amounts.replaceAll(ignored -> 0);
+        Collections.fill(amounts, 0);
     }
 
     @Override
@@ -173,13 +174,13 @@ public class WootImportFluidHandler implements IFluidHandler {
         importFluids.clear();
         tanks.clear();
 
-        ListTag list = tag.getList("FluidHandler", CompoundTag.TAG_COMPOUND);
+        ListTag list = tag.getList("FluidHandler", Tag.TAG_COMPOUND);
         for(int i = 0; i < 4; i++){
             CompoundTag compoundTag = list.getCompound(i);
             if(compoundTag.getBoolean("IsNull"))
                 continue;
 
-            ListTag stackListTag = compoundTag.getList("Stacks", CompoundTag.TAG_COMPOUND);
+            ListTag stackListTag = compoundTag.getList("Stacks", Tag.TAG_COMPOUND);
             List<FluidStack> stackList = new ArrayList<>();
             List<Integer> tanks = new ArrayList<>();
             for(int j = 0; j < stackListTag.size(); j++){

@@ -174,6 +174,8 @@ public class Language extends LanguageProvider {
         add(ItemsRegistry.BLACK_DYE_CASING_ITEM.get(), "Black Dye Casing");
         add(ItemsRegistry.BLACK_DYE_PLATE_ITEM.get(), "Black Dye Plate");
 
+        add(ItemsRegistry.GUIDE_BOOK_ITEM.get(), "Woot Guide Book");
+
         add(BlocksRegistry.LAYOUT_BLOCK.get(), "Factory Layout");
 
         add(BlocksRegistry.DYE_LIQUIFIER_BLOCK.get(), "Dye Liquifier");

@@ -9,6 +9,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import wootrevived.woot.Woot;
+import wootrevived.woot.guide.GuideBookItem;
 import wootrevived.woot.init.Registry;
 import wootrevived.woot.items.basic.BasicItem;
 import wootrevived.woot.items.dye_casing.DyeCasingItem;
@@ -154,4 +155,9 @@ public class ItemsRegistry {
     private static RegistryObject<DyeCasingItem> registerDyeCasingItem(DyeColor color) {
         return ItemsRegistry.ITEMS.register(color.getName() + "_dye_casing", () -> new DyeCasingItem(color));
     }
+
+    /* Guide Book */
+
+    public static final String GUIDE_BOOK_TAG = "guide";
+    public static final RegistryObject<GuideBookItem> GUIDE_BOOK_ITEM = ITEMS.register(GUIDE_BOOK_TAG, GuideBookItem::new);
 }

@@ -11,6 +11,8 @@ public class WootTags {
     public static final String KILLS_TAG = "Kills";
     public static final String REDSTONE_MODE_TAG = "RedstoneMode";
 
+    public static final String GUIDE_PLAYER_TAG = "ReceivedPlayers";
+
     public static class Factory {
         public static final String FACTORY_TIER = "Tier";
         public static final String UPGRADE_ITEM = "UpgradeItem";

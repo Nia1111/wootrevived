@@ -935,5 +935,15 @@ public class Vanilla {
                 .unlockedBy("b", recipes.hasItem(Items.LAVA_BUCKET))
                 .unlockedBy("c", recipes.hasItem(UpgradeItemsRegistry.UPGRADE_BASE_ITEM.get()))
                 .save(consumer);
+
+        /* Guide Book */
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemsRegistry.GUIDE_BOOK_ITEM.get())
+                .requires(Items.BOOK)
+                .requires(ItemsRegistry.STYGIAN_INGOT_ITEM.get())
+                .group(Woot.MOD_ID)
+                .unlockedBy("0", recipes.hasItem(Items.BOOK))
+                .unlockedBy("1", recipes.hasItem(ItemsRegistry.STYGIAN_INGOT_ITEM.get()))
+                .save(consumer);
     }
 }

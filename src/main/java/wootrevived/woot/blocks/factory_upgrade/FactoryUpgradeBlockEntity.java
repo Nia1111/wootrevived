@@ -131,7 +131,7 @@ public class FactoryUpgradeBlockEntity extends FactoryBlockBaseEntity {
     public void setChanged() {
         super.setChanged();
 
-        if(level == null && level.isClientSide) return;
+        if(level == null || level.isClientSide) return;
         level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
@@ -148,6 +148,9 @@ public class FactoryUpgradeBlockEntity extends FactoryBlockBaseEntity {
     @OnlyIn(Dist.CLIENT)
     @SuppressWarnings("UnstableApiUsage")
     public void tryRequestModelDataUpdate(){
+        if(level == null || level.getModelDataManager() == null)
+            return;
+
         ModelData data = level.getModelDataManager().getAt(getBlockPos());
         if(data != null && data.has(FactoryUpgradeBakedModel.UPGRADE_PROPERTY)){
             if(upgradeItem == null && !data.get(FactoryUpgradeBakedModel.UPGRADE_PROPERTY).isEmpty()){

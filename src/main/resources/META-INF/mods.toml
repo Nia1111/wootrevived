@@ -4,23 +4,46 @@ issueTrackerURL = "https://github.com/pharuxtan/woot"
 license = "LGPLv3"
 
 [[mods]]
-modId = "woot_revived"
+modId = "${file.modId}"
 version = "${file.jarVersion}"
 displayName = "Woot Revived"
+displayURL="https://github.com/pharuxtan/woot"
 authors = "pharuxtan"
 credits = "Ipsis"
-description = '''A big, bad, magic, multiblock for mob drops. Aparrently you will either love it or hate it. There is no inbetween.'''
+description = '''A formidable multiblock to harvest mob drops. You'll either fall in love or despise it! No middle ground.'''
 
-[[dependencies.woot_revived]]
+[[dependencies.${file.modId}]]
 modId = "minecraft"
 mandatory = true
+type = "required"
 versionRange = "${mc_version}"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.woot_revived]]
+[[dependencies.${file.modId}]]
 modId = "forge"
 mandatory = true
 versionRange = "[${neo_version},)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.${file.modId}]]
+modId="guideme"
+mandatory = true
+versionRange = "[${guideme_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${file.modId}]]
+modId="jei"
+mandatory = false
+versionRange = "[${jei_version},)"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.${file.modId}]]
+modId="jade"
+mandatory = false
+versionRange = "[${jade_version},)"
+ordering="NONE"
+side="CLIENT"

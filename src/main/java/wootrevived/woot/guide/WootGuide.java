@@ -1,0 +1,18 @@
+package wootrevived.woot.guide;
+
+import guideme.Guide;
+import guideme.compiler.tags.BlockTagCompiler;
+import net.minecraft.resources.ResourceLocation;
+import wootrevived.woot.Woot;
+import wootrevived.woot.guide.recipes.EnchantedRecipeCompiler;
+
+public class WootGuide {
+    public static ResourceLocation ID = ResourceLocation.tryBuild(Woot.MOD_ID, "guide");
+
+    public static void init() {
+        Guide.builder(ID)
+                .folder("guidebook")
+                .extension(BlockTagCompiler.EXTENSION_POINT, new EnchantedRecipeCompiler())
+                .build();
+    }
+}

@@ -171,6 +171,8 @@ public class Items extends ItemModelProvider {
         itemGenerated(ItemsRegistry.XP_SHARD_ITEM);
         itemGenerated(ItemsRegistry.XP_SPLINTER_ITEM);
 
+        itemGenerated(ItemsRegistry.GUIDE_BOOK_ITEM);
+
         itemBucket(FluidsRegistry.VITALITY_FUEL_FLUID_BUCKET, FluidsRegistry.SOURCE_VITALITY_FUEL_FLUID);
         itemBucket(FluidsRegistry.PURE_DYE_FLUID_BUCKET, FluidsRegistry.SOURCE_PURE_DYE_FLUID);
         itemBucket(FluidsRegistry.ENCHANTED_FLUID_BUCKET, FluidsRegistry.SOURCE_ENCHANTED_FLUID);

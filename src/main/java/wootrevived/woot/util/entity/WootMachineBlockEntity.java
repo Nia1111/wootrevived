@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -424,7 +425,7 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
 
         redstoneMode = RedstoneMode.byIndex(tag.getInt(WootTags.REDSTONE_MODE_TAG));
 
-        ListTag list = tag.getList(WootTags.DirectionProperties.LIST, CompoundTag.TAG_LIST);
+        ListTag list = tag.getList(WootTags.DirectionProperties.LIST, Tag.TAG_LIST);
 
         for(int i = 0; i < list.size(); i++){
             Map<MachineSide, MachineSideProperty> properties = getAllMachineSidesProperties().get(i);
