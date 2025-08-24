@@ -114,7 +114,7 @@ dependencies {
 
 shadowJar {
     finalizedBy 'reobfShadowJar'
-    archiveClassifier = 'universal'
+    archiveClassifier = ''
     manifest {
         attributes([
                 'Specification-Title'     : "${mod_name}",
