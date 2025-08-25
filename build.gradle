@@ -7,7 +7,7 @@ plugins {
     id 'com.modrinth.minotaur' version "2.+"
 
     id 'net.neoforged.gradle' version '6.0.21'
-    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of("${java_version}")
@@ -30,6 +30,11 @@ minecraft {
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+
+            args '-mixin.config=woot_revived.mixins.json'
 
             mods {
                 "${mod_id}" {
@@ -60,6 +65,11 @@ minecraft {
             args '--mod', mod_id, '--all', '--output', file('src/main/generated/'), '--existing', file('src/main/resources/')
         }
     }
+}
+
+mixin {
+    add sourceSets.main, 'woot_revived.mixins.refmap.json'
+    config 'woot_revived.mixins.json'
 }
 
 processResources {
@@ -123,7 +133,8 @@ shadowJar {
                 'Implementation-Title'    : "${mod_id}",
                 'Implementation-Vendor'   : 'pharuxtan',
                 'Implementation-Version'  : "${mod_version}",
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs'            : 'woot_revived.mixins.json'
         ])
     }
     configurations = [project.configurations.shadowIn]

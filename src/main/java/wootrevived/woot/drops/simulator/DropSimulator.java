@@ -26,6 +26,8 @@ import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.woot.Woot;
+import wootrevived.woot.mixin.EnderDragonMixin;
+import wootrevived.woot.mixin.LivingEntityMixin;
 
 import java.util.*;
 
@@ -93,10 +95,11 @@ public class DropSimulator {
         int i = ForgeHooks.getLootingLevel(livingEntity, fakePlayer, playerSource);
         livingEntity.captureDrops(new java.util.ArrayList<>());
 
-        livingEntity.dropFromLootTable(playerSource, true);
-        livingEntity.dropCustomDeathLoot(playerSource, i, true);
-        livingEntity.dropEquipment();
-        livingEntity.dropExperience();
+        LivingEntityMixin mixin = (LivingEntityMixin)livingEntity;
+        mixin.invokeDropFromLootTable(playerSource, true);
+        mixin.invokeDropCustomDeathLoot(playerSource, i, true);
+        mixin.invokeDropEquipment();
+        mixin.invokeDropExperience();
 
         Collection<ItemEntity> eventDrops = livingEntity.captureDrops(null);
         ForgeHooks.onLivingDrops(livingEntity, playerSource, eventDrops, i, true);
@@ -131,7 +134,9 @@ public class DropSimulator {
 
         int i = ForgeHooks.getLootingLevel(livingEntity, chargedCreeper, chargedCreeperSource);
         livingEntity.captureDrops(null);
-        livingEntity.dropCustomDeathLoot(chargedCreeperSource, i, false);
+
+        LivingEntityMixin mixin = (LivingEntityMixin)livingEntity;
+        mixin.invokeDropCustomDeathLoot(chargedCreeperSource, i, false);
 
         List<ItemStack> drops = new ArrayList<>();
 
@@ -152,8 +157,10 @@ public class DropSimulator {
         EndDragonFight.Data data = new EndDragonFight.Data(false, false, properties.isEnderDragonAlreadyKilled(), false, Optional.empty(), Optional.empty(), Optional.empty());
 
         enderDragon.setDragonFight(new FakeDragonFight(dimensionLevel, dimensionLevel.getSeed(), data));
-        enderDragon.unlimitedLastHurtByPlayer = fakePlayer;
         enderDragon.setSilent(true);
+
+        EnderDragonMixin dragonMixin = (EnderDragonMixin)enderDragon;
+        dragonMixin.setUnlimitedLastHurtByPlayer(fakePlayer);
 
         for(enderDragon.dragonDeathTime = 0; !enderDragon.getDragonFight().dragonKilled;){
             enderDragon.tickDeath();
@@ -162,10 +169,11 @@ public class DropSimulator {
         int i = ForgeHooks.getLootingLevel(enderDragon, fakePlayer, playerSource);
         enderDragon.captureDrops(new java.util.ArrayList<>());
 
-        ((LivingEntity)enderDragon).dropFromLootTable(playerSource, true);
-        ((LivingEntity)enderDragon).dropCustomDeathLoot(playerSource, i, true);
-        enderDragon.dropEquipment();
-        enderDragon.dropExperience();
+        LivingEntityMixin mixin = (LivingEntityMixin)enderDragon;
+        mixin.invokeDropFromLootTable(playerSource, true);
+        mixin.invokeDropCustomDeathLoot(playerSource, i, true);
+        mixin.invokeDropEquipment();
+        mixin.invokeDropExperience();
 
         Collection<ItemEntity> eventDrops = enderDragon.captureDrops(null);
         ForgeHooks.onLivingDrops(enderDragon, playerSource, eventDrops, i, true);
