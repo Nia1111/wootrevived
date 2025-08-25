@@ -16,8 +16,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.resource.ResourcePackLoader;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.WootFactoryMobsRegistry;
@@ -40,7 +38,6 @@ public class GuideCacheLivingEntities {
             LayeredRegistryAccess<RegistryLayer> layeredAccess = RegistryLayer.createRegistryAccess();
 
             PackRepository packRepository = new PackRepository(new ServerPacksSource());
-            ResourcePackLoader.loadResourcePacks(packRepository, ServerLifecycleHooks::buildPackFinder);
             packRepository.reload();
             packRepository.setSelected(packRepository.getAvailableIds());
 
