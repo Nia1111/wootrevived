@@ -20,8 +20,6 @@ import org.joml.Vector3f;
 import wootrevived.woot.events.client.GlobalClientTicker;
 
 public class WootEntityRenderer {
-    private static float ENTITY_ROT = 180.0F;
-
     public static void render(@NotNull GuiGraphics gui, int x, int y, @NotNull LivingEntity entity, double size, double padding, float max_entity_size){
         EntityRenderer<? super Entity> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
 
@@ -44,9 +42,18 @@ public class WootEntityRenderer {
 
         pose.translate(size / 2 + padding, (size / 2) - padding * 2 + entity.getBbHeight() * scale, 64);
         patchedScale(pose, 1F, 1F, -1F);
-        pose.mulPose(Axis.YP.rotationDegrees((GlobalClientTicker.tickCounter * 4) % 360));
         pose.mulPose(Axis.ZP.rotationDegrees(180));
         pose.scale(scale, scale, scale);
+
+        float yaw = (GlobalClientTicker.tickCounter * 4) % 360;
+        entity.setYBodyRot(yaw);
+        entity.yBodyRotO = yaw;
+        entity.setYRot(yaw);
+        entity.yRotO = yaw;
+        entity.setYHeadRot(yaw);
+        entity.yHeadRotO = yaw;
+        entity.setXRot(0F);
+        entity.xRotO = 0F;
 
         Window window = Minecraft.getInstance().getWindow();
         double windowScale = (double) window.getWidth() / (double) window.getGuiScaledWidth();
