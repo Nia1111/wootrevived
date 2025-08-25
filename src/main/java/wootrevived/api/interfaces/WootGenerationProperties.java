@@ -18,7 +18,7 @@ import wootrevived.api.enums.Tier;
  * <ul>
  *   <li>Adjust spawn rate, vitality fuel cost, or number of simulations</li>
  *   <li>Query the factory tier and associated mob</li>
- *   <li>Access the mob’s saved tag and a random source for deterministic changes</li>
+ *   <li>Access the mob's saved tag and a random source for deterministic changes</li>
  * </ul>
  * <p>
  * The implementation is provided by Woot; addon mods should not implement this

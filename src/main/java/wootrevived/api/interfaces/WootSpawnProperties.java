@@ -12,12 +12,12 @@ import org.jetbrains.annotations.NotNull;
  * by a Woot factory.
  * <p>
  * This interface is passed into Woot API callbacks (e.g. upgrade items or plugins)
- * during the spawn stage. It allows inspection and modification of the mob’s
+ * during the spawn stage. It allows inspection and modification of the mob's
  * equipment, status flags, and contextual data before the simulation begins.
  * <p>
  * Consumers can:
  * <ul>
- *   <li>Change the mob’s main hand or off-hand items</li>
+ *   <li>Change the mob's main hand or off-hand items</li>
  *   <li>Adjust attributes such as luck or environmental flags (e.g. charged creeper, in fire, dragon killed)</li>
  *   <li>Access the factory tier, associated mob, saved NBT, and random source</li>
  * </ul>

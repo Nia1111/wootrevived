@@ -13,6 +13,7 @@ public class WootGuide {
         Guide.builder(ID)
                 .folder("guidebook")
                 .extension(BlockTagCompiler.EXTENSION_POINT, new EnchantedRecipeCompiler())
+                .extension(BlockTagCompiler.EXTENSION_POINT, new TierMobsCompiler())
                 .build();
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
  * <p>
  * Consumers can:
  * <ul>
- *   <li>Query the mob’s spawn context (equipment, flags, tier, etc.)</li>
+ *   <li>Query the mob's spawn context (equipment, flags, tier, etc.)</li>
  *   <li>Inspect the generated drops (items, fluids, and experience)</li>
  *   <li>Adjust the experience value or mutate the drop lists before they are finalized</li>
  * </ul>

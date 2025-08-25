@@ -1,6 +1,10 @@
 package wootrevived.api.enums;
 
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.EnumSet;
+import java.util.Locale;
 
 /**
  * Factory tier levels used by Woot.
@@ -16,7 +20,7 @@ import java.util.EnumSet;
  * </ul>
  * {@link #INVALID} is used as a sentinel value.
  */
-public enum Tier {
+public enum Tier implements StringRepresentable {
     INVALID,
     TIER_1,
     TIER_2,
@@ -26,7 +30,7 @@ public enum Tier {
 
     /**
      * Returns the default vitality cost (in mB) required
-     * for this tier’s simulation.
+     * for this tier's simulation.
      *
      * @return the default vitality cost, or {@code 0} for {@link #INVALID}
      */
@@ -49,7 +53,7 @@ public enum Tier {
      * Checks whether a mob of the given tier can be simulated
      * inside a factory of this tier.
      *
-     * @param tier the mob’s tier
+     * @param tier the mob's tier
      * @return {@code true} if this factory tier supports that mob tier
      */
     public boolean isMobTierValid(Tier tier) {
@@ -81,5 +85,17 @@ public enum Tier {
         if (this == TIER_4) return FACTORY_VALID_FOR_TIER_4.contains(tier);
         if (this == TIER_5) return FACTORY_VALID_FOR_TIER_5.contains(tier);
         return false;
+    }
+
+    /**
+     * Returns the serialized name of this tier for use in registries,
+     * commands, JSON, etc. This is based on the enum constant's name
+     * in lowercase.
+     *
+     * @return the lowercase identifier for this tier
+     */
+    @Override
+    public @NotNull String getSerializedName() {
+        return name().toLowerCase(Locale.ROOT);
     }
 }
