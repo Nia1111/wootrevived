@@ -1,10 +1,10 @@
 ---
 navigation:
-    title: "Mobs"
+    title: "Mobs (may lag)"
     position: 60
     icon: minecraft:spawner
 ---
-# Mobs
+# Mobs (may lag)
 
 You can get here the list of all the entities that can be simulated with their minimum factory tier.
 

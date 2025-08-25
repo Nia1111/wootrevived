@@ -15,7 +15,7 @@ some items you'll need to import, and it will auto generate the loot into your c
 * [Machines/Layout](machines-blocks/machines-blocks-index.md)
 * [Factory](factory/factory-index.md)
 * [Upgrades](upgrades/upgrades-index.md)
-* [Mobs](mobs.md)
+* [Mobs (may lag)](mobs.md)
 
 ### How to recraft the guide book?
 
