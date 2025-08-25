@@ -23,7 +23,7 @@
   "outputs": [
     {
       "type": "fluid",
-      "amount": 1000,
+      "amount": 2000,
       "id": "woot_revived:vitality_fuel_fluid"
     }
   ]
