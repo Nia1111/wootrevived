@@ -1,17 +1,9 @@
 package wootrevived.woot.client.render.heart;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,15 +25,11 @@ import org.jetbrains.annotations.Nullable;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.api.enums.Tier;
 import wootrevived.woot.Woot;
-import wootrevived.woot.events.client.GlobalClientTicker;
 import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.registries.WootFactoryMobsRegistry;
 import wootrevived.woot.util.common.WootTier;
 import wootrevived.woot.util.helper.ModNameHelper;
-import wootrevived.woot.util.render.WootButton;
-import wootrevived.woot.util.render.WootContainerScreen;
-import wootrevived.woot.util.render.WootSlot;
-import wootrevived.woot.util.render.WootSlotItemHandler;
+import wootrevived.woot.util.render.*;
 import wootrevived.woot.util.render.buttons.WootHeartInputButton;
 
 import java.util.ArrayList;
@@ -74,6 +62,11 @@ public class HeartContainerScreen extends AbstractContainerScreen<HeartContainer
     // Right secondary fake spawner
     public static final int SECONDARY_MOB_2_X = 50;
     public static final int SECONDARY_MOB_2_Y = 17;
+
+    private static double BOX_SIZE = 32D;
+    private static double BOX_PADDING = 3D;
+
+    private static float MAX_ENTITY_BOX_SIZE = 20F;
 
     public static final int UPGRADE_SLOT_0_X = 10;
     public static final int UPGRADE_SLOT_0_Y = 77;
@@ -379,14 +372,14 @@ public class HeartContainerScreen extends AbstractContainerScreen<HeartContainer
             pose.pushPose();
             pose.scale(scale, scale, scale);
 
-            float drawY = (32 - font.lineHeight * scale) / 2;
+            float drawY = ((int)BOX_SIZE - font.lineHeight * scale) / 2;
             if(tier == Tier.INVALID || tier == Tier.TIER_1 || (entity != null && !isTierEntityValid(entity))){
-                float drawX = (32 - font.width(invalid) * scale) / 2;
+                float drawX = ((int)BOX_SIZE - font.width(invalid) * scale) / 2;
                 pose.translate((x + drawX + 3.25F) / scale, (y + drawY + 3.25F) / scale, 0);
 
                 gui.drawString(font, invalid, 0, 0, 0x404040, false);
             } else {
-                float drawX = (32 - font.width(empty) * scale) / 2;
+                float drawX = ((int)BOX_SIZE - font.width(empty) * scale) / 2;
                 pose.translate((x + drawX + 3.25F) / scale, (y + drawY + 3.25F) / scale, 0);
 
                 gui.drawString(font, empty, 0, 0, 0x404040, false);
@@ -396,44 +389,11 @@ public class HeartContainerScreen extends AbstractContainerScreen<HeartContainer
             return;
         }
 
-        EntityRenderer<? super Entity> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
-
-        PoseStack pose = gui.pose();
-        pose.pushPose();
-        float width = 20F / entity.getBbWidth();
-        float height = 20F / entity.getBbHeight();
-        float scale = Math.min(width, height);
-        scale = Math.min(scale, 20F);
-
-        pose.translate(x + 19, y + 9 + entity.getBbHeight() * scale, 64);
-        pose.mulPose(Axis.YP.rotationDegrees((GlobalClientTicker.tickCounter * 4) % 360));
-        pose.mulPose(Axis.ZP.rotationDegrees(180));
-        pose.scale(scale, scale, scale);
-
-        Window window = Minecraft.getInstance().getWindow();
-        double windowScale = (double) window.getWidth() / (double) window.getGuiScaledWidth();
-
-        RenderSystem.enableScissor(
-                (int)((leftPos + x + 3) * windowScale),
-                (int)(window.getHeight() - (topPos + y + 35) * windowScale),
-                (int)Math.ceil(32 * windowScale),
-                (int)Math.ceil(32 * windowScale)
-        );
-        Tesselator tesselator = Tesselator.getInstance();
-        MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(tesselator.getBuilder());
-        Lighting.setupForFlatItems();
-
-        renderer.render(entity, entity.getYRot(), 0, pose, bufferSource, LightTexture.pack(15, 15));
-        bufferSource.endLastBatch();
-
-        RenderSystem.disableScissor();
-        Lighting.setupFor3DItems();
-
-        pose.popPose();
+        WootEntityRenderer.render(gui, x, y, entity, BOX_SIZE, BOX_PADDING, MAX_ENTITY_BOX_SIZE);
 
         IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(FluidsRegistry.VITALITY_FUEL_FLUID_TYPE.get());
         TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(fluidTypeExtensions.getStillTexture());
-        WootContainerScreen.renderTiledFluidTextureAtlas(gui, texture, x + 3, y + 3, 32, 32, fluidTypeExtensions.getTintColor(), true);
+        WootContainerScreen.renderTiledFluidTextureAtlas(gui, texture, x + (int)BOX_PADDING, y + (int)BOX_PADDING, (int)BOX_SIZE, (int)BOX_SIZE, fluidTypeExtensions.getTintColor(), true);
     }
 
     protected void renderEntityTooltip(@NotNull GuiGraphics gui, int mouseX, int mouseY, int x, int y, int fakeSpawnerIndex){
