@@ -59,8 +59,8 @@ public class WootEntityRenderer {
         double windowScale = (double) window.getWidth() / (double) window.getGuiScaledWidth();
 
         RenderSystem.enableScissor(
-                (int)((pos.x + padding) * windowScale),
-                (int)(window.getHeight() - (pos.y + size + padding) * windowScale),
+                (int)((pos.x + padding * poseScale.x) * windowScale),
+                (int)(window.getHeight() - (pos.y + (size + padding) * poseScale.y) * windowScale),
                 (int)Math.ceil(size * windowScale * poseScale.x),
                 (int)Math.ceil(size * windowScale * poseScale.y)
         );
