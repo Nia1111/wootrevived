@@ -20,6 +20,9 @@ public class WootFactoryMobsRegistry extends WootFactoryMobRegistration {
             if(hasFactoryMob(entityType))
                 continue;
 
+            if(!entityType.canSerialize())
+                continue;
+
             FACTORY_MOB_REGISTRY.put(entityType, new WootFactoryMob<>(entityType, new WootFactoryMob.Properties()));
         }
     }

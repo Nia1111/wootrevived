@@ -19,6 +19,7 @@ import wootrevived.api.WootFactoryMob;
 import wootrevived.woot.blocks.fake_spawner.FakeSpawnerBlockEntity;
 import wootrevived.woot.events.InitServer;
 import wootrevived.woot.registries.WootFactoryMobsRegistry;
+import wootrevived.woot.util.helper.SerializeEntityNBTHelper;
 
 public class GiveCommand {
     private static final SuggestionProvider<CommandSourceStack> suggestionProvider = (commandContext, suggestionsBuilder) -> {
@@ -47,7 +48,7 @@ public class GiveCommand {
 
         Object object = entityType.create(source.getLevel());
         if(object instanceof LivingEntity entity){
-            CompoundTag tag = mob.saveTag(entity.serializeNBT());
+            CompoundTag tag = mob.saveTag(SerializeEntityNBTHelper.serialize(entity));
             ItemStack fakeSpawner = FakeSpawnerBlockEntity.getItemStack(tag);
             ItemHandlerHelper.giveItemToPlayer(target, fakeSpawner);
         }

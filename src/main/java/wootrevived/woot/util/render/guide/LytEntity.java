@@ -9,6 +9,7 @@ import guideme.render.RenderContext;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.LivingEntity;
 import wootrevived.api.WootFactoryMob;
+import wootrevived.woot.util.helper.SerializeEntityNBTHelper;
 import wootrevived.woot.util.render.WootEntityRenderer;
 
 import java.util.Optional;
@@ -49,6 +50,6 @@ public class LytEntity extends LytBlock implements InteractiveElement {
 
     @Override
     public Optional<GuideTooltip> getTooltip(float x, float y) {
-        return Optional.of(new EntityTooltip(mob, entity.serializeNBT()));
+        return Optional.of(new EntityTooltip(mob, SerializeEntityNBTHelper.serialize(entity)));
     }
 }

@@ -1,8 +1,9 @@
 package wootrevived.woot.events;
 
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.FakePlayer;
@@ -42,13 +43,15 @@ public class MobShardKillCheck {
         if(victim instanceof Player)
             return;
 
-        if(!(victim instanceof Mob))
+        EntityType<?> entityType = victim.getType();
+
+        if(!I18n.exists(entityType.getDescriptionId()))
             return;
 
-        if(!WootFactoryMobsRegistry.hasFactoryMob(victim.getType()))
+        if(!WootFactoryMobsRegistry.hasFactoryMob(entityType))
             return;
 
-        WootFactoryMob<?> mob = WootFactoryMobsRegistry.getFactoryMob(victim.getType());
+        WootFactoryMob<?> mob = WootFactoryMobsRegistry.getFactoryMob(entityType);
         if(mob.isBlacklisted())
             return;
 

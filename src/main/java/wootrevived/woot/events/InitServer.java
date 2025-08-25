@@ -1,5 +1,6 @@
 package wootrevived.woot.events;
 
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -43,9 +44,15 @@ public class InitServer {
 
             for(WootFactoryMob<?> mob : WootFactoryMobsRegistry.getFactoryMobValues()){
                 if(mob.isBlacklisted()) continue;
+
                 EntityType<?> entityType = mob.getEntityType();
+                if(!I18n.exists(entityType.getDescriptionId()))
+                    continue;
+
                 Entity entity = entityType.create(level);
-                if(!(entity instanceof LivingEntity)) continue;
+                if(!(entity instanceof LivingEntity))
+                    continue;
+
                 ResourceLocation location = ForgeRegistries.ENTITY_TYPES.getKey(entityType);
                 mobLocations.add(location);
             }

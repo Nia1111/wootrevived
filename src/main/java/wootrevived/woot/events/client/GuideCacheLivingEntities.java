@@ -1,7 +1,7 @@
 package wootrevived.woot.events.client;
 
-import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,9 +34,15 @@ public class GuideCacheLivingEntities {
 
         for(WootFactoryMob<?> mob : WootFactoryMobsRegistry.getFactoryMobValues()){
             if(mob.isBlacklisted()) continue;
+
             EntityType<?> entityType = mob.getEntityType();
+            if(!I18n.exists(entityType.getDescriptionId()))
+                continue;
+
             Entity entity = entityType.create(level);
-            if(!(entity instanceof LivingEntity livingEntity)) continue;
+            if(!(entity instanceof LivingEntity livingEntity))
+                continue;
+
             livingEntities.put(entityType, livingEntity);
         }
     }
