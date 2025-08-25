@@ -148,8 +148,8 @@ public class Blocks extends BlockStateProvider {
                     .face(Direction.UP).texture("#end").cullface(Direction.UP).end()
                     .face(Direction.NORTH).texture("#primary").cullface(Direction.NORTH).end()
                     .face(Direction.SOUTH).texture("#secondary").cullface(Direction.SOUTH).end()
-                    .face(Direction.WEST).texture("#secondary").cullface(Direction.SOUTH).end()
-                    .face(Direction.EAST).texture("#secondary").cullface(Direction.SOUTH).end()
+                    .face(Direction.WEST).texture("#secondary").cullface(Direction.WEST).end()
+                    .face(Direction.EAST).texture("#secondary").cullface(Direction.EAST).end()
                 .end();
         horizontalBlock((Block)block.get(), model);
     }
