@@ -16,7 +16,7 @@ java.withSourcesJar()
 sourceSets.main.resources.srcDirs += "src/main/generated"
 
 group = 'wootrevived'
-archivesBaseName = "${mod_id}"
+archivesBaseName = "woot-revived"
 def buildVersion = "${mod_version}"
 version = "${mc_version}-${buildVersion}"
 
