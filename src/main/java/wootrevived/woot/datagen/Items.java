@@ -30,7 +30,7 @@ public class Items extends ItemModelProvider {
         itemGenerated(ItemsRegistry.PLATE_MOLD_ITEM);
         itemGenerated(ItemsRegistry.SHARD_MOLD_ITEM);
         itemGenerated(ItemsRegistry.DYE_CASING_MOLD_ITEM);
-        parentedBlock(BlocksRegistry.STYIGAN_ANVIL_BLOCK_ITEM, BlocksRegistry.STYGIAN_ANVIL_BLOCK);
+        parentedBlock(BlocksRegistry.STYGIAN_ANVIL_BLOCK_ITEM, BlocksRegistry.STYGIAN_ANVIL_BLOCK);
 
         parentedBlock(BlocksRegistry.FACTORY_BASE_BLOCK_ITEM, BlocksRegistry.FACTORY_BASE_BLOCK);
         parentedBlock(BlocksRegistry.STYGIAN_BLOCK_ITEM, BlocksRegistry.STYGIAN_BLOCK);

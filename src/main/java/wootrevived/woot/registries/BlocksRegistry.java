@@ -249,7 +249,7 @@ public class BlocksRegistry {
 
     public static final String STYGIAN_ANVIL_TAG = "stygian_anvil";
     public static final RegistryObject<StygianAnvilBlock> STYGIAN_ANVIL_BLOCK = BLOCKS.register(STYGIAN_ANVIL_TAG, StygianAnvilBlock::new);
-    public static final RegistryObject<Item> STYIGAN_ANVIL_BLOCK_ITEM = ITEMS.register(STYGIAN_ANVIL_TAG, () -> new BlockItem(STYGIAN_ANVIL_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> STYGIAN_ANVIL_BLOCK_ITEM = ITEMS.register(STYGIAN_ANVIL_TAG, () -> new BlockItem(STYGIAN_ANVIL_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<BlockEntityType<StygianAnvilBlockEntity>> STYGIAN_ANVIL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(STYGIAN_ANVIL_TAG, () -> BlockEntityType.Builder.of(StygianAnvilBlockEntity::new, STYGIAN_ANVIL_BLOCK.get()).build(null));
 
     /* Stygian Block */

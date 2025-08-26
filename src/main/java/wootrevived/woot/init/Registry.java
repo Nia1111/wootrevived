@@ -37,7 +37,7 @@ public class Registry {
     public static final RegistryObject<CreativeModeTab> WOOT_TAB = TABS.register("woot_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.woot_revived"))
-                    .icon(BlocksRegistry.HEART_BLOCK_ITEM.get()::getDefaultInstance)
+                    .icon(BlocksRegistry.STYGIAN_ANVIL_BLOCK_ITEM.get()::getDefaultInstance)
                     .displayItems((displayParams, output) ->
                             WOOT_TAB_ITEMS.forEach(itemLike -> output.accept(itemLike.get())))
                     .build());
