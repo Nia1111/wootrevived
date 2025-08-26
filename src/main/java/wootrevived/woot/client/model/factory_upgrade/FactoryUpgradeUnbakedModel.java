@@ -10,14 +10,15 @@ import net.minecraft.client.resources.model.*;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.QuadTransformers;
-import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.IGeometryLoader;
-import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
-import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.item.Item;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.QuadTransformers;
+import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
+import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
+import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
+import net.neoforged.neoforge.client.model.geometry.UnbakedGeometryHelper;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import wootrevived.api.WootUpgradeItem;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.UpgradeItemsRegistry;
@@ -43,7 +44,7 @@ public class FactoryUpgradeUnbakedModel implements IUnbakedGeometry<FactoryUpgra
 
         addQuads(context, builder, spriteGetter, modelState, modelLocation, factory, "");
 
-        for(RegistryObject<? extends WootUpgradeItem> upgradeItem : UpgradeItemsRegistry.getValues()){
+        for(DeferredHolder<Item, ? extends WootUpgradeItem> upgradeItem : UpgradeItemsRegistry.getValues()){
             String name = UpgradeItemsRegistry.getNameFromItem(upgradeItem);
 
             TextureAtlasSprite texture = spriteGetter.apply(new Material(

@@ -2,7 +2,7 @@ package wootrevived.woot.util.render;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import wootrevived.woot.util.common.MachineSide;
 import wootrevived.woot.util.common.MachineSideProperty;
 import wootrevived.woot.util.common.RedstoneMode;

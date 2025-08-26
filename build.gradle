@@ -2,12 +2,9 @@ plugins {
     id 'java'
     id 'maven-publish'
 
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'com.modrinth.minotaur' version "2.+"
+    id "me.shedaniel.unified-publishing" version "0.1.+"
 
-    id 'net.neoforged.gradle' version '6.0.21'
-    id 'org.spongepowered.mixin' version '0.7.+'
+    id 'net.neoforged.gradle.userdev' version '7.0.192'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of("${java_version}")
@@ -20,56 +17,39 @@ archivesBaseName = "woot-revived"
 def buildVersion = "${mod_version}"
 version = "${mc_version}-${buildVersion}"
 
-minecraft {
-    mappings channel: 'official', version: "${mc_version}"
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    runs {
-        configureEach {
-            workingDirectory project.file('run')
+runs {
+    configureEach {
+        workingDirectory project.file('run')
 
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
 
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-
-            args '-mixin.config=woot_revived.mixins.json'
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        client {
-            property 'forge.enabledGameTestNamespaces', mod_id
-
-            property "guideme.woot_revived.guide.sources", file("src/main/resources/assets/woot_revived/guidebook").absolutePath
-            property "guideme.woot_revived.guide.sourcesNamespace", "woot_revived"
-        }
-
-        server {
-            property 'forge.enabledGameTestNamespaces', mod_id
-            args '--nogui'
-        }
-
-        gameTestServer {
-            property 'forge.enabledGameTestNamespaces', mod_id
-        }
-
-        data {
-            workingDirectory project.file('run-data')
-
-            args '--mod', mod_id, '--all', '--output', file('src/main/generated/'), '--existing', file('src/main/resources/')
-        }
+        modSource sourceSets.main
     }
-}
 
-mixin {
-    add sourceSets.main, 'woot_revived.mixins.refmap.json'
-    config 'woot_revived.mixins.json'
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+
+        systemProperty "guideme.woot_revived.guide.sources", file("src/main/resources/assets/woot_revived/guidebook").getAbsolutePath()
+        systemProperty "guideme.woot_revived.guide.sourcesNamespace", "woot_revived"
+    }
+
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        argument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+    }
+
+    data {
+        workingDirectory project.file('run-data')
+
+        arguments.addAll '--mod', mod_id, '--all', '--output', file('src/main/generated/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
 }
 
 processResources {
@@ -88,9 +68,7 @@ processResources {
 }
 
 configurations {
-    annotationProcessor.extendsFrom minecraft
-    shadowIn
-    implementation.extendsFrom shadowIn
+    runtimeClasspath.extendsFrom localRuntime
 }
 
 repositories {
@@ -104,101 +82,22 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.neoforged:forge:${mc_version}-${neo_version}"
+    implementation "net.neoforged:neoforge:${neo_version}"
 
     compileOnly 'org.jetbrains:annotations:22.0.0'
 
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
 
-    implementation fg.deobf("maven.modrinth:jade:${jade_version}")
+    implementation "maven.modrinth:jade:${jade_version}-neoforge"
 
-    runtimeOnly fg.deobf("org.embeddedt:embeddium-${mc_version}:${embeddium_version}")
-    runtimeOnly fg.deobf("maven.modrinth:modernfix:${modernfix_version}")
-    runtimeOnly fg.deobf("maven.modrinth:ferrite-core:${ferritecore_version}")
+    implementation "maven.modrinth:guideme:${guideme_version}"
 
-    compileOnly fg.deobf("org.appliedenergistics:guideme:${guideme_version}:api")
-    runtimeOnly fg.deobf("org.appliedenergistics:guideme:${guideme_version}")
+    //localRuntime "org.embeddedt:embeddium-${mc_version}:${embeddium_version}"
+    //localRuntime "maven.modrinth:modernfix:${modernfix_version}"
+    //localRuntime "maven.modrinth:ferrite-core:${ferritecore_version}"
 }
-
-shadowJar {
-    finalizedBy 'reobfShadowJar'
-    archiveClassifier = ''
-    manifest {
-        attributes([
-                'Specification-Title'     : "${mod_name}",
-                'Specification-Vendor'    : 'pharuxtan',
-                'Specification-Version'   : "${mc_version}",
-                'Implementation-Title'    : "${mod_id}",
-                'Implementation-Vendor'   : 'pharuxtan',
-                'Implementation-Version'  : "${mod_version}",
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'MixinConfigs'            : 'woot_revived.mixins.json'
-        ])
-    }
-    configurations = [project.configurations.shadowIn]
-
-    doFirst {
-        exclude '.cache/**'
-    }
-}
-
-tasks.register('apiJar', Jar) {
-    finalizedBy 'apiSourcesJar'
-    finalizedBy 'reobfApiJar'
-
-    archiveClassifier = 'api'
-
-    from(sourceSets.main.output) {
-        include 'wootrevived/api/**'
-    }
-
-    manifest {
-        attributes([
-                'Specification-Title'     : "${mod_name} API",
-                'Specification-Vendor'    : 'pharuxtan',
-                'Specification-Version'   : "${mc_version}",
-                'Implementation-Title'    : "${mod_id}",
-                'Implementation-Vendor'   : 'pharuxtan',
-                'Implementation-Version'  : "api-${mod_version}",
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-
-    doFirst {
-        exclude 'woot_revived.mixins.refmap.json'
-    }
-}
-
-tasks.register('apiSourcesJar', Jar) {
-    dependsOn classes
-    archiveClassifier = 'api-sources'
-
-    from(sourceSets.main.allSource) {
-        include 'wootrevived/api/**'
-    }
-
-    manifest {
-        attributes([
-                'Specification-Title'     : "${mod_name} API Sources",
-                'Specification-Vendor'    : 'pharuxtan',
-                'Specification-Version'   : "${mc_version}",
-                'Implementation-Title'    : "${mod_id}",
-                'Implementation-Vendor'   : 'pharuxtan',
-                'Implementation-Version'  : "api-${mod_version}",
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-}
-
-reobf {
-    shadowJar {}
-    apiJar {}
-    jar { enabled = false }
-}
-
-jar.enabled = false
 
 publishing {
     publications {
@@ -213,7 +112,77 @@ publishing {
     }
 }
 
+jar {
+    exclude '.cache/**'
+    manifest {
+        attributes([
+                'Specification-Title'     : "${mod_name}",
+                'Specification-Vendor'    : 'pharuxtan',
+                'Specification-Version'   : "${mc_version}",
+                'Implementation-Title'    : "${mod_id}",
+                'Implementation-Vendor'   : 'pharuxtan',
+                'Implementation-Version'  : "${mod_version}",
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs'            : 'woot_revived.mixins.json'
+        ])
+    }
+}
+
+tasks.register('apiJar', Jar) {
+    archiveClassifier = 'api'
+
+    from(sourceSets.main.output) {
+        include 'wootrevived/api/**'
+    }
+
+    // keep your manifest branding (adjust if you want different values)
+    manifest {
+        attributes([
+                'Specification-Title'     : "${mod_name} API",
+                'Specification-Vendor'    : 'pharuxtan',
+                'Specification-Version'   : "${mc_version}",
+                'Implementation-Title'    : "${mod_id}",
+                'Implementation-Vendor'   : 'pharuxtan',
+                'Implementation-Version'  : "api-${mod_version}",
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+tasks.register('apiSourcesJar', Jar) {
+    dependsOn classes
+    archiveClassifier = 'api-sources'
+
+    from(sourceSets.main.allSource) {
+        include 'wootrevived/api/**'
+    }
+
+    manifest {
+        attributes([
+                'Specification-Title'     : "${mod_name} API",
+                'Specification-Vendor'    : 'pharuxtan',
+                'Specification-Version'   : "${mc_version}",
+                'Implementation-Title'    : "${mod_id}",
+                'Implementation-Vendor'   : 'pharuxtan',
+                'Implementation-Version'  : "api-${mod_version}",
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+tasks.assemble {
+    dependsOn tasks.named('apiJar')
+    dependsOn tasks.named('apiSourcesJar')
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs += ['-Xlint:deprecation', '-Xlint:unchecked']
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
 }

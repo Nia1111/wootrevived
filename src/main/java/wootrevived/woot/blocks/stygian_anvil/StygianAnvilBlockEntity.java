@@ -12,16 +12,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.blocks.fake_spawner.FakeSpawnerBlockEntity;
@@ -65,16 +63,10 @@ public class StygianAnvilBlockEntity extends BlockEntity {
     public static int INGREDIENT_2_SLOT = 2;
     public static int INGREDIENT_3_SLOT = 3;
     public static int INGREDIENT_4_SLOT = 4;
-    private final LazyOptional<IItemHandler> inventory = LazyOptional.of(() -> inventoryHandler);
     public IItemHandler getInventory() { return inventoryHandler; }
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side){
-        if(ForgeCapabilities.ITEM_HANDLER.equals(cap)){
-            return inventory.cast();
-        }
-
-        return LazyOptional.empty();
+    public static IItemHandler getItemHandlerCapability(StygianAnvilBlockEntity blockEntity, Direction side) {
+        return blockEntity.getInventory();
     }
 
     public ItemStack[] getIngredients() {
@@ -121,7 +113,7 @@ public class StygianAnvilBlockEntity extends BlockEntity {
             return;
         }
 
-        StygianAnvilRecipe recipe = level.getRecipeManager().getRecipeFor(RecipesRegistry.ANVIL_RECIPE_TYPE.get(),
+        RecipeHolder<StygianAnvilRecipe> recipeHolder = level.getRecipeManager().getRecipeFor(RecipesRegistry.ANVIL_RECIPE_TYPE.get(),
                 new SimpleContainer(
                         inventoryHandler.getStackInSlot(BASE_SLOT),
                         inventoryHandler.getStackInSlot(INGREDIENT_1_SLOT),
@@ -129,10 +121,10 @@ public class StygianAnvilBlockEntity extends BlockEntity {
                         inventoryHandler.getStackInSlot(INGREDIENT_3_SLOT),
                         inventoryHandler.getStackInSlot(INGREDIENT_4_SLOT)),
                 level).orElse(null);
-        if (recipe == null)
+        if (recipeHolder == null)
             return;
 
-        ItemStack output = recipe.getOutputItem();
+        ItemStack output = recipeHolder.value().getOutputItem();
 
         if (inventoryHandler.getStackInSlot(BASE_SLOT).getItem() == ItemsRegistry.MOB_SHARD_ITEM.get()) {
             CompoundTag mobTag = MobShardItem.getProgrammedMob(inventoryHandler.getStackInSlot(BASE_SLOT));

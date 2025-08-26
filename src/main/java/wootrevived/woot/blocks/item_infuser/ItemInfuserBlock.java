@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -26,11 +25,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.util.Config;
@@ -141,7 +139,8 @@ public class ItemInfuserBlock extends Block implements EntityBlock {
             if (FluidUtil.getFluidHandler(heldItem).isPresent())
                 return FluidUtil.interactWithFluidHandler(player, hand, level, hit.getBlockPos(), hit.getDirection()) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
 
-            NetworkHooks.openScreen((ServerPlayer) player, itemInfuserBlockEntity, hit.getBlockPos());
+            player.openMenu(itemInfuserBlockEntity, buf -> buf.writeBlockPos(hit.getBlockPos()));
+
             return InteractionResult.SUCCESS;
         }
 

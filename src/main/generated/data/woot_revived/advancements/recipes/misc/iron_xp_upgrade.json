@@ -44,16 +44,15 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "a",
       "b",
-      "c",
-      "has_the_recipe"
+      "c"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:iron_xp_upgrade"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

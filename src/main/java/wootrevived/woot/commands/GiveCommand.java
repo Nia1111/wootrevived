@@ -7,14 +7,14 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.woot.blocks.fake_spawner.FakeSpawnerBlockEntity;
 import wootrevived.woot.events.InitServer;
@@ -43,7 +43,7 @@ public class GiveCommand {
     }
 
     private static int giveItem(CommandSourceStack source, ServerPlayer target, ResourceLocation resourceLocation) {
-        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(resourceLocation);
+        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(resourceLocation);
         WootFactoryMob<?> mob = WootFactoryMobsRegistry.getFactoryMob(entityType);
 
         Object object = entityType.create(source.getLevel());

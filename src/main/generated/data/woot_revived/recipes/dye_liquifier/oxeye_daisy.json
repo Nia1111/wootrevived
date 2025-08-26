@@ -2,17 +2,11 @@
   "type": "woot_revived:dye_liquifier",
   "blue": 8,
   "energy": 500,
-  "inputs": [
+  "inputIngredients": [
     {
-      "type": "ingredient",
-      "ingredients": [
-        {
-          "item": "minecraft:oxeye_daisy"
-        }
-      ]
+      "item": "minecraft:oxeye_daisy"
     }
   ],
-  "outputs": [],
   "red": 8,
   "white": 48,
   "yellow": 8

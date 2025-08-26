@@ -1,6 +1,7 @@
 package wootrevived.woot.datagen;
 
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
@@ -14,8 +15,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.util.entity.WootTags;
@@ -31,7 +31,7 @@ public class LootTables extends BlockLootSubProvider {
 
     @Override
     protected @NotNull Iterable<Block> getKnownBlocks() {
-        return BlocksRegistry.BLOCKS.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList());
+        return BlocksRegistry.BLOCKS.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toList());
     }
 
     @Override
@@ -110,41 +110,41 @@ public class LootTables extends BlockLootSubProvider {
     }
 
     public ResourceLocation getBlockResource(Block block){
-        return Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block));
+        return Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(block));
     }
 
-    public void dropSelf(RegistryObject<?> block){
-        add((Block)block.get(), noDrop().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem((Block)block.get())).unwrap()));
+    public void dropSelf(DeferredHolder<Block, ? extends Block> block){
+        add(block.get(), noDrop().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem((Block)block.get())).unwrap()));
     }
 
-    public void dropSelfWithEnable(RegistryObject<?> block){
-        LootItemCondition.Builder builder = LootItemBlockStatePropertyCondition.hasBlockStateProperties((Block)block.get())
+    public void dropSelfWithEnable(DeferredHolder<Block, ? extends Block> block){
+        LootItemCondition.Builder builder = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get())
                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockStateProperties.ENABLED, true));
-        add((Block)block.get(), noDrop().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem((Block)block.get()).when(builder))));
+        add(block.get(), noDrop().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem((Block)block.get()).when(builder))));
     }
 
-    public void copyTag(RegistryObject<?> block, LootItemFunction.Builder builder){
-        add((Block)block.get(), noDrop()
+    public void copyTag(DeferredHolder<Block, ? extends Block> block, LootItemFunction.Builder builder){
+        add(block.get(), noDrop()
                 .withPool(LootPool.lootPool()
-                        .name(getBlockResource((Block)block.get()).toString())
+                        .name(getBlockResource(block.get()).toString())
                         .setRolls(ConstantValue.exactly(1.0F))
                         .add(
-                                LootItem.lootTableItem(((Block) block.get()).asItem())
+                                LootItem.lootTableItem((block.get()).asItem())
                                         .apply(builder)
                         )
                 ));
     }
 
-    public void copyTagWithEnable(RegistryObject<?> block, LootItemFunction.Builder builder){
-        LootItemCondition.Builder stateBuilder = LootItemBlockStatePropertyCondition.hasBlockStateProperties((Block)block.get())
+    public void copyTagWithEnable(DeferredHolder<Block, ? extends Block> block, LootItemFunction.Builder builder){
+        LootItemCondition.Builder stateBuilder = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get())
                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockStateProperties.ENABLED, true));
-        add((Block)block.get(), noDrop()
+        add(block.get(), noDrop()
             .withPool(LootPool.lootPool()
-                    .name(getBlockResource((Block)block.get()).toString())
+                    .name(getBlockResource(block.get()).toString())
                     .setRolls(ConstantValue.exactly(1.0F))
                     .when(stateBuilder)
                     .add(
-                            LootItem.lootTableItem(((Block) block.get()).asItem())
+                            LootItem.lootTableItem((block.get()).asItem())
                                     .apply(builder)
                     )
             ));

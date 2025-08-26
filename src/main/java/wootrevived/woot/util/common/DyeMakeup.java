@@ -1,9 +1,8 @@
 package wootrevived.woot.util.common;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 public enum DyeMakeup {
 
@@ -50,8 +49,5 @@ public enum DyeMakeup {
     public int getYellow() { return this.yellow; }
     public int getBlue() { return this.blue; }
     public int getWhite() { return this.white; }
-    public ResourceLocation getForgeTag() { return ResourceLocation.tryBuild("forge", "dyes/" + this.tag); }
     public TagKey<Item> getItemTag() { return itemTag; }
-
-    public static final DyeMakeup[] VALUES = DyeMakeup.values();
 }

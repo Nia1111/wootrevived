@@ -58,17 +58,16 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "a",
       "b",
       "c",
-      "d",
-      "has_the_recipe"
+      "d"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:fluid_infuser"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

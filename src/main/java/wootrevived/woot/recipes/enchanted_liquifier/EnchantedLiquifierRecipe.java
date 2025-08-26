@@ -3,8 +3,9 @@ package wootrevived.woot.recipes.enchanted_liquifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.RecipesRegistry;
 import wootrevived.woot.util.recipes.WootRecipe;
 
@@ -12,8 +13,8 @@ import java.util.List;
 
 // Recipe class for JEI
 public class EnchantedLiquifierRecipe extends WootRecipe {
-    public EnchantedLiquifierRecipe(int energy, List<Ingredient> inputItems, FluidStack outputFluid) {
-        super(null, energy, inputItems, null, null, outputFluid);
+    public EnchantedLiquifierRecipe(int energy, @Nullable List<Ingredient> inputItems, FluidStack outputFluid) {
+        super(energy, inputItems, null, null, outputFluid);
     }
 
     @Override

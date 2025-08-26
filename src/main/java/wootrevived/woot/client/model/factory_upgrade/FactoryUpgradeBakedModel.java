@@ -9,16 +9,17 @@ import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.RenderTypeGroup;
-import net.minecraftforge.client.model.BakedModelWrapper;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.RenderTypeGroup;
+import net.neoforged.neoforge.client.model.BakedModelWrapper;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.api.WootUpgradeItem;
@@ -89,7 +90,7 @@ public class FactoryUpgradeBakedModel extends BakedModelWrapper<SimpleBakedModel
             }
             this.faces.put("", map);
 
-            for(RegistryObject<? extends WootUpgradeItem> upgradeItem : UpgradeItemsRegistry.getValues()) {
+            for(DeferredHolder<Item, ? extends WootUpgradeItem> upgradeItem : UpgradeItemsRegistry.getValues()) {
                 map = Maps.newEnumMap(Direction.class);
                 for(Direction direction : Direction.values()) {
                     map.put(direction, new ArrayList<>());

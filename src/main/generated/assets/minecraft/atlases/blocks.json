@@ -1,7 +1,8 @@
 {
   "sources": [
     {
-      "type": "woot_revived:factory_upgrade"
+      "type": "woot_revived:factory_upgrade",
+      "id": "woot_revived:factory_upgrade"
     }
   ]
 }

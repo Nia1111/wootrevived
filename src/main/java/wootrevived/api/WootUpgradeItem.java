@@ -1,11 +1,11 @@
 package wootrevived.api;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.interfaces.WootGenerationProperties;
 import wootrevived.api.interfaces.WootSpawnProperties;
@@ -74,7 +74,7 @@ public abstract class WootUpgradeItem extends Item {
      * @return the texture {@link ResourceLocation}
      */
     public ResourceLocation getTextureLocation(){
-        return ForgeRegistries.ITEMS.getKey(this).withPrefix("textures/item/").withSuffix(".png");
+        return BuiltInRegistries.ITEM.getKey(this).withPrefix("textures/item/").withSuffix(".png");
     }
 
     /**

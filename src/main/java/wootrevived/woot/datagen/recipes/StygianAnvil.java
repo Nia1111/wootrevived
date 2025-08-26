@@ -1,51 +1,49 @@
 package wootrevived.woot.datagen.recipes;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import wootrevived.woot.datagen.Recipes;
 import wootrevived.woot.items.dye_casing.DyeCasingItem;
 import wootrevived.woot.recipes.stygian_anvil.StygianAnvilRecipeBuilder;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.ItemsRegistry;
 
-import java.util.function.Consumer;
-
 public class StygianAnvil {
-    public static void registerRecipes(Recipes recipes, Consumer<FinishedRecipe> consumer){
+    public static void registerRecipes(Recipes recipes, RecipeOutput output){
         StygianAnvilRecipeBuilder.anvilRecipe(ItemsRegistry.PLATE_MOLD_ITEM.get())
                 .base(Ingredient.of(Items.IRON_TRAPDOOR))
                 .ingredient(Ingredient.of(Items.QUARTZ))
                 .ingredient(Ingredient.of(ItemsRegistry.STYGIAN_INGOT_ITEM.get()))
-                .save(consumer);
+                .save(output);
 
         StygianAnvilRecipeBuilder.anvilRecipe(ItemsRegistry.SHARD_MOLD_ITEM.get())
                 .base(Ingredient.of(Items.PRISMARINE_SHARD))
                 .ingredient(Ingredient.of(Items.QUARTZ))
                 .ingredient(Ingredient.of(ItemsRegistry.STYGIAN_INGOT_ITEM.get()))
-                .save(consumer, ItemsRegistry.SHARD_MOLD_TAG);
+                .save(output, ItemsRegistry.SHARD_MOLD_TAG);
 
         StygianAnvilRecipeBuilder.anvilRecipe(ItemsRegistry.DYE_CASING_MOLD_ITEM.get())
                 .base(Ingredient.of(Tags.Items.DYES))
                 .ingredient(Ingredient.of(Items.QUARTZ))
                 .ingredient(Ingredient.of(ItemsRegistry.STYGIAN_INGOT_ITEM.get()))
-                .save(consumer, ItemsRegistry.DYE_CASING_MOLD_TAG);
+                .save(output, ItemsRegistry.DYE_CASING_MOLD_TAG);
 
         StygianAnvilRecipeBuilder.anvilRecipe(ItemsRegistry.STYGIAN_PLATE_ITEM.get())
                 .base(Ingredient.of(ItemsRegistry.PLATE_MOLD_ITEM.get()))
                 .ingredient(Ingredient.of(ItemsRegistry.STYGIAN_INGOT_ITEM.get()))
-                .save(consumer, ItemsRegistry.STYGIAN_PLATE_TAG);
+                .save(output, ItemsRegistry.STYGIAN_PLATE_TAG);
 
         StygianAnvilRecipeBuilder.anvilRecipe(ItemsRegistry.MOB_SHARD_ITEM.get())
                 .base(Ingredient.of(ItemsRegistry.SHARD_MOLD_ITEM.get()))
                 .ingredient(Ingredient.of(ItemsRegistry.STYGIAN_INGOT_ITEM.get()))
                 .ingredient(Ingredient.of(ItemsRegistry.STYGIAN_INGOT_ITEM.get()))
-                .save(consumer, ItemsRegistry.MOB_SHARD_TAG);
+                .save(output, ItemsRegistry.MOB_SHARD_TAG);
 
         StygianAnvilRecipeBuilder.anvilRecipe(ItemsRegistry.COPPER_SHARD_ITEM.get())
                 .base(Ingredient.of(ItemsRegistry.SHARD_MOLD_ITEM.get()))
@@ -53,22 +51,22 @@ public class StygianAnvil {
                 .ingredient(Ingredient.of(Items.COPPER_INGOT))
                 .ingredient(Ingredient.of(Items.COPPER_INGOT))
                 .ingredient(Ingredient.of(Items.COPPER_INGOT))
-                .save(consumer, ItemsRegistry.COPPER_SHARD_TAG);
+                .save(output, ItemsRegistry.COPPER_SHARD_TAG);
 
         StygianAnvilRecipeBuilder.anvilRecipe(BlocksRegistry.FAKE_SPAWNER_BLOCK.get())
                 .base(Ingredient.of(ItemsRegistry.MOB_SHARD_ITEM.get()))
                 .ingredient(Ingredient.of(ItemsRegistry.PRISM_ITEM.get()))
                 .ingredient(Ingredient.of(BlocksRegistry.FACTORY_BASE_BLOCK.get()))
-                .save(consumer, BlocksRegistry.FAKE_SPAWNER_TAG);
+                .save(output, BlocksRegistry.FAKE_SPAWNER_TAG);
 
         class Casing {
-            final RegistryObject<DyeCasingItem> casing;
+            final DeferredHolder<Item, DyeCasingItem> casing;
             final String name;
             final TagKey<Item> tag;
 
-            public Casing(RegistryObject<DyeCasingItem> casing, TagKey<Item> tag) {
+            public Casing(DeferredHolder<Item, DyeCasingItem> casing, TagKey<Item> tag) {
                 this.casing = casing;
-                this.name = ForgeRegistries.ITEMS.getKey(casing.get()).getPath();
+                this.name = BuiltInRegistries.ITEM.getKey(casing.get()).getPath();
                 this.tag = tag;
             }
         }
@@ -96,7 +94,7 @@ public class StygianAnvil {
             StygianAnvilRecipeBuilder.anvilRecipe(c.casing.get())
                     .base(Ingredient.of(ItemsRegistry.DYE_CASING_MOLD_ITEM.get()))
                     .ingredient(Ingredient.of(c.tag))
-                    .save(consumer, c.name);
+                    .save(output, c.name);
         }
     }
 }

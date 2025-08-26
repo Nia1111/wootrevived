@@ -1,15 +1,15 @@
 package wootrevived.woot.events.client;
 
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.WootFactoryMobsRegistry;
@@ -36,7 +36,7 @@ public class GuideCacheLivingEntities {
             if(mob.isBlacklisted()) continue;
 
             EntityType<?> entityType = mob.getEntityType();
-            if(!I18n.exists(entityType.getDescriptionId()))
+            if(!Language.getInstance().has(entityType.getDescriptionId()))
                 continue;
 
             Entity entity = entityType.create(level);

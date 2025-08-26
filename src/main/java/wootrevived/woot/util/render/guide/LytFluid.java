@@ -8,7 +8,7 @@ import guideme.layout.LayoutContext;
 import guideme.render.RenderContext;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import wootrevived.woot.util.render.WootContainerScreen;
 
 import java.util.Optional;

@@ -1,13 +1,13 @@
 package wootrevived.woot.upgrades;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.registrations.WootUpgradeItemRegistration;
@@ -58,7 +58,7 @@ public class Xp extends WootUpgradeItem {
 
     /* Upgrade Item registration */
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.Keys.ITEMS, Woot.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, Woot.MOD_ID);
 
     public static void register(WootUpgradeItemRegistration registration){
         ITEMS.register(registration.getWootEventBus());
@@ -70,17 +70,17 @@ public class Xp extends WootUpgradeItem {
     }
 
     public static final String COPPER_XP_TAG = "copper_xp_upgrade";
-    public static final RegistryObject<Xp> COPPER_XP_ITEM = ITEMS.register(COPPER_XP_TAG, () -> new Xp(1));
+    public static final DeferredHolder<Item, Xp> COPPER_XP_ITEM = ITEMS.register(COPPER_XP_TAG, () -> new Xp(1));
 
     public static final String IRON_XP_TAG = "iron_xp_upgrade";
-    public static final RegistryObject<Xp> IRON_XP_ITEM = ITEMS.register(IRON_XP_TAG, () -> new Xp(2));
+    public static final DeferredHolder<Item, Xp> IRON_XP_ITEM = ITEMS.register(IRON_XP_TAG, () -> new Xp(2));
 
     public static final String GOLD_XP_TAG = "gold_xp_upgrade";
-    public static final RegistryObject<Xp> GOLD_XP_ITEM = ITEMS.register(GOLD_XP_TAG, () -> new Xp(3));
+    public static final DeferredHolder<Item, Xp> GOLD_XP_ITEM = ITEMS.register(GOLD_XP_TAG, () -> new Xp(3));
 
     public static final String DIAMOND_XP_TAG = "diamond_xp_upgrade";
-    public static final RegistryObject<Xp> DIAMOND_XP_ITEM = ITEMS.register(DIAMOND_XP_TAG, () -> new Xp(4));
+    public static final DeferredHolder<Item, Xp> DIAMOND_XP_ITEM = ITEMS.register(DIAMOND_XP_TAG, () -> new Xp(4));
 
     public static final String NETHERITE_XP_TAG = "netherite_xp_upgrade";
-    public static final RegistryObject<Xp> NETHERITE_XP_ITEM = ITEMS.register(NETHERITE_XP_TAG, () -> new Xp(5));
+    public static final DeferredHolder<Item, Xp> NETHERITE_XP_ITEM = ITEMS.register(NETHERITE_XP_TAG, () -> new Xp(5));
 }

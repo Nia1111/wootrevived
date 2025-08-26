@@ -1,22 +1,17 @@
 package wootrevived.woot.recipes.item_infuser;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.fluids.FluidStack;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.BlocksRegistry;
-import wootrevived.woot.registries.RecipesRegistry;
-import wootrevived.woot.util.recipes.WootFinishedRecipe;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class ItemInfuserRecipeBuilder {
     private FluidStack fluid;
@@ -69,25 +64,15 @@ public class ItemInfuserRecipeBuilder {
         return this;
     }
 
-    public void save(Consumer<FinishedRecipe> consumer){
-        save(consumer, ForgeRegistries.ITEMS.getKey(output.getItem()).getPath());
+    public void save(RecipeOutput recipeOutput){
+        save(recipeOutput, BuiltInRegistries.ITEM.getKey(output.getItem()).getPath());
     }
 
-    public void save(Consumer<FinishedRecipe> consumer, String path){
-        consumer.accept(new Result(
+    public void save(RecipeOutput recipeOutput, String path){
+        recipeOutput.accept(
                 ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.ITEM_INFUSER_TAG + "/" + path),
-                energy, fluid, ingredient, augment, output
-        ));
-    }
-
-    public static class Result extends WootFinishedRecipe {
-        protected Result(ResourceLocation recipeId, int energy, FluidStack fluid, Ingredient ingredient, Ingredient augment, ItemStack output) {
-            super(recipeId, energy, List.of(ingredient, augment), List.of(fluid), output, null);
-        }
-
-        @Override
-        public @NotNull RecipeSerializer<?> getType() {
-            return RecipesRegistry.ITEM_INFUSER_RECIPE_SERIALIZER.get();
-        }
+                new ItemInfuserRecipe(energy, List.of(ingredient, augment), List.of(fluid), output),
+                null
+        );
     }
 }

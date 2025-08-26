@@ -6,13 +6,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.BlocksRegistry;
 
 public class CreativePowerBlockEntity extends BlockEntity implements BlockEntityTicker<BlockEntity> {
@@ -32,27 +29,23 @@ public class CreativePowerBlockEntity extends BlockEntity implements BlockEntity
             return;
 
         for (Direction facing : Direction.values()) {
-            BlockEntity be = level.getBlockEntity(getBlockPos().relative(facing));
-            if (be != null) {
-                be.getCapability(ForgeCapabilities.ENERGY, facing.getOpposite()).ifPresent(h -> {
-                    if (h.canReceive())
-                        h.receiveEnergy(1000, false);
-                });
-            }
+            IEnergyStorage storage = level.getCapability(Capabilities.EnergyStorage.BLOCK, getBlockPos().relative(facing), facing.getOpposite());
+            if(storage == null)
+                continue;
+
+            if(storage.canReceive())
+                storage.receiveEnergy(1000, false);
         }
     }
 
-    private final LazyOptional<IEnergyStorage> energyStorage = LazyOptional.of(this::createEnergy);
+    private final EnergyStorage energyHandler = createEnergy();
     private EnergyStorage createEnergy() {
         EnergyStorage es = new EnergyStorage(Integer.MAX_VALUE);
         es.receiveEnergy(Integer.MAX_VALUE, false);
         return es;
     }
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ENERGY)
-            return energyStorage.cast();
-        return super.getCapability(cap, side);
+    public static IEnergyStorage getEnergyStorageCapability(CreativePowerBlockEntity blockEntity, Direction side){
+        return blockEntity.energyHandler;
     }
 }

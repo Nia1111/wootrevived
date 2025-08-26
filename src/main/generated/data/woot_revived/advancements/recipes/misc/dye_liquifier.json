@@ -32,15 +32,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "d",
-      "f",
-      "has_the_recipe"
+      "f"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:dye_liquifier"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

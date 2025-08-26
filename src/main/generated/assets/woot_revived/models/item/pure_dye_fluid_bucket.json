@@ -1,5 +1,5 @@
 {
-  "parent": "forge:item/bucket",
+  "parent": "neoforge:item/bucket",
   "fluid": "woot_revived:pure_dye_fluid",
-  "loader": "forge:fluid_container"
+  "loader": "neoforge:fluid_container"
 }

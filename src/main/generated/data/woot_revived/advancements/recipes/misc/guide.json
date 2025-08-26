@@ -34,15 +34,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "0",
-      "1",
-      "has_the_recipe"
+      "1"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:guide"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

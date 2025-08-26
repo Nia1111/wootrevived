@@ -1,14 +1,14 @@
 package wootrevived.woot.init;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class CommonConfig {
-    private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+    private static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
 
-    public static ForgeConfigSpec COMMON_CONFIG;
-    public static ForgeConfigSpec.BooleanValue GIVE_GUIDE_ON_SPAWN;
+    public static ModConfigSpec COMMON_CONFIG;
+    public static ModConfigSpec.BooleanValue GIVE_GUIDE_ON_SPAWN;
 
     static {
         COMMON_BUILDER.comment("Guide").push("guide");

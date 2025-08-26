@@ -19,10 +19,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.level.entity.EntityPersistentStorage;
 import net.minecraft.world.level.entity.PersistentEntitySectionManager;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.entity.living.MobSpawnEvent;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.woot.Woot;
@@ -65,7 +65,7 @@ public class DropSimulator {
 
         if(entity instanceof Mob mob){
             var event = new MobSpawnEvent.FinalizeSpawn(mob, dimensionLevel, 0, 0, 0, dimensionLevel.getCurrentDifficultyAt(BlockPos.ZERO), MobSpawnType.SPAWNER, null, null, null);
-            MinecraftForge.EVENT_BUS.post(event);
+            NeoForge.EVENT_BUS.post(event);
             mob.finalizeSpawn(dimensionLevel, dimensionLevel.getCurrentDifficultyAt(BlockPos.ZERO), MobSpawnType.SPAWNER, null, null);
         }
 
@@ -92,7 +92,7 @@ public class DropSimulator {
             return;
         }
 
-        int i = ForgeHooks.getLootingLevel(livingEntity, fakePlayer, playerSource);
+        int i = CommonHooks.getLootingLevel(livingEntity, fakePlayer, playerSource);
         livingEntity.captureDrops(new java.util.ArrayList<>());
 
         LivingEntityMixin mixin = (LivingEntityMixin)livingEntity;
@@ -102,7 +102,7 @@ public class DropSimulator {
         mixin.invokeDropExperience();
 
         Collection<ItemEntity> eventDrops = livingEntity.captureDrops(null);
-        ForgeHooks.onLivingDrops(livingEntity, playerSource, eventDrops, i, true);
+        CommonHooks.onLivingDrops(livingEntity, playerSource, eventDrops, i, true);
         eventDrops.forEach(e -> dimensionLevel.addFreshEntity(e));
 
         List<ItemStack> drops = properties.getItemDrops();
@@ -132,7 +132,7 @@ public class DropSimulator {
 
         chargedCreeper.droppedSkulls = 0;
 
-        int i = ForgeHooks.getLootingLevel(livingEntity, chargedCreeper, chargedCreeperSource);
+        int i = CommonHooks.getLootingLevel(livingEntity, chargedCreeper, chargedCreeperSource);
         livingEntity.captureDrops(null);
 
         LivingEntityMixin mixin = (LivingEntityMixin)livingEntity;
@@ -166,7 +166,7 @@ public class DropSimulator {
             enderDragon.tickDeath();
         }
 
-        int i = ForgeHooks.getLootingLevel(enderDragon, fakePlayer, playerSource);
+        int i = CommonHooks.getLootingLevel(enderDragon, fakePlayer, playerSource);
         enderDragon.captureDrops(new java.util.ArrayList<>());
 
         LivingEntityMixin mixin = (LivingEntityMixin)enderDragon;
@@ -176,7 +176,7 @@ public class DropSimulator {
         mixin.invokeDropExperience();
 
         Collection<ItemEntity> eventDrops = enderDragon.captureDrops(null);
-        ForgeHooks.onLivingDrops(enderDragon, playerSource, eventDrops, i, true);
+        CommonHooks.onLivingDrops(enderDragon, playerSource, eventDrops, i, true);
         eventDrops.forEach(e -> dimensionLevel.addFreshEntity(e));
 
         List<ItemStack> drops = properties.getItemDrops();

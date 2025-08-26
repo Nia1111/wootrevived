@@ -1,9 +1,9 @@
 package wootrevived.woot.registries;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
-import net.minecraftforge.registries.ForgeRegistries;
 import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.api.registrations.WootFactoryMobRegistration;
@@ -16,11 +16,11 @@ public class WootFactoryMobsRegistry extends WootFactoryMobRegistration {
     public static void register(){
         WootPlugins.registerFactoryMobs(new WootFactoryMobsRegistry());
 
-        for(EntityType<?> entityType : ForgeRegistries.ENTITY_TYPES.getValues()){
-            if(hasFactoryMob(entityType))
+        for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
+            if (hasFactoryMob(entityType))
                 continue;
 
-            if(!entityType.canSerialize())
+            if (!entityType.canSerialize())
                 continue;
 
             FACTORY_MOB_REGISTRY.put(entityType, new WootFactoryMob<>(entityType, new WootFactoryMob.Properties()));
@@ -39,7 +39,7 @@ public class WootFactoryMobsRegistry extends WootFactoryMobRegistration {
     }
 
     public static WootFactoryMob<?> getFactoryMob(String mobId){
-        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.tryParse(mobId));
+        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryParse(mobId));
         return getFactoryMob(entityType);
     }
 
@@ -54,7 +54,7 @@ public class WootFactoryMobsRegistry extends WootFactoryMobRegistration {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean hasFactoryMob(String mobId){
-        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.tryParse(mobId));
+        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryParse(mobId));
         return hasFactoryMob(entityType);
     }
 
@@ -80,7 +80,7 @@ public class WootFactoryMobsRegistry extends WootFactoryMobRegistration {
     }
 
     public static List<Consumer<WootDropsProperties>> getDropsModifier(String mobId){
-        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.tryParse(mobId));
+        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryParse(mobId));
         return getDropsModifier(entityType);
     }
 
@@ -96,7 +96,7 @@ public class WootFactoryMobsRegistry extends WootFactoryMobRegistration {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean hasDropsModifier(String mobId){
-        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.tryParse(mobId));
+        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryParse(mobId));
         return hasDropsModifier(entityType);
     }
 

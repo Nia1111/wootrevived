@@ -15,10 +15,10 @@ import wootrevived.woot.util.render.WootEntityRenderer;
 import java.util.Optional;
 
 public class LytEntity extends LytBlock implements InteractiveElement {
-    private static double BOX_SIZE = 36D;
-    private static double BOX_PADDING = 3D;
+    private static final double BOX_SIZE = 36D;
+    private static final double BOX_PADDING = 3D;
 
-    private static float MAX_ENTITY_BOX_SIZE = 20F;
+    private static final float MAX_ENTITY_BOX_SIZE = 20F;
 
     private final WootFactoryMob<?> mob;
     private final LivingEntity entity;

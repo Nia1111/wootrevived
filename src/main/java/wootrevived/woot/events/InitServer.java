@@ -1,16 +1,16 @@
 package wootrevived.woot.events;
 
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.locale.Language;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.woot.Woot;
 import wootrevived.woot.recipes.stygian_anvil.StygianAnvilRecipe;
@@ -46,14 +46,14 @@ public class InitServer {
                 if(mob.isBlacklisted()) continue;
 
                 EntityType<?> entityType = mob.getEntityType();
-                if(!I18n.exists(entityType.getDescriptionId()))
+                if(!Language.getInstance().has(entityType.getDescriptionId()))
                     continue;
 
                 Entity entity = entityType.create(level);
                 if(!(entity instanceof LivingEntity))
                     continue;
 
-                ResourceLocation location = ForgeRegistries.ENTITY_TYPES.getKey(entityType);
+                ResourceLocation location = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
                 mobLocations.add(location);
             }
         }

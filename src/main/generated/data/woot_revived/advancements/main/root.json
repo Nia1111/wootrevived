@@ -1,18 +1,14 @@
 {
   "criteria": {
     "killed_something": {
-      "conditions": {},
       "trigger": "minecraft:player_killed_entity"
     }
   },
   "display": {
-    "announce_to_chat": true,
     "background": "minecraft:textures/block/black_concrete_powder.png",
     "description": {
       "translate": "advancements.woot_revived.root.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "woot_revived:heart"
     },

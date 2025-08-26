@@ -1,14 +1,14 @@
 package wootrevived.woot.upgrades;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.registrations.WootUpgradeItemRegistration;
@@ -79,7 +79,7 @@ public class ShardDrop extends WootUpgradeItem {
 
     /* Upgrade Item registration */
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.Keys.ITEMS, Woot.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, Woot.MOD_ID);
 
     public static void register(WootUpgradeItemRegistration registration){
         ITEMS.register(registration.getWootEventBus());
@@ -90,14 +90,14 @@ public class ShardDrop extends WootUpgradeItem {
     }
 
     public static final String IRON_SHARD_DROP_TAG = "iron_shard_drop_upgrade";
-    public static final RegistryObject<ShardDrop> IRON_SHARD_DROP_ITEM = ITEMS.register(IRON_SHARD_DROP_TAG, () -> new ShardDrop(1));
+    public static final DeferredHolder<Item, ShardDrop> IRON_SHARD_DROP_ITEM = ITEMS.register(IRON_SHARD_DROP_TAG, () -> new ShardDrop(1));
 
     public static final String GOLD_SHARD_DROP_TAG = "gold_shard_drop_upgrade";
-    public static final RegistryObject<ShardDrop> GOLD_SHARD_DROP_ITEM = ITEMS.register(GOLD_SHARD_DROP_TAG, () -> new ShardDrop(2));
+    public static final DeferredHolder<Item, ShardDrop> GOLD_SHARD_DROP_ITEM = ITEMS.register(GOLD_SHARD_DROP_TAG, () -> new ShardDrop(2));
 
     public static final String DIAMOND_SHARD_DROP_TAG = "diamond_shard_drop_upgrade";
-    public static final RegistryObject<ShardDrop> DIAMOND_SHARD_DROP_ITEM = ITEMS.register(DIAMOND_SHARD_DROP_TAG, () -> new ShardDrop(3));
+    public static final DeferredHolder<Item, ShardDrop> DIAMOND_SHARD_DROP_ITEM = ITEMS.register(DIAMOND_SHARD_DROP_TAG, () -> new ShardDrop(3));
 
     public static final String NETHERITE_SHARD_DROP_TAG = "netherite_shard_drop_upgrade";
-    public static final RegistryObject<ShardDrop> NETHERITE_SHARD_DROP_ITEM = ITEMS.register(NETHERITE_SHARD_DROP_TAG, () -> new ShardDrop(4));
+    public static final DeferredHolder<Item, ShardDrop> NETHERITE_SHARD_DROP_ITEM = ITEMS.register(NETHERITE_SHARD_DROP_TAG, () -> new ShardDrop(4));
 }

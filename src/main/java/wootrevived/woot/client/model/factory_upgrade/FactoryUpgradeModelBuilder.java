@@ -1,9 +1,9 @@
 package wootrevived.woot.client.model.factory_upgrade;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
-import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
+import net.neoforged.neoforge.client.model.generators.ModelBuilder;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.BlocksRegistry;
 
@@ -15,6 +15,6 @@ public class FactoryUpgradeModelBuilder<T extends ModelBuilder<T>> extends Custo
 
     public FactoryUpgradeModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
-        super(ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.FACTORY_UPGRADE_TAG), parent, existingFileHelper);
+        super(ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.FACTORY_UPGRADE_TAG), parent, existingFileHelper, false);
     }
 }

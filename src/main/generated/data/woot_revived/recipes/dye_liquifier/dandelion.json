@@ -2,17 +2,11 @@
   "type": "woot_revived:dye_liquifier",
   "blue": 0,
   "energy": 500,
-  "inputs": [
+  "inputIngredients": [
     {
-      "type": "ingredient",
-      "ingredients": [
-        {
-          "item": "minecraft:dandelion"
-        }
-      ]
+      "item": "minecraft:dandelion"
     }
   ],
-  "outputs": [],
   "red": 0,
   "white": 0,
   "yellow": 72

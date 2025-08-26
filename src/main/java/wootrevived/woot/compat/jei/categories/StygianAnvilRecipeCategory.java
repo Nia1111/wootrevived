@@ -2,21 +2,20 @@ package wootrevived.woot.compat.jei.categories;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotTooltipCallback;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.gui.ingredient.IRecipeSlotRichTooltipCallback;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.compat.jei.WootJeiPluginTypes;
 import wootrevived.woot.items.mob_shard.MobShardItem;
 import wootrevived.woot.recipes.stygian_anvil.StygianAnvilRecipe;
@@ -28,7 +27,8 @@ import java.util.List;
 
 import static wootrevived.woot.util.render.WootStyles.DESCRIPTION_STYLE;
 
-public class StygianAnvilRecipeCategory implements IRecipeCategory<StygianAnvilRecipe>, IRecipeSlotRichTooltipCallback {
+public class StygianAnvilRecipeCategory implements IRecipeCategory<StygianAnvilRecipe>, IRecipeSlotTooltipCallback {
+    private static IDrawable background;
     private static IDrawable icon;
     private static IDrawable stygian_hammer;
 
@@ -60,8 +60,9 @@ public class StygianAnvilRecipeCategory implements IRecipeCategory<StygianAnvilR
     private static final int HAMMER_Y = 11;
 
     public StygianAnvilRecipeCategory(IGuiHelper guiHelper) {
-        icon = guiHelper.createDrawableItemLike(BlocksRegistry.STYGIAN_ANVIL_BLOCK.get());
-        stygian_hammer = guiHelper.createDrawableItemLike(ItemsRegistry.STYGIAN_HAMMER_ITEM.get());
+        background = guiHelper.createBlankDrawable(GUI_WIDTH, GUI_HEIGHT);
+        icon = guiHelper.createDrawableItemStack(BlocksRegistry.STYGIAN_ANVIL_BLOCK_ITEM.get().getDefaultInstance());
+        stygian_hammer = guiHelper.createDrawableItemStack(ItemsRegistry.STYGIAN_HAMMER_ITEM.get().getDefaultInstance());
     }
 
     @Override
@@ -78,13 +79,8 @@ public class StygianAnvilRecipeCategory implements IRecipeCategory<StygianAnvilR
     }
 
     @Override
-    public int getWidth() {
-        return GUI_WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return GUI_HEIGHT;
+    public @NotNull IDrawable getBackground() {
+        return background;
     }
 
     @Override
@@ -98,14 +94,14 @@ public class StygianAnvilRecipeCategory implements IRecipeCategory<StygianAnvilR
     }
 
     @Override
-    public @Nullable IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, StygianAnvilRecipe recipe, @NotNull IFocusGroup focuses) {
-        IRecipeSlotBuilder baseSlot = builder.addInputSlot(BASE_X + 1, BASE_Y + 1)
-                .addRichTooltipCallback(this);
+        IRecipeSlotBuilder baseSlot = builder.addSlot(RecipeIngredientRole.INPUT, BASE_X + 1, BASE_Y + 1)
+                .addTooltipCallback(this);
         if(recipe.getRecipeBaseIngredient().getItems()[0].getItem() == ItemsRegistry.MOB_SHARD_ITEM.get()){
             ItemStack itemStack = ItemsRegistry.MOB_SHARD_ITEM.get().getDefaultInstance();
             MobShardItem.setJEIShard(itemStack);
@@ -115,10 +111,10 @@ public class StygianAnvilRecipeCategory implements IRecipeCategory<StygianAnvilR
         }
 
         IRecipeSlotBuilder[] slots = {
-                builder.addInputSlot(INGREDIENT_0_X + 1, INGREDIENT_0_Y + 1),
-                builder.addInputSlot(INGREDIENT_1_X + 1, INGREDIENT_1_Y + 1),
-                builder.addInputSlot(INGREDIENT_2_X + 1, INGREDIENT_2_Y + 1),
-                builder.addInputSlot(INGREDIENT_3_X + 1, INGREDIENT_3_Y + 1),
+                builder.addSlot(RecipeIngredientRole.INPUT, INGREDIENT_0_X + 1, INGREDIENT_0_Y + 1),
+                builder.addSlot(RecipeIngredientRole.INPUT, INGREDIENT_1_X + 1, INGREDIENT_1_Y + 1),
+                builder.addSlot(RecipeIngredientRole.INPUT, INGREDIENT_2_X + 1, INGREDIENT_2_Y + 1),
+                builder.addSlot(RecipeIngredientRole.INPUT, INGREDIENT_3_X + 1, INGREDIENT_3_Y + 1),
         };
 
         List<Ingredient> ingredients = recipe.getRecipeIngredients();
@@ -126,12 +122,12 @@ public class StygianAnvilRecipeCategory implements IRecipeCategory<StygianAnvilR
             slots[i].addIngredients(ingredients.get(i));
         }
 
-        builder.addOutputSlot(OUTPUT_X + 1, OUTPUT_Y + 1)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X + 1, OUTPUT_Y + 1)
                .addItemStack(recipe.getOutputItem());
     }
 
     @Override
-    public void onRichTooltip(@NotNull IRecipeSlotView recipeSlotView, ITooltipBuilder tooltip) {
+    public void onTooltip(@NotNull IRecipeSlotView recipeSlotView, List<Component> tooltip) {
         tooltip.add(Component.translatable("info.woot_revived.base_item").setStyle(DESCRIPTION_STYLE));
     }
 }

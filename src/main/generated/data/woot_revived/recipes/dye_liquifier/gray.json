@@ -2,17 +2,11 @@
   "type": "woot_revived:dye_liquifier",
   "blue": 12,
   "energy": 500,
-  "inputs": [
+  "inputIngredients": [
     {
-      "type": "ingredient",
-      "ingredients": [
-        {
-          "tag": "forge:dyes/gray"
-        }
-      ]
+      "tag": "forge:dyes/gray"
     }
   ],
-  "outputs": [],
   "red": 12,
   "white": 36,
   "yellow": 12

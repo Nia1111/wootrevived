@@ -5,6 +5,7 @@ import guideme.document.block.LytBox;
 import guideme.document.block.LytSlot;
 import guideme.layout.LayoutContext;
 import guideme.render.RenderContext;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import wootrevived.woot.client.render.fluid_infuser.FluidInfuserContainerScreen;
 import wootrevived.woot.recipes.fluid_infuser.FluidInfuserRecipe;
 import wootrevived.woot.util.Config;
@@ -35,7 +36,8 @@ public class LytFluidInfuserRecipe extends LytBox {
     private final LytFluid outputFluid;
     private final LytSlot inputSlot;
 
-    public LytFluidInfuserRecipe(FluidInfuserRecipe recipe){
+    public LytFluidInfuserRecipe(RecipeHolder<FluidInfuserRecipe> recipeHolder){
+        FluidInfuserRecipe recipe = recipeHolder.value();
         append(energy = new LytEnergy(recipe.getEnergy(), Config.FluidInfuser.ENERGY_CAPACITY));
         append(inputFluid = new LytFluid(recipe.getInputFluid(), Config.FluidInfuser.INPUT_TANK_CAPACITY));
         append(outputFluid = new LytFluid(recipe.getOutputFluid(), Config.FluidInfuser.OUTPUT_TANK_CAPACITY));

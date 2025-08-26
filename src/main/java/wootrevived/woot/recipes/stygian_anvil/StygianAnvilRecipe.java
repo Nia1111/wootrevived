@@ -1,11 +1,11 @@
 package wootrevived.woot.recipes.stygian_anvil;
 
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.RecipesRegistry;
@@ -15,8 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StygianAnvilRecipe extends WootRecipe {
-    public StygianAnvilRecipe(ResourceLocation recipeId, int energy, @Nullable List<Ingredient> inputItems, @Nullable List<FluidStack> inputFluids, @Nullable ItemStack outputItem, @Nullable FluidStack outputFluid) {
-        super(recipeId, energy, inputItems, inputFluids, outputItem, outputFluid);
+    public static final MapCodec<StygianAnvilRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+            Ingredient.CODEC.listOf().fieldOf("inputIngredients").forGetter(StygianAnvilRecipe::getInputItems),
+            ItemStack.CODEC.fieldOf("outputItem").forGetter(StygianAnvilRecipe::getOutputItem)
+    ).apply(inst, StygianAnvilRecipe::new));
+
+    public StygianAnvilRecipe(@Nullable List<Ingredient> inputItems, @Nullable ItemStack outputItem) {
+        super(0, inputItems, null, outputItem, null);
     }
 
     @Override
@@ -72,10 +77,8 @@ public class StygianAnvilRecipe extends WootRecipe {
 
     public static void loadRecipes(@NotNull RecipeManager manager){
         Validator.clear();
-        for(Recipe<?> recipe : manager.getRecipes()) {
-            if(recipe instanceof StygianAnvilRecipe stygianAnvilRecipe) {
-                Validator.add(stygianAnvilRecipe.getInputItems());
-            }
+        for(RecipeHolder<StygianAnvilRecipe> recipeHolder : manager.getAllRecipesFor(RecipesRegistry.ANVIL_RECIPE_TYPE.get())) {
+            Validator.add(recipeHolder.value().getInputItems());
         }
     }
 

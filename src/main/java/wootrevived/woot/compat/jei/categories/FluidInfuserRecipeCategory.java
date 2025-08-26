@@ -1,19 +1,18 @@
 package wootrevived.woot.compat.jei.categories;
 
-import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.client.render.fluid_infuser.FluidInfuserContainerScreen;
 import wootrevived.woot.compat.jei.WootJeiCustomFluidRenderer;
 import wootrevived.woot.compat.jei.WootJeiPluginTypes;
@@ -24,6 +23,7 @@ import wootrevived.woot.util.Config;
 import wootrevived.woot.util.render.WootContainerScreen;
 
 public class FluidInfuserRecipeCategory implements IRecipeCategory<FluidInfuserRecipe> {
+    private static IDrawable background;
     private static IDrawable icon;
 
     private static final int GUI_WIDTH = 129;
@@ -45,7 +45,8 @@ public class FluidInfuserRecipeCategory implements IRecipeCategory<FluidInfuserR
     private static final int PROGRESS_Y = 24;
 
     public FluidInfuserRecipeCategory(IGuiHelper guiHelper) {
-        icon = guiHelper.createDrawableItemLike(BlocksRegistry.FLUID_INFUSER_BLOCK.get());
+        background = guiHelper.createBlankDrawable(GUI_WIDTH, GUI_HEIGHT);
+        icon = guiHelper.createDrawableItemStack(BlocksRegistry.FLUID_INFUSER_BLOCK_ITEM.get().getDefaultInstance());
     }
 
     @Override
@@ -67,13 +68,8 @@ public class FluidInfuserRecipeCategory implements IRecipeCategory<FluidInfuserR
     }
 
     @Override
-    public int getWidth() {
-        return GUI_WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return GUI_HEIGHT;
+    public @NotNull IDrawable getBackground() {
+        return background;
     }
 
     @Override
@@ -87,7 +83,7 @@ public class FluidInfuserRecipeCategory implements IRecipeCategory<FluidInfuserR
     }
 
     @Override
-    public @Nullable IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
@@ -95,23 +91,23 @@ public class FluidInfuserRecipeCategory implements IRecipeCategory<FluidInfuserR
     public void setRecipe(IRecipeLayoutBuilder builder, FluidInfuserRecipe recipe, @NotNull IFocusGroup focuses) {
         FluidStack inputFluid = recipe.getInputFluid();
 
-        builder.addInputSlot(INPUT_FLUID_X + 3, INPUT_FLUID_Y + 3)
+        builder.addSlot(RecipeIngredientRole.INPUT, INPUT_FLUID_X + 3, INPUT_FLUID_Y + 3)
                 .addFluidStack(inputFluid.getFluid(), inputFluid.getAmount())
-                .setCustomRenderer(ForgeTypes.FLUID_STACK, new WootJeiCustomFluidRenderer(Config.FluidInfuser.INPUT_TANK_CAPACITY));
+                .setCustomRenderer(NeoForgeTypes.FLUID_STACK, new WootJeiCustomFluidRenderer(Config.FluidInfuser.INPUT_TANK_CAPACITY));
 
         builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                .addItemLike(inputFluid.getFluid().getBucket());
+                .addItemStack(inputFluid.getFluid().getBucket().getDefaultInstance());
 
-        builder.addInputSlot(INPUT_SLOT_X + 1, INPUT_SLOT_Y + 1)
+        builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X + 1, INPUT_SLOT_Y + 1)
                 .addIngredients(recipe.getInputIngredient());
 
         FluidStack outputFluid = recipe.getOutputFluid();
 
-        builder.addOutputSlot(OUTPUT_FLUID_X + 3, OUTPUT_FLUID_Y + 3)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_FLUID_X + 3, OUTPUT_FLUID_Y + 3)
                 .addFluidStack(outputFluid.getFluid(), outputFluid.getAmount())
-                .setCustomRenderer(ForgeTypes.FLUID_STACK, new WootJeiCustomFluidRenderer(Config.FluidInfuser.OUTPUT_TANK_CAPACITY));
+                .setCustomRenderer(NeoForgeTypes.FLUID_STACK, new WootJeiCustomFluidRenderer(Config.FluidInfuser.OUTPUT_TANK_CAPACITY));
 
         builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
-                .addItemLike(outputFluid.getFluid().getBucket());
+                .addItemStack(outputFluid.getFluid().getBucket().getDefaultInstance());
     }
 }

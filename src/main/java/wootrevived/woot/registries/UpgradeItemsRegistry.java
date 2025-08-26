@@ -1,10 +1,10 @@
 package wootrevived.woot.registries;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import wootrevived.api.registrations.WootUpgradeItemRegistration;
 import wootrevived.api.WootUpgradeItem;
 import wootrevived.woot.Woot;
@@ -25,12 +25,10 @@ public class UpgradeItemsRegistry extends WootUpgradeItemRegistration {
         this.wootBus = wootBus;
     }
 
-    private static final Map<String, RegistryObject<? extends WootUpgradeItem>> REGISTRY = new HashMap<>();
+    private static final Map<String, DeferredHolder<Item, ? extends WootUpgradeItem>> REGISTRY = new HashMap<>();
 
     @Override
-    public void register(RegistryObject<? extends WootUpgradeItem> item) {
-        if(item.getId() == null)
-            return;
+    public void register(DeferredHolder<Item, ? extends WootUpgradeItem> item) {
         REGISTRY.put(getNameFromItem(item), item);
         Registry.addToCreativeTab(item);
     }
@@ -40,7 +38,7 @@ public class UpgradeItemsRegistry extends WootUpgradeItemRegistration {
         return wootBus;
     }
 
-    public static RegistryObject<? extends WootUpgradeItem> get(String name){
+    public static DeferredHolder<Item, ? extends WootUpgradeItem> get(String name){
         return REGISTRY.get(name);
     }
 
@@ -49,21 +47,21 @@ public class UpgradeItemsRegistry extends WootUpgradeItemRegistration {
         return REGISTRY.containsKey(name);
     }
 
-    public static Collection<RegistryObject<? extends WootUpgradeItem>> getValues(){
+    public static Collection<DeferredHolder<Item, ? extends WootUpgradeItem>> getValues(){
         return REGISTRY.values();
     }
 
-    public static String getNameFromItem(RegistryObject<? extends WootUpgradeItem> item){
+    public static String getNameFromItem(DeferredHolder<Item, ? extends WootUpgradeItem> item){
         return item.getId().toString().replaceAll("[^a-zA-Z0-9_]", "_");
     }
 
     public static String getNameFromItem(WootUpgradeItem item){
-        return ForgeRegistries.ITEMS.getKey(item).toString().replaceAll("[^a-zA-Z0-9_]", "_");
+        return BuiltInRegistries.ITEM.getKey(item).toString().replaceAll("[^a-zA-Z0-9_]", "_");
     }
 
     /* Forge Items */
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.Keys.ITEMS, Woot.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, Woot.MOD_ID);
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
@@ -75,5 +73,5 @@ public class UpgradeItemsRegistry extends WootUpgradeItemRegistration {
     /* Upgrade Base */
 
     public static final String UPGRADE_BASE_TAG = "upgrade_base";
-    public static final RegistryObject<BasicItem> UPGRADE_BASE_ITEM = ITEMS.register(UPGRADE_BASE_TAG, () -> new BasicItem(BasicItem.Type.UPGRADE_BASE));
+    public static final DeferredHolder<Item, BasicItem> UPGRADE_BASE_ITEM = ITEMS.register(UPGRADE_BASE_TAG, () -> new BasicItem(BasicItem.Type.UPGRADE_BASE));
 }

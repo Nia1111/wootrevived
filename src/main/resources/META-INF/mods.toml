@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[${neo_major_version},)"
+loaderVersion = "[1,)"
 issueTrackerURL = "https://github.com/pharuxtan/woot"
 license = "LGPLv3"
 
@@ -13,38 +13,40 @@ authors = "pharuxtan"
 credits = "Ipsis"
 description = '''A formidable multiblock mod to harvest mob drops. You'll either fall in love or despise it! No middle ground.'''
 
+[[mixins]]
+config = "woot_revived.mixins.json"
+
 [[dependencies.${file.modId}]]
 modId = "minecraft"
-mandatory = true
 type = "required"
-versionRange = "${mc_version}"
+versionRange = "[${mc_version}]"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.${file.modId}]]
-modId = "forge"
-mandatory = true
+modId = "neoforge"
+type = "required"
 versionRange = "[${neo_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.${file.modId}]]
 modId="guideme"
-mandatory = true
+type = "required"
 versionRange = "[${guideme_version},)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.${file.modId}]]
 modId="jei"
-mandatory = false
+type = "optional"
 versionRange = "[${jei_version},)"
 ordering="NONE"
 side="CLIENT"
 
 [[dependencies.${file.modId}]]
 modId="jade"
-mandatory = false
+type = "optional"
 versionRange = "[${jade_version},)"
 ordering="NONE"
 side="CLIENT"

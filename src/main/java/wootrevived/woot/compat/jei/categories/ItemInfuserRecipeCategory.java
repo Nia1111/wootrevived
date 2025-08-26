@@ -1,19 +1,18 @@
 package wootrevived.woot.compat.jei.categories;
 
-import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.compat.jei.WootJeiCustomFluidRenderer;
 import wootrevived.woot.compat.jei.WootJeiPluginTypes;
 import wootrevived.woot.events.client.GlobalClientTicker;
@@ -23,6 +22,7 @@ import wootrevived.woot.util.Config;
 import wootrevived.woot.util.render.WootContainerScreen;
 
 public class ItemInfuserRecipeCategory implements IRecipeCategory<ItemInfuserRecipe> {
+    private static IDrawable background;
     private static IDrawable icon;
 
     private static final int GUI_WIDTH = 124;
@@ -47,7 +47,8 @@ public class ItemInfuserRecipeCategory implements IRecipeCategory<ItemInfuserRec
     private static final int PROGRESS_Y = 20;
 
     public ItemInfuserRecipeCategory(IGuiHelper guiHelper) {
-        icon = guiHelper.createDrawableItemLike(BlocksRegistry.ITEM_INFUSER_BLOCK.get());
+        background = guiHelper.createBlankDrawable(GUI_WIDTH, GUI_HEIGHT);
+        icon = guiHelper.createDrawableItemStack(BlocksRegistry.ITEM_INFUSER_BLOCK_ITEM.get().getDefaultInstance());
     }
 
     @Override
@@ -70,13 +71,8 @@ public class ItemInfuserRecipeCategory implements IRecipeCategory<ItemInfuserRec
     }
 
     @Override
-    public int getWidth() {
-        return GUI_WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return GUI_HEIGHT;
+    public @NotNull IDrawable getBackground() {
+        return background;
     }
 
     @Override
@@ -90,7 +86,7 @@ public class ItemInfuserRecipeCategory implements IRecipeCategory<ItemInfuserRec
     }
 
     @Override
-    public @Nullable IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
@@ -98,22 +94,22 @@ public class ItemInfuserRecipeCategory implements IRecipeCategory<ItemInfuserRec
     public void setRecipe(IRecipeLayoutBuilder builder, ItemInfuserRecipe recipe, @NotNull IFocusGroup focuses) {
         FluidStack inputFluid = recipe.getInputFluid();
 
-        builder.addInputSlot(INPUT_FLUID_X + 3, INPUT_FLUID_Y + 3)
+        builder.addSlot(RecipeIngredientRole.INPUT, INPUT_FLUID_X + 3, INPUT_FLUID_Y + 3)
                 .addFluidStack(inputFluid.getFluid(), inputFluid.getAmount())
-                .setCustomRenderer(ForgeTypes.FLUID_STACK, new WootJeiCustomFluidRenderer(Config.ItemInfuser.INPUT_TANK_CAPACITY));
+                .setCustomRenderer(NeoForgeTypes.FLUID_STACK, new WootJeiCustomFluidRenderer(Config.ItemInfuser.INPUT_TANK_CAPACITY));
 
         builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-               .addItemLike(inputFluid.getFluid().getBucket());
+               .addItemStack(inputFluid.getFluid().getBucket().getDefaultInstance());
 
-        builder.addInputSlot(INGREDIENT_SLOT_X + 1, INGREDIENT_SLOT_Y + 1)
+        builder.addSlot(RecipeIngredientRole.INPUT, INGREDIENT_SLOT_X + 1, INGREDIENT_SLOT_Y + 1)
                .addIngredients(recipe.getInputIngredient());
 
         if(!recipe.getAugmentIngredient().isEmpty()){
-            builder.addInputSlot(AUGMENT_SLOT_X + 1, AUGMENT_SLOT_Y + 1)
+            builder.addSlot(RecipeIngredientRole.INPUT, AUGMENT_SLOT_X + 1, AUGMENT_SLOT_Y + 1)
                    .addIngredients(recipe.getAugmentIngredient());
         }
 
-        builder.addOutputSlot(OUTPUT_SLOT_X + 1, OUTPUT_SLOT_Y + 1)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_SLOT_X + 1, OUTPUT_SLOT_Y + 1)
                .addItemStack(recipe.getOutputItem());
     }
 }

@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -15,11 +16,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.api.WootFactoryMob;
@@ -63,10 +63,10 @@ public class HeartContainerScreen extends AbstractContainerScreen<HeartContainer
     public static final int SECONDARY_MOB_2_X = 50;
     public static final int SECONDARY_MOB_2_Y = 17;
 
-    private static double BOX_SIZE = 32D;
-    private static double BOX_PADDING = 3D;
+    private static final double BOX_SIZE = 32D;
+    private static final double BOX_PADDING = 3D;
 
-    private static float MAX_ENTITY_BOX_SIZE = 20F;
+    private static final float MAX_ENTITY_BOX_SIZE = 20F;
 
     public static final int UPGRADE_SLOT_0_X = 10;
     public static final int UPGRADE_SLOT_0_Y = 77;
@@ -228,7 +228,6 @@ public class HeartContainerScreen extends AbstractContainerScreen<HeartContainer
 
     @Override
     protected void renderBg(@NotNull GuiGraphics gui, float partialTicks, int mouseX, int mouseY) {
-        renderBackground(gui);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
         PoseStack pose = gui.pose();
@@ -319,7 +318,7 @@ public class HeartContainerScreen extends AbstractContainerScreen<HeartContainer
             ));
 
             if(fluid != null && !fluid.isEmpty()){
-                String modId = ForgeRegistries.FLUIDS.getKey(fluid.getFluid()).getNamespace();
+                String modId = BuiltInRegistries.FLUID.getKey(fluid.getFluid()).getNamespace();
                 tooltip.add(ModNameHelper.getModName(modId).setStyle(MOD_NAME_STYLE));
             }
 
@@ -433,7 +432,7 @@ public class HeartContainerScreen extends AbstractContainerScreen<HeartContainer
                                 .append(Component.literal("mB").setStyle(UNIT_STYLE))
                 );
 
-                String modId = ForgeRegistries.ENTITY_TYPES.getKey(mob.getEntityType()).getNamespace();
+                String modId = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getEntityType()).getNamespace();
                 tooltip.add(ModNameHelper.getModName(modId).setStyle(MOD_NAME_STYLE));
 
                 if(menu.getFactoryIsActive(fakeSpawnerIndex)){

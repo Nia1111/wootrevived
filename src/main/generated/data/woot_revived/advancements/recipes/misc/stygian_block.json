@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "a",
-      "has_the_recipe"
+      "has_the_recipe",
+      "a"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:stygian_block"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

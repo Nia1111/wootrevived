@@ -1,12 +1,13 @@
 package wootrevived.woot.datagen.recipes;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import wootrevived.woot.datagen.Recipes;
 import wootrevived.woot.items.dye_casing.DyeCasingItem;
 import wootrevived.woot.items.dye_plate.DyePlateItem;
@@ -15,10 +16,8 @@ import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.registries.ItemsRegistry;
 import wootrevived.woot.util.common.DyeMakeup;
 
-import java.util.function.Consumer;
-
 public class ItemInfuser {
-    public static void registerRecipes(Recipes recipes, Consumer<FinishedRecipe> consumer) {
+    public static void registerRecipes(Recipes recipes, RecipeOutput consumer) {
         ItemInfuserRecipeBuilder.itemInfuserRecipe(ItemsRegistry.PRISM_ITEM.get())
                 .ingredient(Ingredient.of(Tags.Items.GLASS))
                 .fluid(FluidsRegistry.SOURCE_PURE_DYE_FLUID.get(), 1000)
@@ -93,9 +92,9 @@ public class ItemInfuser {
                 .save(consumer);
 
         class Plate {
-            final RegistryObject<DyeCasingItem> casing;
-            final RegistryObject<DyePlateItem> plate;
-            public Plate(RegistryObject<DyeCasingItem> casing, RegistryObject<DyePlateItem> plate) {
+            final DeferredHolder<Item, DyeCasingItem> casing;
+            final DeferredHolder<Item, DyePlateItem> plate;
+            public Plate(DeferredHolder<Item, DyeCasingItem> casing, DeferredHolder<Item, DyePlateItem> plate) {
                 this.casing = casing;
                 this.plate = plate;
             }

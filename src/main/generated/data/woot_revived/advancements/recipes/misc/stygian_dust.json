@@ -54,17 +54,16 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "0",
       "1",
       "2",
-      "3",
-      "has_the_recipe"
+      "3"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:stygian_dust"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

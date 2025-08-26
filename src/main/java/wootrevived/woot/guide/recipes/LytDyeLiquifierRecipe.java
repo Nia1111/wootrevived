@@ -8,8 +8,9 @@ import guideme.render.RenderContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.fluids.FluidStack;
 import wootrevived.woot.client.render.dye_liquifier.DyeLiquifierContainerScreen;
 import wootrevived.woot.recipes.dye_liquifier.DyeLiquifierRecipe;
 import wootrevived.woot.registries.FluidsRegistry;
@@ -50,7 +51,8 @@ public class LytDyeLiquifierRecipe extends LytBox {
     private final LytColorBar whiteColorBar;
     private final LytFluid outputFluid;
 
-    public LytDyeLiquifierRecipe(DyeLiquifierRecipe recipe){
+    public LytDyeLiquifierRecipe(RecipeHolder<DyeLiquifierRecipe> recipeHolder){
+        DyeLiquifierRecipe recipe = recipeHolder.value();
         append(energy = new LytEnergy(recipe.getEnergy(), Config.DyeLiquifier.ENERGY_CAPACITY));
         append(inputSlot = new LytSlot(Ingredient.of(Tags.Items.DYES)));
         append(redColorBar = new LytColorBar(DyeMakeup.LCM, DyeMakeup.LCM * 2, DyeColor.RED.getTextureDiffuseColors(), Component.translatable("info.woot_revived.dye.red")));

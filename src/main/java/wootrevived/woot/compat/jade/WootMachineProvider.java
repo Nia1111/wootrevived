@@ -5,9 +5,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.IItemHandler;
 import snownee.jade.addon.universal.*;
 import snownee.jade.api.*;
 import snownee.jade.api.config.IPluginConfig;
@@ -32,7 +32,7 @@ public enum WootMachineProvider implements IBlockComponentProvider, IServerDataP
             IElementHelper helper = IElementHelper.get();
             float progress = blockAccessor.getServerData().getInt("Progress") / 100F;
 
-            BoxStyle box = new BoxStyle();
+            BoxStyle.GradientBorder box = BoxStyle.getTransparent().clone();
             box.bgColor = 0x88000000;
             iTooltip.add(helper.progress(progress, null, helper.progressStyle(), box, false).size(new Vec2(10.0F, 4.0F)));
         }
@@ -59,7 +59,7 @@ public enum WootMachineProvider implements IBlockComponentProvider, IServerDataP
             container.addItem(inventory.getStackInSlot(i));
 
         ItemCollector<?> items = new ItemCollector<>(new ItemIterator.ContainerItemIterator(0));
-        List<ViewGroup<ItemStack>> viewsList = items.update(container, blockAccessor.getLevel().getGameTime());
+        List<ViewGroup<ItemStack>> viewsList = items.update(blockAccessor, blockAccessor.getLevel().getGameTime());
 
         if (ViewGroup.saveList(compoundTag, "JadeItemStorage", viewsList, (item) -> {
             CompoundTag itemTag = new CompoundTag();

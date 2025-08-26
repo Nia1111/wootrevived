@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "0",
-      "has_the_recipe"
+      "has_the_recipe",
+      "0"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:stygian_ingot_cook"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

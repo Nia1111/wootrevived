@@ -1,8 +1,8 @@
 package wootrevived.woot.util.render.buttons;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import wootrevived.woot.util.common.RedstoneMode;
 import wootrevived.woot.util.render.WootButton;
 import wootrevived.woot.util.render.WootContainerScreen;

@@ -42,16 +42,15 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "a",
       "b",
-      "c",
-      "has_the_recipe"
+      "c"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:netherite_rate_upgrade"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

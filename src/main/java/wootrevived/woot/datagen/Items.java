@@ -1,15 +1,15 @@
 package wootrevived.woot.datagen;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.FluidsRegistry;
@@ -180,44 +180,44 @@ public class Items extends ItemModelProvider {
     }
 
     public ResourceLocation getItemResource(Item item){
-        return Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)).withPrefix("item/");
+        return Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)).withPrefix("item/");
     }
 
     public ResourceLocation getBlockResource(Block block){
-        return Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).withPrefix("block/");
+        return Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(block)).withPrefix("block/");
     }
 
-    public void itemBucket(RegistryObject<?> item, RegistryObject<?> fluid){
-        ResourceLocation itemResource = getItemResource((Item) item.get());
+    public void itemBucket(DeferredHolder<Item, ? extends Item> item, DeferredHolder<Fluid, ? extends Fluid> fluid){
+        ResourceLocation itemResource = getItemResource(item.get());
         getBuilder(itemResource.getPath())
-                .parent(getExistingFile(ResourceLocation.tryBuild("forge", "item/bucket")))
+                .parent(getExistingFile(ResourceLocation.tryBuild("neoforge", "item/bucket")))
                 .customLoader(DynamicFluidContainerModelBuilder::begin)
-                .fluid((Fluid)fluid.get());
+                .fluid(fluid.get());
     }
 
-    public void parentedBlock(RegistryObject<?> item, RegistryObject<?> block){
-        ResourceLocation itemResource = getItemResource((Item) item.get());
-        ResourceLocation blockResource = getBlockResource((Block) block.get());
+    public void parentedBlock(DeferredHolder<Item, ? extends Item> item, DeferredHolder<Block, ? extends Block> block){
+        ResourceLocation itemResource = getItemResource(item.get());
+        ResourceLocation blockResource = getBlockResource(block.get());
         getBuilder(itemResource.getPath())
                 .parent(getExistingFile(blockResource));
     }
 
-    public void itemGenerated(RegistryObject<?> item){
-        ResourceLocation itemResource = getItemResource((Item) item.get());
+    public void itemGenerated(DeferredHolder<Item, ? extends Item> item){
+        ResourceLocation itemResource = getItemResource(item.get());
         getBuilder(itemResource.getPath())
                 .parent(getExistingFile(mcLoc("item/generated")))
                 .texture("layer0", itemResource);
     }
 
-    public void itemGenerated(RegistryObject<?> item, ResourceLocation texture){
-        ResourceLocation itemResource = getItemResource((Item) item.get());
+    public void itemGenerated(DeferredHolder<Item, ? extends Item> item, ResourceLocation texture){
+        ResourceLocation itemResource = getItemResource(item.get());
         getBuilder(itemResource.getPath())
                 .parent(getExistingFile(mcLoc("item/generated")))
                 .texture("layer0", texture);
     }
 
-    public void itemHandheld(RegistryObject<?> item){
-        ResourceLocation itemResource = getItemResource((Item) item.get());
+    public void itemHandheld(DeferredHolder<Item, ? extends Item> item){
+        ResourceLocation itemResource = getItemResource(item.get());
         getBuilder(itemResource.getPath())
                 .parent(getExistingFile(mcLoc("item/handheld")))
                 .texture("layer0", itemResource);

@@ -1,7 +1,7 @@
 package wootrevived.woot.util.render;
 
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class WootSlotItemHandler extends SlotItemHandler {
     private final Type type;

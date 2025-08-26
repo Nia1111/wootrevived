@@ -3,6 +3,7 @@ package wootrevived.woot.blocks.enchanted_liquifier;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -20,13 +21,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.client.render.enchanted_liquifier.EnchantedLiquifierContainerMenu;
 import wootrevived.woot.registries.BlocksRegistry;
@@ -95,7 +92,6 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
     };
 
     public static int INPUT_SLOT = 0;
-    private final LazyOptional<IItemHandler> inventory = LazyOptional.of(() -> inventoryHandler);
     public IItemHandler getInventory() { return inventoryHandler; }
 
     public record Properties(EnchantedLiquifierBlockEntity entity, MachineSide machineSide){
@@ -113,27 +109,19 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
         return new Properties(this, MachineSide.getMachineSide(facing, side));
     }
 
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @org.jetbrains.annotations.Nullable Direction side){
-        if(side == null)
-            return super.getCapability(cap, side);
+    public static IItemHandler getItemHandlerCapability(EnchantedLiquifierBlockEntity blockEntity, Direction side){
+        Properties properties = blockEntity.getProperties(side);
+        if(properties.getIngredientProperty() != MachineSideProperty.DISABLED)
+            return new WootItemStackHandlerWrapper(blockEntity.inventoryHandler, properties::getIngredientProperty);
+        return null;
+    }
 
-        Properties properties = getProperties(side);
-
-        if(ForgeCapabilities.ITEM_HANDLER.equals(cap)){
-            MachineSideProperty ingredientProperty = properties.getIngredientProperty();
-            if(ingredientProperty != MachineSideProperty.DISABLED)
-                return inventory.lazyMap(handler -> new WootItemStackHandlerWrapper((WootItemStackHandler) handler, properties::getIngredientProperty)).cast();
-        }
-
-        if(ForgeCapabilities.FLUID_HANDLER.equals(cap)){
-            MachineSideProperty property = properties.getOutputFluidProperty();
-            if(property != MachineSideProperty.DISABLED && property != MachineSideProperty.PULL)
-                return outputTank.lazyMap(tank -> new WootFluidTankHandlerWrapper(tank, properties::getOutputFluidProperty)).cast();
-        }
-
-        return super.getCapability(cap, side);
+    public static IFluidHandler getFluidHandlerCapability(EnchantedLiquifierBlockEntity blockEntity, Direction side){
+        Properties properties = blockEntity.getProperties(side);
+        MachineSideProperty property = properties.getOutputFluidProperty();
+        if(property != MachineSideProperty.DISABLED && property != MachineSideProperty.PULL)
+            return new WootFluidTankHandlerWrapper(blockEntity.outputTankHandler, properties::getOutputFluidProperty);
+        return null;
     }
 
     @Override
@@ -251,7 +239,7 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
 
             for (int i = 0; i < listNBT.size(); i++) {
                 CompoundTag compoundNBT = listNBT.getCompound(i);
-                Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(ResourceLocation.tryParse(compoundNBT.getString("id")));
+                Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(ResourceLocation.tryParse(compoundNBT.getString("id")));
                 if (enchantment != null && compoundNBT.contains("lvl"))
                     amount += Mth.clamp(compoundNBT.getInt("lvl"), 1, Config.EnchantedLiquifier.MAX_ENCHANT_LVL) * Config.EnchantedLiquifier.PER_ENCHANT_FLUID;
             }
@@ -270,7 +258,7 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
 
             for (int i = 0; i < listNBT.size(); i++) {
                 CompoundTag compoundNBT = listNBT.getCompound(i);
-                Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(ResourceLocation.tryParse(compoundNBT.getString("id")));
+                Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(ResourceLocation.tryParse(compoundNBT.getString("id")));
                 if (enchantment != null && compoundNBT.contains("lvl"))
                     amount += Mth.clamp(compoundNBT.getInt("lvl"), 1, Config.EnchantedLiquifier.MAX_ENCHANT_LVL) * Config.EnchantedLiquifier.PER_ENCHANT_ENERGY;
             }

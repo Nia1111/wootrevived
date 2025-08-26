@@ -6,13 +6,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.util.Config;
@@ -27,7 +23,6 @@ public class CellBlockEntity extends FactoryBlockBaseEntity {
     }
 
     public final WootFluidTankHandler tankHandler = createTank();
-    public final LazyOptional<WootFluidTankHandler> tank = LazyOptional.of(() -> tankHandler);
 
     private WootFluidTankHandler createTank() {
         return new WootFluidTankHandler(1000, false, (stack) -> stack.isFluidEqual(new FluidStack(FluidsRegistry.SOURCE_VITALITY_FUEL_FLUID.get(), 1))) {
@@ -52,12 +47,8 @@ public class CellBlockEntity extends FactoryBlockBaseEntity {
         return 0;
     }
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side){
-        if(getBlockState().getValue(BlockStateProperties.ENABLED) && ForgeCapabilities.FLUID_HANDLER.equals(cap))
-            return tank.cast();
-
-        return LazyOptional.empty();
+    public static IFluidHandler getFluidHandlerCapability(CellBlockEntity blockEntity, Direction side){
+        return blockEntity.tankHandler;
     }
 
     @Override

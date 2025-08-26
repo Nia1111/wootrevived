@@ -1,6 +1,7 @@
 package wootrevived.woot.datagen;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -11,11 +12,10 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.Woot;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
@@ -40,8 +40,8 @@ public class ItemTagsGen extends ItemTagsProvider {
         String prefix = Tags.Items.DYES.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor dyeColor : DyeColor.values()) {
             ResourceLocation key = ResourceLocation.tryBuild(Woot.MOD_ID, "{color}_dye_plate".replace("{color}", dyeColor.getName()));
-            TagKey<Item> iTag = getForgeItemTag(prefix + dyeColor.getName());
-            Item item = ForgeRegistries.ITEMS.getValue(key);
+            TagKey<Item> iTag = getNeoForgeItemTag(prefix + dyeColor.getName());
+            Item item = BuiltInRegistries.ITEM.get(key);
             if (item == null || item == Items.AIR)
                 throw new IllegalStateException("Unknown woot item: " + key.toString());
             tag(iTag).add(item);
@@ -49,9 +49,8 @@ public class ItemTagsGen extends ItemTagsProvider {
         }
     }
 
-    // Straight from forge
     @SuppressWarnings("unchecked")
-    private TagKey<Item> getForgeItemTag(String name)
+    private TagKey<Item> getNeoForgeItemTag(String name)
     {
         try {
             name = name.toUpperCase(Locale.ENGLISH);

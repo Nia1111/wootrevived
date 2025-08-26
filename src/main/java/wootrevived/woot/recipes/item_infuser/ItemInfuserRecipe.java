@@ -1,11 +1,13 @@
 package wootrevived.woot.recipes.item_infuser;
 
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.RecipesRegistry;
@@ -16,8 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemInfuserRecipe extends WootRecipe {
-    public ItemInfuserRecipe(ResourceLocation recipeId, int energy, @Nullable List<Ingredient> inputItems, @Nullable List<FluidStack> inputFluids, @Nullable ItemStack outputItem, @Nullable FluidStack outputFluid) {
-        super(recipeId, energy, inputItems, inputFluids, outputItem, outputFluid);
+    public static final MapCodec<ItemInfuserRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+            Codec.INT.fieldOf("energy").forGetter(ItemInfuserRecipe::getEnergy),
+            Ingredient.CODEC.listOf().fieldOf("inputIngredients").forGetter(ItemInfuserRecipe::getInputItems),
+            FluidStack.CODEC.listOf().fieldOf("inputFluids").forGetter(ItemInfuserRecipe::getInputFluids),
+            ItemStack.CODEC.fieldOf("outputItem").forGetter(ItemInfuserRecipe::getOutputItem)
+    ).apply(inst, ItemInfuserRecipe::new));
+
+    public ItemInfuserRecipe(int energy, @Nullable List<Ingredient> inputItems, @Nullable List<FluidStack> inputFluids, @Nullable ItemStack outputItem) {
+        super(energy, inputItems, inputFluids, outputItem, null);
     }
 
     @Override
@@ -59,10 +68,8 @@ public class ItemInfuserRecipe extends WootRecipe {
 
     public static void loadRecipes(@NotNull RecipeManager manager){
         Validator.clear();
-        for(Recipe<?> recipe : manager.getRecipes()) {
-            if(recipe instanceof ItemInfuserRecipe fluidInfuserRecipe) {
-                Validator.add(fluidInfuserRecipe.getInputItems(), fluidInfuserRecipe.getInputFluids());
-            }
+        for(RecipeHolder<ItemInfuserRecipe> recipeHolder : manager.getAllRecipesFor(RecipesRegistry.ITEM_INFUSER_RECIPE_TYPE.get())) {
+            Validator.add(recipeHolder.value().getInputItems(), recipeHolder.value().getInputFluids());
         }
     }
 

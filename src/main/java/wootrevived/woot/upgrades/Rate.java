@@ -1,13 +1,13 @@
 package wootrevived.woot.upgrades;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.interfaces.WootGenerationProperties;
 import wootrevived.api.registrations.WootUpgradeItemRegistration;
@@ -36,7 +36,7 @@ public class Rate extends WootUpgradeItem {
 
     /* Upgrade Item registration */
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.Keys.ITEMS, Woot.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, Woot.MOD_ID);
 
     public static void register(WootUpgradeItemRegistration registration){
         ITEMS.register(registration.getWootEventBus());
@@ -48,17 +48,17 @@ public class Rate extends WootUpgradeItem {
     }
 
     public static final String COPPER_RATE_TAG = "copper_rate_upgrade";
-    public static final RegistryObject<Rate> COPPER_RATE_ITEM = ITEMS.register(COPPER_RATE_TAG, () -> new Rate(1));
+    public static final DeferredHolder<Item, Rate> COPPER_RATE_ITEM = ITEMS.register(COPPER_RATE_TAG, () -> new Rate(1));
 
     public static final String IRON_RATE_TAG = "iron_rate_upgrade";
-    public static final RegistryObject<Rate> IRON_RATE_ITEM = ITEMS.register(IRON_RATE_TAG, () -> new Rate(2));
+    public static final DeferredHolder<Item, Rate> IRON_RATE_ITEM = ITEMS.register(IRON_RATE_TAG, () -> new Rate(2));
 
     public static final String GOLD_RATE_TAG = "gold_rate_upgrade";
-    public static final RegistryObject<Rate> GOLD_RATE_ITEM = ITEMS.register(GOLD_RATE_TAG, () -> new Rate(3));
+    public static final DeferredHolder<Item, Rate> GOLD_RATE_ITEM = ITEMS.register(GOLD_RATE_TAG, () -> new Rate(3));
 
     public static final String DIAMOND_RATE_TAG = "diamond_rate_upgrade";
-    public static final RegistryObject<Rate> DIAMOND_RATE_ITEM = ITEMS.register(DIAMOND_RATE_TAG, () -> new Rate(4));
+    public static final DeferredHolder<Item, Rate> DIAMOND_RATE_ITEM = ITEMS.register(DIAMOND_RATE_TAG, () -> new Rate(4));
 
     public static final String NETHERITE_RATE_TAG = "netherite_rate_upgrade";
-    public static final RegistryObject<Rate> NETHERITE_RATE_ITEM = ITEMS.register(NETHERITE_RATE_TAG, () -> new Rate(5));
+    public static final DeferredHolder<Item, Rate> NETHERITE_RATE_ITEM = ITEMS.register(NETHERITE_RATE_TAG, () -> new Rate(5));
 }

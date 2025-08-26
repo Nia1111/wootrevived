@@ -18,15 +18,15 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import wootrevived.woot.network.NetworkChannel;
 import wootrevived.woot.network.WootMachineUpdate;
 import wootrevived.woot.util.common.MachineSide;
 import wootrevived.woot.util.common.MachineSideProperty;
@@ -268,7 +268,6 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     public abstract IItemHandler getInventory();
 
     public final WootEnergyStorage energyHandler = createEnergy();
-    public final LazyOptional<WootEnergyStorage> energy = LazyOptional.of(() -> energyHandler);
 
     private WootEnergyStorage createEnergy() {
         if(!hasEnergyCapability())
@@ -298,7 +297,6 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     public abstract boolean hasEnergyCapability();
 
     public final WootFluidTankHandler inputTankHandler = createInputTank();
-    public final LazyOptional<WootFluidTankHandler> inputTank = LazyOptional.of(() -> inputTankHandler);
 
     private WootFluidTankHandler createInputTank() {
         if(!hasInputFluidCapability())
@@ -325,28 +323,28 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     protected void tickFluid(WootFluidTankHandler fluidTank, BlockPos pos, Function<Direction, MachineSideProperty> getProperty) {
         for(Direction side : Direction.values()){
             if(getProperty.apply(side) == MachineSideProperty.PUSH){
-                BlockEntity be = level.getBlockEntity(pos.relative(side));
+                IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, pos.relative(side), side.getOpposite());
 
-                if(be == null) continue;
-                be.getCapability(ForgeCapabilities.FLUID_HANDLER, side.getOpposite()).ifPresent(handler -> {
-                    FluidStack simulation = FluidUtil.tryFluidTransfer(handler, fluidTank, FLUID_TICK_RATE, false);
-                    if(!simulation.isEmpty())
-                        FluidUtil.tryFluidTransfer(handler, fluidTank, simulation.getAmount(), true);
-                });
+                if(handler == null)
+                    continue;
+
+                FluidStack simulation = FluidUtil.tryFluidTransfer(handler, fluidTank, FLUID_TICK_RATE, false);
+                if(!simulation.isEmpty())
+                    FluidUtil.tryFluidTransfer(handler, fluidTank, simulation.getAmount(), true);
             } else if(getProperty.apply(side) == MachineSideProperty.PULL && !fluidTank.isOutput()){
-                BlockEntity be = level.getBlockEntity(pos.relative(side));
-                if(be == null) continue;
-                be.getCapability(ForgeCapabilities.FLUID_HANDLER, side.getOpposite()).ifPresent(handler -> {
-                    FluidStack simulation = FluidUtil.tryFluidTransfer(fluidTank, handler, FLUID_TICK_RATE, false);
-                    if(!simulation.isEmpty())
-                        FluidUtil.tryFluidTransfer(fluidTank, handler, simulation.getAmount(), true);
-                });
+                IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, pos.relative(side), side.getOpposite());
+
+                if(handler == null)
+                    continue;
+
+                FluidStack simulation = FluidUtil.tryFluidTransfer(fluidTank, handler, FLUID_TICK_RATE, false);
+                if(!simulation.isEmpty())
+                    FluidUtil.tryFluidTransfer(fluidTank, handler, simulation.getAmount(), true);
             }
         }
     }
 
     public final WootFluidTankHandler outputTankHandler = createOutputTank();
-    public final LazyOptional<WootFluidTankHandler> outputTank = LazyOptional.of(() -> outputTankHandler);
 
     private WootFluidTankHandler createOutputTank() {
         if(!hasOutputFluidCapability())
@@ -367,13 +365,8 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     public abstract int getOutputTankCapacity();
     public abstract boolean hasOutputFluidCapability();
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side){
-        if(hasEnergyCapability() && ForgeCapabilities.ENERGY.equals(cap)) {
-            return energy.cast();
-        }
-
-        return LazyOptional.empty();
+    public static IEnergyStorage getEnergyStorageCapability(WootMachineBlockEntity blockEntity, Direction side){
+        return blockEntity.energyHandler;
     }
 
     @Override
@@ -480,12 +473,13 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
         this.level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
         if(hasSidePropertiesChanged){
             hasSidePropertiesChanged = false;
+            invalidateCapabilities();
             this.level.updateNeighborsAt(getBlockPos(), getBlockState().getBlock());
         }
     }
 
     public void sendNewState(){
-        NetworkChannel.channel.sendToServer(new WootMachineUpdate(getBlockPos(), redstoneMode, getAllMachineSidesProperties()));
+        PacketDistributor.SERVER.noArg().send(new WootMachineUpdate(getBlockPos(), redstoneMode, getAllMachineSidesProperties()));
     }
 
     public void handleNewState(WootMachineUpdate update){

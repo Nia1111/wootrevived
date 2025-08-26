@@ -1,6 +1,6 @@
 package wootrevived.woot.datagen.recipes;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
@@ -10,21 +10,19 @@ import wootrevived.woot.recipes.fluid_infuser.FluidInfuserRecipeBuilder;
 import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.registries.ItemsRegistry;
 
-import java.util.function.Consumer;
-
 public class FluidInfuser {
-    public static void registerRecipes(Recipes recipes, Consumer<FinishedRecipe> consumer) {
+    public static void registerRecipes(Recipes recipes, RecipeOutput output) {
         FluidInfuserRecipeBuilder.fluidInfuserRecipe(FluidsRegistry.SOURCE_VITALITY_FUEL_FLUID.get(), 1250)
                 .ingredient(Ingredient.of(Blocks.MAGMA_BLOCK))
                 .fluid(FluidsRegistry.SOURCE_ENCHANTED_FLUID.get())
                 .energy(1000)
-                .save(consumer, "vitality_fuel_enchanted_1");
+                .save(output, "vitality_fuel_enchanted_1");
 
         FluidInfuserRecipeBuilder.fluidInfuserRecipe(FluidsRegistry.SOURCE_VITALITY_FUEL_FLUID.get(), 1450)
                 .ingredient(Ingredient.of(Blocks.END_STONE))
                 .fluid(FluidsRegistry.SOURCE_ENCHANTED_FLUID.get())
                 .energy(1000)
-                .save(consumer, "vitality_fuel_enchanted_2");
+                .save(output, "vitality_fuel_enchanted_2");
 
         class IngredientRecipe {
             final Ingredient ingredient;
@@ -62,7 +60,7 @@ public class FluidInfuser {
                     .ingredient(vitalityFuelIngredients[i].ingredient)
                     .fluid(FluidsRegistry.SOURCE_MOB_TEARS_FLUID.get())
                     .energy(1000)
-                    .save(consumer, "vitality_fuel_" + i);
+                    .save(output, "vitality_fuel_" + i);
         }
 
         IngredientRecipe[] mobTearsIngredients = new IngredientRecipe[]{
@@ -84,7 +82,7 @@ public class FluidInfuser {
                     .ingredient(mobTearsIngredients[i].ingredient)
                     .fluid(Fluids.WATER)
                     .energy(1000)
-                    .save(consumer, "mob_tears_" + i);
+                    .save(output, "mob_tears_" + i);
         }
     }
 }

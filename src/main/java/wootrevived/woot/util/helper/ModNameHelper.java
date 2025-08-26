@@ -3,8 +3,8 @@ package wootrevived.woot.util.helper;
 import com.google.common.base.CaseFormat;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 
 import java.util.Optional;
 

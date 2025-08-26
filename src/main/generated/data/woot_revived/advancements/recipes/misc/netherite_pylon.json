@@ -44,16 +44,15 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "a",
       "b",
-      "c",
-      "has_the_recipe"
+      "c"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:netherite_pylon"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

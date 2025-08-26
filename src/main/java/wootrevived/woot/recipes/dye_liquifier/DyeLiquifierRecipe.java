@@ -1,6 +1,8 @@
 package wootrevived.woot.recipes.dye_liquifier;
 
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -14,13 +16,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DyeLiquifierRecipe extends WootRecipe {
+    public static final MapCodec<DyeLiquifierRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+            Codec.INT.fieldOf("energy").forGetter(DyeLiquifierRecipe::getEnergy),
+            Codec.INT.fieldOf("red").forGetter(DyeLiquifierRecipe::getRed),
+            Codec.INT.fieldOf("yellow").forGetter(DyeLiquifierRecipe::getYellow),
+            Codec.INT.fieldOf("blue").forGetter(DyeLiquifierRecipe::getBlue),
+            Codec.INT.fieldOf("white").forGetter(DyeLiquifierRecipe::getWhite),
+            Ingredient.CODEC.listOf().fieldOf("inputIngredients").forGetter(DyeLiquifierRecipe::getInputItems)
+    ).apply(inst, DyeLiquifierRecipe::new));
+
     private final int red;
     private final int yellow;
     private final int blue;
     private final int white;
 
-    public DyeLiquifierRecipe(ResourceLocation recipeId, int energy, int red, int yellow, int blue, int white, @Nullable List<Ingredient> inputItems) {
-        super(recipeId, energy, inputItems, null, null, null);
+    public DyeLiquifierRecipe(int energy, int red, int yellow, int blue, int white, @Nullable List<Ingredient> inputItems) {
+        super(energy, inputItems, null, null, null);
         this.red = red;
         this.yellow = yellow;
         this.blue = blue;
@@ -64,10 +75,8 @@ public class DyeLiquifierRecipe extends WootRecipe {
 
     public static void loadRecipes(@NotNull RecipeManager manager){
         Validator.clear();
-        for(Recipe<?> recipe : manager.getRecipes()) {
-            if(recipe instanceof DyeLiquifierRecipe dyeLiquifierRecipe) {
-                Validator.add(dyeLiquifierRecipe.getInputItems());
-            }
+        for(RecipeHolder<DyeLiquifierRecipe> recipeHolder : manager.getAllRecipesFor(RecipesRegistry.DYE_LIQUIFIER_RECIPE_TYPE.get())) {
+            Validator.add(recipeHolder.value().getInputItems());
         }
     }
 

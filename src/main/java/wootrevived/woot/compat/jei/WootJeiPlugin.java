@@ -2,12 +2,13 @@ package wootrevived.woot.compat.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -15,10 +16,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.Woot;
 import wootrevived.woot.compat.jei.categories.*;
@@ -66,7 +67,8 @@ public class WootJeiPlugin implements IModPlugin {
         List<FluidInfuserRecipe> fluidInfuserRecipes = new ArrayList<>();
         List<ItemInfuserRecipe> itemInfuserRecipes = new ArrayList<>();
 
-        for(Recipe<?> recipe : recipeManager.getRecipes()) {
+        for(RecipeHolder<?> recipeHolder : recipeManager.getRecipes()) {
+            Recipe<?> recipe = recipeHolder.value();
             if(recipe instanceof StygianAnvilRecipe stygianAnvilRecipe) {
                 stygianAnvilRecipes.add(stygianAnvilRecipe);
             } else if(recipe instanceof DyeLiquifierRecipe dyeLiquifierRecipe) {
@@ -86,7 +88,7 @@ public class WootJeiPlugin implements IModPlugin {
         List<EnchantedLiquifierRecipe> enchantedLiquifierRecipes = new ArrayList<>();
 
         Map<Integer, List<ItemStack>> booksMap = new HashMap<>();
-        for(Enchantment enchantment : ForgeRegistries.ENCHANTMENTS.getValues()){
+        for(Enchantment enchantment : BuiltInRegistries.ENCHANTMENT){
             for(int enchantLevel = enchantment.getMinLevel(); enchantLevel <= enchantment.getMaxLevel(); ++enchantLevel) {
                 ItemStack itemStack = Items.ENCHANTED_BOOK.getDefaultInstance();
                 itemStack.enchant(enchantment, enchantLevel);
@@ -122,8 +124,8 @@ public class WootJeiPlugin implements IModPlugin {
                 Component.translatable("jei.woot_revived.shard")
         );
 
-        registration.addIngredientInfo(
-                BlocksRegistry.STYGIAN_ANVIL_BLOCK.get(),
+        registration.addItemStackInfo(
+                BlocksRegistry.STYGIAN_ANVIL_BLOCK_ITEM.get().getDefaultInstance(),
                 Component.translatable("jei.woot_revived.anvil.0"),
                 Component.translatable("jei.woot_revived.anvil.1"),
                 Component.translatable("jei.woot_revived.anvil.2"),
@@ -144,17 +146,17 @@ public class WootJeiPlugin implements IModPlugin {
 
         registration.addIngredientInfo(
                 new FluidStack(FluidsRegistry.SOURCE_PURE_DYE_FLUID.get(), 1),
-                ForgeTypes.FLUID_STACK,
+                NeoForgeTypes.FLUID_STACK,
                 Component.translatable("jei.woot_revived.pure_dye_fluid")
         );
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(BlocksRegistry.STYGIAN_ANVIL_BLOCK.get(), WootJeiPluginTypes.STYGIAN_ANVIL_TYPE);
-        registration.addRecipeCatalyst(BlocksRegistry.DYE_LIQUIFIER_BLOCK.get(), WootJeiPluginTypes.DYE_LIQUIFIER_TYPE);
-        registration.addRecipeCatalyst(BlocksRegistry.FLUID_INFUSER_BLOCK.get(), WootJeiPluginTypes.FLUID_INFUSER_TYPE);
-        registration.addRecipeCatalyst(BlocksRegistry.ITEM_INFUSER_BLOCK.get(), WootJeiPluginTypes.ITEM_INFUSER_TYPE);
-        registration.addRecipeCatalyst(BlocksRegistry.ENCHANTED_LIQUIFIER_BLOCK.get(), WootJeiPluginTypes.ENCHANTED_LIQUIFIER_TYPE);
+        registration.addRecipeCatalyst(BlocksRegistry.STYGIAN_ANVIL_BLOCK_ITEM.get().getDefaultInstance(), WootJeiPluginTypes.STYGIAN_ANVIL_TYPE);
+        registration.addRecipeCatalyst(BlocksRegistry.DYE_LIQUIFIER_BLOCK_ITEM.get().getDefaultInstance(), WootJeiPluginTypes.DYE_LIQUIFIER_TYPE);
+        registration.addRecipeCatalyst(BlocksRegistry.FLUID_INFUSER_BLOCK_ITEM.get().getDefaultInstance(), WootJeiPluginTypes.FLUID_INFUSER_TYPE);
+        registration.addRecipeCatalyst(BlocksRegistry.ITEM_INFUSER_BLOCK_ITEM.get().getDefaultInstance(), WootJeiPluginTypes.ITEM_INFUSER_TYPE);
+        registration.addRecipeCatalyst(BlocksRegistry.ENCHANTED_LIQUIFIER_BLOCK_ITEM.get().getDefaultInstance(), WootJeiPluginTypes.ENCHANTED_LIQUIFIER_TYPE);
     }
 }

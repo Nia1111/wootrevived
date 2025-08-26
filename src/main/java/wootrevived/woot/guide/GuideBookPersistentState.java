@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GuideBookPersistentState extends SavedData {
+    private static final Factory<GuideBookPersistentState> FACTORY = new Factory<>(GuideBookPersistentState::new, GuideBookPersistentState::fromTag);
     private static final String NAME = Woot.MOD_ID + "_guidebook";
     private final Set<String> receivedPlayers;
 
@@ -56,6 +57,6 @@ public class GuideBookPersistentState extends SavedData {
 
     public static GuideBookPersistentState get(MinecraftServer server){
         ServerLevel level = server.getLevel(ServerLevel.OVERWORLD);
-        return level.getDataStorage().computeIfAbsent(GuideBookPersistentState::fromTag, GuideBookPersistentState::new, NAME);
+        return level.getDataStorage().computeIfAbsent(FACTORY, NAME);
     }
 }

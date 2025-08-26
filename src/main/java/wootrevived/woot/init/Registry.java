@@ -4,14 +4,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.*;
-import wootrevived.woot.client.sprite.factory_upgrade.FactoryUpgradeDynamicSpriteSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +23,13 @@ public class Registry {
         TABS.register(bus);
 
         RecipesRegistry.register(bus);
-        if(FMLEnvironment.dist == Dist.CLIENT)
-            FactoryUpgradeDynamicSpriteSource.register();
     }
 
     /* Creative Tab */
 
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Woot.MOD_ID);
     public static final List<Supplier<? extends ItemLike>> WOOT_TAB_ITEMS = new ArrayList<>();
-    public static final RegistryObject<CreativeModeTab> WOOT_TAB = TABS.register("woot_tab",
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> WOOT_TAB = TABS.register("woot_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.woot_revived"))
                     .icon(BlocksRegistry.STYGIAN_ANVIL_BLOCK_ITEM.get()::getDefaultInstance)
@@ -42,7 +37,7 @@ public class Registry {
                             WOOT_TAB_ITEMS.forEach(itemLike -> output.accept(itemLike.get())))
                     .build());
 
-    public static void addToCreativeTab(RegistryObject<? extends ItemLike> itemLike){
+    public static void addToCreativeTab(DeferredHolder<? extends ItemLike, ? extends ItemLike> itemLike){
         WOOT_TAB_ITEMS.add(itemLike);
     }
 }

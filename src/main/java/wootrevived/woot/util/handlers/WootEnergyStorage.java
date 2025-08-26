@@ -2,8 +2,8 @@ package wootrevived.woot.util.handlers;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.energy.EnergyStorage;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.energy.EnergyStorage;
 import wootrevived.woot.util.entity.WootTags;
 
 public class WootEnergyStorage extends EnergyStorage implements INBTSerializable<Tag> {

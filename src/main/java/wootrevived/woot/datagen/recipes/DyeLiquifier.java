@@ -1,6 +1,6 @@
 package wootrevived.woot.datagen.recipes;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -9,10 +9,9 @@ import wootrevived.woot.recipes.dye_liquifier.DyeLiquifierRecipeBuilder;
 import wootrevived.woot.util.common.DyeMakeup;
 
 import java.util.Locale;
-import java.util.function.Consumer;
 
 public class DyeLiquifier {
-    public static void registerRecipes(Recipes recipes, Consumer<FinishedRecipe> consumer){
+    public static void registerRecipes(Recipes recipes, RecipeOutput output){
         for (DyeMakeup d : DyeMakeup.values()) {
             DyeLiquifierRecipeBuilder.dyeLiquifierRecipe()
                     .ingredient(Ingredient.of(d.getItemTag()))
@@ -21,7 +20,7 @@ public class DyeLiquifier {
                     .yellow(d.getYellow())
                     .blue(d.getBlue())
                     .white(d.getWhite())
-                    .save(consumer, d.name().toLowerCase(Locale.ROOT));
+                    .save(output, d.name().toLowerCase(Locale.ROOT));
         }
 
         class VanillaDyes {
@@ -75,7 +74,7 @@ public class DyeLiquifier {
                     .blue(d.dyeMakeup.getBlue())
                     .white(d.dyeMakeup.getWhite())
                     .multiply(d.multiply)
-                    .save(consumer, d.name);
+                    .save(output, d.name);
         }
     }
 }

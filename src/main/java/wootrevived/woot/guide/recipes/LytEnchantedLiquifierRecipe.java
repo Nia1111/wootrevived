@@ -5,12 +5,12 @@ import guideme.document.block.LytBox;
 import guideme.document.block.LytSlot;
 import guideme.layout.LayoutContext;
 import guideme.render.RenderContext;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
 import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.util.Config;
 import wootrevived.woot.util.render.WootContainerScreen;
@@ -42,7 +42,7 @@ public class LytEnchantedLiquifierRecipe extends LytBox {
 
     public LytEnchantedLiquifierRecipe(int enchantLevel){
         List<ItemStack> items = new ArrayList<>();
-        for(Enchantment enchantment : ForgeRegistries.ENCHANTMENTS.getValues()){
+        for(Enchantment enchantment : BuiltInRegistries.ENCHANTMENT){
             if(enchantLevel > enchantment.getMaxLevel() || enchantLevel < enchantment.getMinLevel())
                 continue;
 

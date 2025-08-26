@@ -1,18 +1,24 @@
 package wootrevived.woot.datagen;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.SpriteSourceProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.SpriteSourceProvider;
+import wootrevived.woot.Woot;
 import wootrevived.woot.client.sprite.factory_upgrade.FactoryUpgradeDynamicSpriteSource;
+import wootrevived.woot.registries.BlocksRegistry;
+
+import java.util.concurrent.CompletableFuture;
 
 public class Atlas extends SpriteSourceProvider {
-    public Atlas(PackOutput output, ExistingFileHelper fileHelper){
-        super(output, fileHelper, "minecraft");
+    public Atlas(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper){
+        super(output, lookupProvider, "minecraft", existingFileHelper);
     }
 
     @Override
-    protected void addSources() {
+    protected void gather() {
         atlas(BLOCKS_ATLAS)
-                .addSource(new FactoryUpgradeDynamicSpriteSource(FactoryUpgradeDynamicSpriteSource.Atlas.BLOCKS));
+                .addSource(new FactoryUpgradeDynamicSpriteSource(ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.FACTORY_UPGRADE_TAG)));
     }
 }

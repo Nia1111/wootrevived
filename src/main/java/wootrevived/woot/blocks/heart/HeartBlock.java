@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +24,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.multiblock.MultiBlockFactory;
 import wootrevived.woot.util.render.WootShapes;
@@ -88,7 +86,7 @@ public class HeartBlock extends MultiBlockFactory {
             if (!(level.getBlockEntity(hit.getBlockPos()) instanceof HeartBlockEntity heart))
                 throw new IllegalStateException("BlockEntity is missing");
 
-            NetworkHooks.openScreen((ServerPlayer) player, heart, hit.getBlockPos());
+            player.openMenu(heart, buf -> buf.writeBlockPos(hit.getBlockPos()));
 
             return InteractionResult.SUCCESS;
         }

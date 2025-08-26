@@ -1,19 +1,14 @@
 package wootrevived.woot.recipes.fluid_infuser;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.fluids.FluidStack;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.BlocksRegistry;
-import wootrevived.woot.registries.RecipesRegistry;
-import wootrevived.woot.util.recipes.WootFinishedRecipe;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class FluidInfuserRecipeBuilder {
     private FluidStack inputFluid;
@@ -62,21 +57,11 @@ public class FluidInfuserRecipeBuilder {
         return this;
     }
 
-    public void save(Consumer<FinishedRecipe> consumer, String path){
-        consumer.accept(new Result(
+    public void save(RecipeOutput recipeOutput, String path){
+        recipeOutput.accept(
                 ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.FLUID_INFUSER_TAG + "/" + path),
-                energy, inputFluid, ingredient, outputFluid
-        ));
-    }
-
-    public static class Result extends WootFinishedRecipe {
-        protected Result(ResourceLocation recipeId, int energy, FluidStack inputFluid, Ingredient ingredient, FluidStack outputFluid) {
-            super(recipeId, energy, List.of(ingredient), List.of(inputFluid), null, outputFluid);
-        }
-
-        @Override
-        public @NotNull RecipeSerializer<?> getType() {
-            return RecipesRegistry.FLUID_INFUSER_RECIPE_SERIALIZER.get();
-        }
+                new FluidInfuserRecipe(energy, List.of(ingredient), List.of(inputFluid), outputFluid),
+                null
+        );
     }
 }

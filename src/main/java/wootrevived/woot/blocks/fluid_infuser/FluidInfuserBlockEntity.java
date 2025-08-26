@@ -11,17 +11,14 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.client.render.fluid_infuser.FluidInfuserContainerMenu;
 import wootrevived.woot.registries.BlocksRegistry;
@@ -94,7 +91,6 @@ public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements M
     };
 
     public static final int INPUT_SLOT = 0;
-    private final LazyOptional<IItemHandler> inventory = LazyOptional.of(() -> inventoryHandler);
     public IItemHandler getInventory() { return inventoryHandler; }
 
     public record Properties(FluidInfuserBlockEntity entity, MachineSide machineSide){
@@ -116,32 +112,24 @@ public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements M
         return new Properties(this, MachineSide.getMachineSide(facing, side));
     }
 
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @org.jetbrains.annotations.Nullable Direction side){
-        if(side == null)
-            return super.getCapability(cap, side);
+    public static IItemHandler getItemHandlerCapability(FluidInfuserBlockEntity blockEntity, Direction side){
+        Properties properties = blockEntity.getProperties(side);
+        if(properties.getIngredientProperty() != MachineSideProperty.DISABLED)
+            return new WootItemStackHandlerWrapper(blockEntity.inventoryHandler, properties::getIngredientProperty);
+        return null;
+    }
 
-        Properties properties = getProperties(side);
-
-        if(ForgeCapabilities.ITEM_HANDLER.equals(cap)){
-            MachineSideProperty property = properties.getIngredientProperty();
-            if(property != MachineSideProperty.DISABLED)
-                return inventory.lazyMap(handler -> new WootItemStackHandlerWrapper((WootItemStackHandler) handler, properties::getIngredientProperty)).cast();
-        }
-
-        if(ForgeCapabilities.FLUID_HANDLER.equals(cap)){
-            MachineSideProperty inputProperty = properties.getInputFluidProperty();
-            MachineSideProperty outputProperty = properties.getOutputFluidProperty();
-            if(outputProperty == MachineSideProperty.PUSH)
-                return outputTank.lazyMap(tank -> new WootFluidTankHandlerWrapper(tank, properties::getOutputFluidProperty)).cast();
-            if(inputProperty != MachineSideProperty.DISABLED)
-                return inputTank.lazyMap(tank -> new WootFluidTankHandlerWrapper(tank, properties::getInputFluidProperty)).cast();
-            if(outputProperty == MachineSideProperty.ENABLED)
-                return outputTank.lazyMap(tank -> new WootFluidTankHandlerWrapper(tank, properties::getOutputFluidProperty)).cast();
-        }
-
-        return super.getCapability(cap, side);
+    public static IFluidHandler getFluidHandlerCapability(FluidInfuserBlockEntity blockEntity, Direction side){
+        Properties properties = blockEntity.getProperties(side);
+        MachineSideProperty inputProperty = properties.getInputFluidProperty();
+        MachineSideProperty outputProperty = properties.getOutputFluidProperty();
+        if(outputProperty == MachineSideProperty.PUSH)
+            return new WootFluidTankHandlerWrapper(blockEntity.outputTankHandler, properties::getOutputFluidProperty);
+        if(inputProperty != MachineSideProperty.DISABLED)
+            return new WootFluidTankHandlerWrapper(blockEntity.inputTankHandler, properties::getInputFluidProperty);
+        if(outputProperty == MachineSideProperty.ENABLED)
+            return new WootFluidTankHandlerWrapper(blockEntity.outputTankHandler, properties::getOutputFluidProperty);
+        return null;
     }
 
     @Override
@@ -256,7 +244,7 @@ public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements M
     private void getRecipe() {
         clearRecipe();
 
-        FluidStack inFluid = inputTank.map(FluidTank::getFluid).orElse(FluidStack.EMPTY);
+        FluidStack inFluid = inputTankHandler.getFluid();
         if (inFluid.isEmpty()) {
             clearRecipe();
             return;
@@ -268,13 +256,14 @@ public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements M
             return;
         }
 
-        // Get a list of recipes with matching catalyst
-        recipe = level.getRecipeManager().getRecipeFor(
+        RecipeHolder<FluidInfuserRecipe> recipeHolder = level.getRecipeManager().getRecipeFor(
                 RecipesRegistry.FLUID_INFUSER_RECIPE_TYPE.get(),
                 new WootContainer(
                         Either.right(inputTankHandler.getFluid()),
                         Either.left(inventoryHandler.getStackInSlot(INPUT_SLOT))
                 ), level).orElse(null);
+
+        recipe = recipeHolder == null ? null : recipeHolder.value();
     }
 
     public int getEnergyCapacity(){

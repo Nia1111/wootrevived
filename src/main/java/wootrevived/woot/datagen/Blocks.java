@@ -1,14 +1,18 @@
 package wootrevived.woot.datagen;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.*;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ModelBuilder;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import wootrevived.woot.Woot;
 import wootrevived.woot.util.fluid.WootFluidType;
 import wootrevived.woot.registries.BlocksRegistry;
@@ -79,55 +83,55 @@ public class Blocks extends BlockStateProvider {
     }
 
     public ResourceLocation getBlockResource(Block block){
-        return Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block));
+        return Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(block));
     }
 
-    public void fluid(RegistryObject<?> block, RegistryObject<?> fluid){
-        ResourceLocation blockResource = getBlockResource((Block)block.get());
+    public void fluid(DeferredHolder<Block, ? extends Block> block, DeferredHolder<FluidType, ? extends FluidType> fluid){
+        ResourceLocation blockResource = getBlockResource(block.get());
         WootFluidType fluidType = (WootFluidType) fluid.get();
         ModelFile model = models().getBuilder(blockResource.getPath())
                         .texture("particle", fluidType.getStillTexture());
-        VariantBlockStateBuilder builder = getVariantBuilder((Block)block.get());
+        VariantBlockStateBuilder builder = getVariantBuilder(block.get());
         builder.partialState().modelForState().modelFile(model).addModel();
     }
 
-    public void orientable(RegistryObject<?> block){
-        ResourceLocation blockResource = getBlockResource((Block)block.get());
-        horizontalBlock((Block)block.get(), FACTORY_BASE, blockResource.withPrefix("block/"), FACTORY_BASE);
+    public void orientable(DeferredHolder<Block, ? extends Block> block){
+        ResourceLocation blockResource = getBlockResource(block.get());
+        horizontalBlock(block.get(), FACTORY_BASE, blockResource.withPrefix("block/"), FACTORY_BASE);
     }
 
-    public void cubeAll(RegistryObject<?> block){
-        ResourceLocation blockResource = getBlockResource((Block)block.get());
+    public void cubeAll(DeferredHolder<Block, ? extends Block> block){
+        ResourceLocation blockResource = getBlockResource(block.get());
         ModelFile model = models().cubeAll(blockResource.getPath(), blockResource.withPrefix("block/"));
-        VariantBlockStateBuilder builder = getVariantBuilder((Block)block.get());
+        VariantBlockStateBuilder builder = getVariantBuilder(block.get());
         builder.partialState().modelForState().modelFile(model).addModel();
     }
 
-    public void cubeColumn(RegistryObject<?> block){
-        ResourceLocation blockResource = getBlockResource((Block)block.get());
+    public void cubeColumn(DeferredHolder<Block, ? extends Block> block){
+        ResourceLocation blockResource = getBlockResource(block.get());
         ModelFile model = models().cubeColumn(blockResource.getPath(), blockResource.withPrefix("block/"), FACTORY_BASE);
-        VariantBlockStateBuilder builder = getVariantBuilder((Block)block.get());
+        VariantBlockStateBuilder builder = getVariantBuilder(block.get());
         builder.partialState().modelForState().modelFile(model).addModel();
     }
 
-    public void cubeColumnCreative(RegistryObject<?> block){
-        ResourceLocation blockResource = getBlockResource((Block)block.get());
+    public void cubeColumnCreative(DeferredHolder<Block, ? extends Block> block){
+        ResourceLocation blockResource = getBlockResource(block.get());
         ModelFile model = models().cubeColumn(blockResource.getPath(), blockResource.withPrefix("block/"), CREATIVE_BASE);
-        VariantBlockStateBuilder builder = getVariantBuilder((Block)block.get());
+        VariantBlockStateBuilder builder = getVariantBuilder(block.get());
         builder.partialState().modelForState().modelFile(model).addModel();
     }
 
-    public void upgrade(RegistryObject<?> block){
-        ResourceLocation blockResource = getBlockResource((Block)block.get());
+    public void upgrade(DeferredHolder<Block, ? extends Block> block){
+        ResourceLocation blockResource = getBlockResource(block.get());
         ModelFile model = models().cubeColumn(blockResource.getPath(), blockResource.withPrefix("block/"), FACTORY_BASE)
                 .customLoader(FactoryUpgradeModelBuilder::new)
                 .end();
-        VariantBlockStateBuilder builder = getVariantBuilder((Block)block.get());
+        VariantBlockStateBuilder builder = getVariantBuilder(block.get());
         builder.partialState().modelForState().modelFile(model).addModel();
     }
 
-    public void layout(RegistryObject<?> block){
-        ResourceLocation blockResource = getBlockResource((Block)block.get());
+    public void layout(DeferredHolder<Block, ? extends Block>block){
+        ResourceLocation blockResource = getBlockResource(block.get());
         ModelFile model = models().withExistingParent(blockResource.getPath(), ResourceLocation.tryBuild("minecraft", "block/block"))
                 .texture("particle", blockResource.withPrefix("block/"))
                 .texture("end", blockResource.withPrefix("block/"))
@@ -151,11 +155,11 @@ public class Blocks extends BlockStateProvider {
                     .face(Direction.WEST).texture("#secondary").cullface(Direction.WEST).end()
                     .face(Direction.EAST).texture("#secondary").cullface(Direction.EAST).end()
                 .end();
-        horizontalBlock((Block)block.get(), model);
+        horizontalBlock(block.get(), model);
     }
 
-    public void anvil(RegistryObject<?> block){
-        ResourceLocation blockResource = getBlockResource((Block)block.get());
+    public void anvil(DeferredHolder<Block, ? extends Block> block){
+        ResourceLocation blockResource = getBlockResource(block.get());
         ModelFile model = models().withExistingParent(blockResource.getPath(), ResourceLocation.tryBuild("minecraft", "block/block"))
                 .texture("particle", blockResource.withPrefix("block/"))
                 .texture("base", ResourceLocation.tryBuild("minecraft", "block/crying_obsidian"))
@@ -209,6 +213,6 @@ public class Blocks extends BlockStateProvider {
                     .face(Direction.WEST).uvs(10, 0, 16, 16).texture("#body").rotation(ModelBuilder.FaceRotation.CLOCKWISE_90).end()
                     .face(Direction.EAST).uvs(16, 0, 10, 16).texture("#body").rotation(ModelBuilder.FaceRotation.COUNTERCLOCKWISE_90).end()
                 .end();
-        horizontalBlock((Block)block.get(), model);
+        horizontalBlock(block.get(), model);
     }
 }

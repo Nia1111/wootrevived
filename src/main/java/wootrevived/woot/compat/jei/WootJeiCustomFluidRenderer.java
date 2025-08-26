@@ -4,7 +4,7 @@ import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.util.render.WootContainerScreen;
 
@@ -26,7 +26,6 @@ public class WootJeiCustomFluidRenderer implements IIngredientRenderer<FluidStac
     }
 
     @Override
-    @SuppressWarnings("removal")
     public @NotNull List<Component> getTooltip(FluidStack ingredient, @NotNull TooltipFlag tooltipFlag) {
         return List.of(
                 Component.empty()

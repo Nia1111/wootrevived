@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.client.render.dye_liquifier.DyeLiquifierContainerScreen;
 import wootrevived.woot.compat.jei.WootJeiPluginTypes;
 import wootrevived.woot.events.client.GlobalClientTicker;
@@ -26,6 +25,7 @@ import wootrevived.woot.util.common.DyeMakeup;
 import wootrevived.woot.util.render.WootContainerScreen;
 
 public class DyeLiquifierRecipeCategory implements IRecipeCategory<DyeLiquifierRecipe> {
+    private static IDrawable background;
     private static IDrawable icon;
 
     private static final int GUI_WIDTH = 119;
@@ -48,7 +48,8 @@ public class DyeLiquifierRecipeCategory implements IRecipeCategory<DyeLiquifierR
     private static final int PROGRESS_Y = 7;
 
     public DyeLiquifierRecipeCategory(IGuiHelper guiHelper) {
-        icon = guiHelper.createDrawableItemLike(BlocksRegistry.DYE_LIQUIFIER_BLOCK.get());
+        background = guiHelper.createBlankDrawable(GUI_WIDTH, GUI_HEIGHT);
+        icon = guiHelper.createDrawableItemStack(BlocksRegistry.DYE_LIQUIFIER_BLOCK_ITEM.get().getDefaultInstance());
     }
 
     @Override
@@ -80,13 +81,8 @@ public class DyeLiquifierRecipeCategory implements IRecipeCategory<DyeLiquifierR
     }
 
     @Override
-    public int getWidth() {
-        return GUI_WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return GUI_HEIGHT;
+    public @NotNull IDrawable getBackground() {
+        return background;
     }
 
     @Override
@@ -100,19 +96,19 @@ public class DyeLiquifierRecipeCategory implements IRecipeCategory<DyeLiquifierR
     }
 
     @Override
-    public @Nullable IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, DyeLiquifierRecipe recipe, @NotNull IFocusGroup focuses) {
-        IRecipeSlotBuilder input = builder.addInputSlot(INPUT_SLOT_X + 1, INPUT_SLOT_Y + 1);
+        IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X + 1, INPUT_SLOT_Y + 1);
         for(Ingredient ingredient : recipe.getInputItems()) {
             input.addIngredients(ingredient);
         }
 
         builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
-                .addFluidStack(FluidsRegistry.SOURCE_PURE_DYE_FLUID.get())
-                .addItemLike(FluidsRegistry.PURE_DYE_FLUID_BUCKET.get());
+                .addFluidStack(FluidsRegistry.SOURCE_PURE_DYE_FLUID.get(), 1)
+                .addItemStack(FluidsRegistry.PURE_DYE_FLUID_BUCKET.get().getDefaultInstance());
     }
 }

@@ -5,9 +5,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class WootButton extends AbstractWidget {
@@ -24,9 +25,8 @@ public abstract class WootButton extends AbstractWidget {
     public abstract void onPress();
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void onClick(double mouseX, double mouseY) {
-        if (this.active && this.visible &&
+    public void onClick(double mouseX, double mouseY, int button) {
+        if (this.active && this.visible && button == GLFW.GLFW_MOUSE_BUTTON_LEFT &&
                 mouseX >= this.getX() && mouseY >= this.getY() &&
                 mouseX < this.getX() + this.width && mouseY < this.getY() + this.height) {
             this.playDownSound(Minecraft.getInstance().getSoundManager());

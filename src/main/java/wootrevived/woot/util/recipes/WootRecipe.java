@@ -1,14 +1,13 @@
 package wootrevived.woot.util.recipes;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class WootRecipe implements Recipe<Container> {
-    protected final ResourceLocation recipeId;
-
     protected final ArrayList<Ingredient> inputItems = new ArrayList<>();
     protected final ArrayList<FluidStack> inputFluids = new ArrayList<>();
 
@@ -26,8 +23,7 @@ public abstract class WootRecipe implements Recipe<Container> {
 
     protected final int energy;
 
-    protected WootRecipe(ResourceLocation recipeId, int energy, @Nullable List<Ingredient> inputItems, @Nullable List<FluidStack> inputFluids, @Nullable ItemStack outputItem, @Nullable FluidStack outputFluid){
-        this.recipeId = recipeId;
+    protected WootRecipe(int energy, @Nullable List<Ingredient> inputItems, @Nullable List<FluidStack> inputFluids, @Nullable ItemStack outputItem, @Nullable FluidStack outputFluid){
         this.energy = energy;
 
         if(inputItems != null) this.inputItems.addAll(inputItems);
@@ -78,11 +74,6 @@ public abstract class WootRecipe implements Recipe<Container> {
     @Override
     public boolean isSpecial() {
         return true;
-    }
-
-    @Override
-    public @NotNull ResourceLocation getId() {
-        return recipeId;
     }
 
     @Override

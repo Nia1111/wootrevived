@@ -11,16 +11,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.util.entity.WootTags;
 import wootrevived.woot.util.handlers.WootFluidTankHandler;
-import org.jetbrains.annotations.Nullable;
 
 public class CreativeTankBlockEntity extends BlockEntity implements BlockEntityTicker<BlockEntity> {
     public CreativeTankBlockEntity(BlockPos pos, BlockState state) {
@@ -28,7 +25,6 @@ public class CreativeTankBlockEntity extends BlockEntity implements BlockEntityT
     }
 
     public WootFluidTankHandler inputTankHandler = createInputTank();
-    public LazyOptional<WootFluidTankHandler> inputTank = LazyOptional.of(() -> inputTankHandler);
 
     private WootFluidTankHandler createInputTank() {
         return new WootFluidTankHandler(Integer.MAX_VALUE, false) {
@@ -49,12 +45,11 @@ public class CreativeTankBlockEntity extends BlockEntity implements BlockEntityT
     @Override
     public void tick(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull BlockEntity blockEntity) {
         for (Direction facing : Direction.values()) {
-            BlockEntity be = level.getBlockEntity(getBlockPos().relative(facing));
-
-            if(be == null)
+            IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, getBlockPos().relative(facing), facing.getOpposite());
+            if(handler == null)
                 continue;
 
-            be.getCapability(ForgeCapabilities.FLUID_HANDLER).ifPresent((tank) -> tank.fill(new FluidStack(this.inputTankHandler.getFluid().getFluid(), tank.getTankCapacity(0)), IFluidHandler.FluidAction.EXECUTE));
+            handler.fill(new FluidStack(this.inputTankHandler.getFluid().getFluid(), handler.getTankCapacity(0)), IFluidHandler.FluidAction.EXECUTE);
         }
     }
 
@@ -68,11 +63,8 @@ public class CreativeTankBlockEntity extends BlockEntity implements BlockEntityT
             inputTankHandler.setFluid(FluidStack.EMPTY);
     }
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.FLUID_HANDLER)
-            return inputTank.cast();
-        return super.getCapability(cap, side);
+    public static IFluidHandler getFluidHandlerCapability(CreativeTankBlockEntity blockEntity, Direction side){
+        return blockEntity.inputTankHandler;
     }
 
     @Override

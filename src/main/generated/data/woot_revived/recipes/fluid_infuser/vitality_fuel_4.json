@@ -1,30 +1,19 @@
 {
   "type": "woot_revived:fluid_infuser",
   "energy": 1000,
-  "inputs": [
+  "inputFluids": [
     {
-      "type": "ingredient",
-      "ingredients": [
-        {
-          "item": "woot_revived:copper_enchanted_plate"
-        }
-      ]
-    },
-    {
-      "type": "fluid",
-      "fluids": [
-        {
-          "amount": 1000,
-          "id": "woot_revived:mob_tears_fluid"
-        }
-      ]
+      "Amount": 1000,
+      "FluidName": "woot_revived:mob_tears_fluid"
     }
   ],
-  "outputs": [
+  "inputIngredients": [
     {
-      "type": "fluid",
-      "amount": 4000,
-      "id": "woot_revived:vitality_fuel_fluid"
+      "item": "woot_revived:copper_enchanted_plate"
     }
-  ]
+  ],
+  "outputFluid": {
+    "Amount": 4000,
+    "FluidName": "woot_revived:vitality_fuel_fluid"
+  }
 }

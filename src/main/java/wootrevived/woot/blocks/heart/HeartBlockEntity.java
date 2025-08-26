@@ -13,10 +13,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.api.WootFactoryMob;
@@ -185,30 +186,29 @@ public class HeartBlockEntity extends MultiBlockFactoryEntity implements MenuPro
 
                     BlockPos blockPos = exportPos.relative(direction);
 
-                    BlockEntity entity = level.getBlockEntity(blockPos);
-                    if(entity == null) continue;
-
-                    entity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction.getOpposite()).ifPresent(handler -> {
+                    IItemHandler itemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, blockPos, direction.getOpposite());
+                    if(itemHandler != null){
                         for(ItemStack stack : List.copyOf(result.items)){
-                            ItemStack insert = ItemHandlerHelper.insertItem(handler, stack, false);
+                            ItemStack insert = ItemHandlerHelper.insertItem(itemHandler, stack, false);
                             if(insert.isEmpty()){
                                 result.items.remove(stack);
                             } else if(insert.getCount() != stack.getCount()) {
                                 stack.setCount(insert.getCount());
                             }
                         }
-                    });
+                    }
 
-                    entity.getCapability(ForgeCapabilities.FLUID_HANDLER, direction.getOpposite()).ifPresent(handler -> {
+                    IFluidHandler fluidHandler = level.getCapability(Capabilities.FluidHandler.BLOCK, blockPos, direction.getOpposite());
+                    if(fluidHandler != null){
                         for(FluidStack stack : List.copyOf(result.fluids)){
-                            int amount = handler.fill(stack, IFluidHandler.FluidAction.EXECUTE);
+                            int amount = fluidHandler.fill(stack, IFluidHandler.FluidAction.EXECUTE);
                             if(stack.getAmount() == amount){
                                 result.fluids.remove(stack);
                             } else if(amount > 0){
                                 stack.shrink(amount);
                             }
                         }
-                    });
+                    }
                 }
             }
         }

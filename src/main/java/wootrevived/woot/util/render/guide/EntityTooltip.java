@@ -3,9 +3,9 @@ package wootrevived.woot.util.render.guide;
 import guideme.document.interaction.GuideTooltip;
 import guideme.siteexport.ResourceExporter;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.registries.ForgeRegistries;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.woot.util.common.WootTier;
 import wootrevived.woot.util.helper.ModNameHelper;
@@ -26,7 +26,7 @@ public class EntityTooltip implements GuideTooltip {
 
     @Override
     public List<ClientTooltipComponent> getLines() {
-        String modId = ForgeRegistries.ENTITY_TYPES.getKey(mob.getEntityType()).getNamespace();
+        String modId = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getEntityType()).getNamespace();
 
         List<Component> lines = List.of(
                 mob.getDisplayName(tag).append(Component.literal(": ")).setStyle(MACHINE_STYLE),

@@ -41,9 +41,10 @@ public abstract class FactoryBlockBase extends Block implements EntityBlock {
     }
 
     @Override
-    public void playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, BlockState state, @NotNull Player player){
+    public @NotNull BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, BlockState state, @NotNull Player player){
         if(state.getValue(BlockStateProperties.ENABLED))
-            super.playerWillDestroy(level, pos, state, player);
+            return super.playerWillDestroy(level, pos, state, player);
+        return state;
     }
 
     @Override

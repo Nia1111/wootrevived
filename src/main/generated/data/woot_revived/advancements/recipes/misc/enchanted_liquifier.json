@@ -58,17 +58,16 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "p",
       "c",
       "b",
-      "t",
-      "has_the_recipe"
+      "t"
     ]
   ],
   "rewards": {
     "recipes": [
       "woot_revived:enchanted_liquifier"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

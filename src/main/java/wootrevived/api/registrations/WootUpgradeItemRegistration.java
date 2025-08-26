@@ -1,7 +1,8 @@
 package wootrevived.api.registrations;
 
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import wootrevived.api.WootUpgradeItem;
 
 /**
@@ -14,9 +15,9 @@ public abstract class WootUpgradeItemRegistration {
     /**
      * Registers a new {@link WootUpgradeItem}.
      *
-     * @param item a {@link RegistryObject} referring to your upgrade item
+     * @param item a {@link DeferredHolder} referring to your upgrade item
      */
-    public abstract void register(RegistryObject<? extends WootUpgradeItem> item);
+    public abstract void register(DeferredHolder<Item, ? extends WootUpgradeItem> item);
 
     /**
      * Provides access to Woot's internal event bus.

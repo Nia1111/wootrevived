@@ -1,5 +1,6 @@
 package wootrevived.woot.items.mob_shard;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -11,9 +12,8 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.woot.registries.ItemsRegistry;
@@ -176,7 +176,7 @@ public class MobShardItem extends Item {
         WootFactoryMob<?> mob = WootFactoryMobsRegistry.getFactoryMob(mobTag);
         if(mob != null) {
             tooltip.add(mob.getDisplayName(mobTag).setStyle(CAPTURED_STYLE));
-            String modId = ForgeRegistries.ENTITY_TYPES.getKey(mob.getEntityType()).getNamespace();
+            String modId = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getEntityType()).getNamespace();
             tooltip.add(ModNameHelper.getModName(modId).setStyle(MOD_NAME_STYLE));
         }
 
