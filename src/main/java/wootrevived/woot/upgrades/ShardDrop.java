@@ -6,7 +6,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +16,6 @@ import wootrevived.api.enums.Tier;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.ItemsRegistry;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static wootrevived.woot.util.render.WootStyles.DESCRIPTION_STYLE;
@@ -71,7 +69,7 @@ public class ShardDrop extends WootUpgradeItem {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltip, @NotNull TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext ctx, List<Component> tooltip, @NotNull TooltipFlag flag) {
         tooltip.add(Component.translatable("info.woot_revived.upgrade.shard_drop.desc.0", Component.translatable("misc.woot_revived.tier_" + (getLevel() + 1))).setStyle(DESCRIPTION_STYLE));
         tooltip.add(Component.translatable("info.woot_revived.upgrade.shard_drop.desc.1", Component.translatable("misc.woot_revived.tier_" + (getLevel()))).setStyle(DESCRIPTION_STYLE));
         tooltip.add(Component.translatable("info.woot_revived.upgrade.shard_drop.desc.2", PERCENTAGES[getLevel() - 1]).setStyle(DESCRIPTION_STYLE));

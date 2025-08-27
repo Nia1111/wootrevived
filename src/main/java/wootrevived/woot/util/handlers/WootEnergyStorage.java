@@ -1,10 +1,8 @@
 package wootrevived.woot.util.handlers;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.energy.EnergyStorage;
-import wootrevived.woot.util.entity.WootTags;
 
 public class WootEnergyStorage extends EnergyStorage implements INBTSerializable<Tag> {
     public WootEnergyStorage(int capacity, int maxTransfer) {
@@ -30,19 +28,5 @@ public class WootEnergyStorage extends EnergyStorage implements INBTSerializable
         int res = super.extractEnergy(maxExtract, simulate);
         onEnergyChanged();
         return res;
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
-        tag.putInt(WootTags.ENERGY_TAG, getEnergyStored());
-        return tag;
-    }
-
-    @Override
-    public void deserializeNBT(Tag nbt) {
-        if(nbt instanceof CompoundTag tag) {
-            setEnergy(tag.getInt(WootTags.ENERGY_TAG));
-        }
     }
 }

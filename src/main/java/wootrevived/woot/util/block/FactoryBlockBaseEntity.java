@@ -1,7 +1,9 @@
 package wootrevived.woot.util.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -10,9 +12,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import wootrevived.woot.util.entity.WootTags;
+import org.jetbrains.annotations.Nullable;
+import wootrevived.woot.data.FactoryBlockData;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class FactoryBlockBaseEntity extends BlockEntity {
     public FactoryBlockBaseEntity(BlockEntityType<?> entity, BlockPos pos, BlockState state) {
@@ -37,42 +41,46 @@ public class FactoryBlockBaseEntity extends BlockEntity {
         setChanged();
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
+    private FactoryBlockData.Component getComponent(){
+        return new FactoryBlockData.Component(
+                Optional.ofNullable(heartPos)
+        );
+    }
 
-        if(this.heartPos != null){
-            tag.putLong(WootTags.Factory.HEART_POS, heartPos.asLong());
-        }
+    private void setComponent(FactoryBlockData.Component component){
+        heartPos = component.heartPos().orElse(null);
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+        FactoryBlockData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
 
-        if(tag.contains(WootTags.Factory.HEART_POS))
-            heartPos = BlockPos.of(tag.getLong(WootTags.Factory.HEART_POS));
-        else
-            heartPos = null;
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+        FactoryBlockData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookupProvider){
+        super.handleUpdateTag(tag, lookupProvider);
+        loadAdditional(tag, lookupProvider);
     }
 
-    @org.jetbrains.annotations.Nullable
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket(){
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket(){
         return ClientboundBlockEntityDataPacket.create(this);
     }
 

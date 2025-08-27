@@ -2,15 +2,17 @@ package wootrevived.woot.blocks.ingredient_import;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.data.IngredientImportData;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.util.block.FactoryBlockBaseEntity;
 import wootrevived.woot.util.handlers.WootImportFluidHandler;
@@ -23,8 +25,8 @@ public class IngredientImportBlockEntity extends FactoryBlockBaseEntity {
         super(BlocksRegistry.IMPORT_BLOCK_ENTITY.get(), pos, state);
     }
 
-    private final WootImportItemHandler itemHandler = new WootImportItemHandler();
-    private final WootImportFluidHandler fluidHandler = new WootImportFluidHandler();
+    private WootImportItemHandler itemHandler = new WootImportItemHandler();
+    private WootImportFluidHandler fluidHandler = new WootImportFluidHandler();
 
     public void setImportItem(int index, List<ItemStack> importItem){
         itemHandler.setImportItem(index, importItem);
@@ -49,25 +51,25 @@ public class IngredientImportBlockEntity extends FactoryBlockBaseEntity {
 
             BlockPos blockPos = getBlockPos().relative(direction);
 
-            IItemHandler itemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, blockPos, direction.getOpposite());
-            if(itemHandler != null){
-                for (int i = 0; i < itemHandler.getSlots(); i++) {
-                    ItemStack stack = itemHandler.getStackInSlot(i);
+            IItemHandler neighborItemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, blockPos, direction.getOpposite());
+            if(neighborItemHandler != null){
+                for (int i = 0; i < neighborItemHandler.getSlots(); i++) {
+                    ItemStack stack = neighborItemHandler.getStackInSlot(i);
                     ItemStack result = itemHandler.insertItem(i, stack, true);
                     if(result.getCount() < stack.getCount()){
-                        itemHandler.extractItem(i, stack.getCount() - result.getCount(), false);
+                        neighborItemHandler.extractItem(i, stack.getCount() - result.getCount(), false);
                         itemHandler.insertItem(i, stack, false);
                     }
                 }
             }
 
-            IFluidHandler fluidHandler = level.getCapability(Capabilities.FluidHandler.BLOCK, blockPos, direction.getOpposite());
-            if(fluidHandler != null){
-                for (int i = 0; i < fluidHandler.getTanks(); i++) {
-                    FluidStack stack = fluidHandler.getFluidInTank(i);
+            IFluidHandler neighborFluidHandler = level.getCapability(Capabilities.FluidHandler.BLOCK, blockPos, direction.getOpposite());
+            if(neighborFluidHandler != null){
+                for (int i = 0; i < neighborFluidHandler.getTanks(); i++) {
+                    FluidStack stack = neighborFluidHandler.getFluidInTank(i);
                     int filled = fluidHandler.fill(stack, IFluidHandler.FluidAction.SIMULATE);
                     if(filled > 0){
-                        fluidHandler.drain(new FluidStack(stack.getFluid(), filled), IFluidHandler.FluidAction.EXECUTE);
+                        neighborFluidHandler.drain(new FluidStack(stack.getFluid(), filled), IFluidHandler.FluidAction.EXECUTE);
                         fluidHandler.fill(stack, IFluidHandler.FluidAction.EXECUTE);
                     }
                 }
@@ -83,41 +85,43 @@ public class IngredientImportBlockEntity extends FactoryBlockBaseEntity {
         return blockEntity.fluidHandler;
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
+    private IngredientImportData.Component getComponent(){
+        return new IngredientImportData.Component(
+                itemHandler,
+                fluidHandler
+        );
+    }
 
-        itemHandler.save(tag);
-        fluidHandler.save(tag);
+    private void setComponent(IngredientImportData.Component component){
+        itemHandler = component.itemHandler();
+        fluidHandler = component.fluidHandler();
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+        IngredientImportData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
 
-        itemHandler.load(tag);
-        fluidHandler.load(tag);
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+        IngredientImportData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-
-        if(this.level == null || this.level.isClientSide) return;
-        this.level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookupProvider){
+        super.handleUpdateTag(tag, lookupProvider);
+        loadAdditional(tag, lookupProvider);
     }
 }

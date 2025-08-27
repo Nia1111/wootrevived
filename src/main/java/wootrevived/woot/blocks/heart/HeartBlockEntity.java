@@ -329,14 +329,4 @@ public class HeartBlockEntity extends MultiBlockFactoryEntity implements MenuPro
     public @Nullable AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
         return new HeartContainerMenu(containerId, level, getBlockPos(), playerInventory, player);
     }
-
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
-    }
-
-    @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-    }
 }

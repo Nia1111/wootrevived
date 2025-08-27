@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import wootrevived.api.WootFactoryMob;
@@ -15,11 +15,12 @@ import wootrevived.woot.Woot;
 import wootrevived.woot.items.mob_shard.MobShardItem;
 import wootrevived.woot.items.mob_shard.MobShardProjectile;
 import wootrevived.woot.registries.WootFactoryMobsRegistry;
+import wootrevived.woot.util.helper.SerializeEntityNBTHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Woot.MOD_ID)
+@EventBusSubscriber(modid = Woot.MOD_ID)
 public class MobShardKillCheck {
     @SubscribeEvent
     public static void onLivingDeathEvent(LivingDeathEvent event) {
@@ -65,7 +66,7 @@ public class MobShardKillCheck {
             mobShardItem.hurtEnemy(inHandItemStack, victim, killer);
         }
 
-        MobShardItem.handleKill(killer, victim.serializeNBT());
+        MobShardItem.handleKill(killer, SerializeEntityNBTHelper.serialize(victim));
     }
 
     private static final List<String> uuidList = new ArrayList<>();

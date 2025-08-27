@@ -1,0 +1,13 @@
+{
+  "type": "woot_revived:dye_liquifier",
+  "blue": 36,
+  "energy": 500,
+  "inputIngredients": [
+    {
+      "tag": "c:dyes/green"
+    }
+  ],
+  "red": 0,
+  "white": 0,
+  "yellow": 36
+}

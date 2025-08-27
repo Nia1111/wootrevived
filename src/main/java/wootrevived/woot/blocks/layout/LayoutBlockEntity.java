@@ -2,7 +2,9 @@ package wootrevived.woot.blocks.layout;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -16,6 +18,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.api.enums.Tier;
+import wootrevived.woot.data.LayoutData;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.util.block.FactoryBlockBase;
 import wootrevived.woot.util.common.WootTier;
@@ -86,8 +89,6 @@ public class LayoutBlockEntity extends BlockEntity implements BlockEntityTicker<
         blockRenderOffset++;
     }
 
-
-
     public static void placePatternBlock(@NotNull Level level, Direction facing, BlockPos layoutPos, Pattern.PatternBlock patternBlock, int blockRenderOffset) {
         Block block = patternBlock.blocks[blockRenderOffset % (int) Arrays.stream(patternBlock.blocks).count()];
         BlockState blockState = block.getStateDefinition().any();
@@ -128,33 +129,40 @@ public class LayoutBlockEntity extends BlockEntity implements BlockEntityTicker<
         setChanged();
     }
 
-    static final String KEY_TIER = "tier";
+    private LayoutData.Component getComponent(){
+        return new LayoutData.Component(tier);
+    }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
-        tag.putInt(KEY_TIER, tier.ordinal());
+    private void setComponent(LayoutData.Component component){
+        tier = component.tier();
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-        if(tag.contains(KEY_TIER))
-            tier = WootTier.byIndex(tag.getInt(KEY_TIER));
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+        LayoutData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
+
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+        LayoutData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookupProvider){
+        super.handleUpdateTag(tag, lookupProvider);
+        loadAdditional(tag, lookupProvider);
     }
 
     @Override

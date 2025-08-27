@@ -1,10 +1,10 @@
 package wootrevived.woot.blocks.creative_tank;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -55,31 +55,30 @@ public class CreativeTankBlock extends Block implements EntityBlock {
     }
 
     public static class State extends BlockState {
-        public State(Block block, ImmutableMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
+        public State(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
             super(block, map, codec);
         }
 
         @Override
-        public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        public @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack heldItem, @NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
             if (level.isClientSide())
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
 
             if (!(level.getBlockEntity(hit.getBlockPos()) instanceof CreativeTankBlockEntity createTankBlockEntity))
                 throw new IllegalStateException("BlockEntity is missing");
 
-            ItemStack heldItem = player.getItemInHand(hand);
             if (FluidUtil.getFluidHandler(heldItem).isPresent()) {
                 FluidStack stack = FluidUtil.getFluidHandler(heldItem).map(h -> h.getFluidInTank(0)).orElse(FluidStack.EMPTY);
                 createTankBlockEntity.emptyIfDifferentFluidStack(stack);
                 if (FluidUtil.interactWithFluidHandler(player, hand, level, hit.getBlockPos(), hit.getDirection())) {
                     createTankBlockEntity.setMaxCapacity();
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 } else {
-                    return InteractionResult.FAIL;
+                    return ItemInteractionResult.FAIL;
                 }
             }
 
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
     }
 }

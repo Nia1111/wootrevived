@@ -6,7 +6,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@Mod.EventBusSubscriber(modid = Woot.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
@@ -25,7 +25,7 @@ public class DataGenerators {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         PackOutput packOutput = generator.getPackOutput();
         if(event.includeServer()) {
-            generator.addProvider(true, new Recipes(packOutput));
+            generator.addProvider(true, new Recipes(packOutput, lookupProvider));
             BlockTagsProvider blockTagsProvider = new BlockTagsGen(packOutput, lookupProvider, existingFileHelper);
             generator.addProvider(true, blockTagsProvider);
             generator.addProvider(true, new ItemTagsGen(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
@@ -33,7 +33,7 @@ public class DataGenerators {
             generator.addProvider(true, new Advancements(packOutput, lookupProvider, existingFileHelper));
             generator.addProvider(true, new LootTableProvider(packOutput, Set.of(), List.of(
                     new LootTableProvider.SubProviderEntry(LootTables::new, LootContextParamSets.BLOCK)
-            )));
+            ), lookupProvider));
         }
         if(event.includeClient()) {
             generator.addProvider(true, new Blocks(packOutput, existingFileHelper));

@@ -3,7 +3,7 @@ package wootrevived.woot.events.client;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import wootrevived.woot.Woot;
 import wootrevived.woot.client.render.dye_liquifier.DyeLiquifierContainerScreen;
@@ -14,7 +14,7 @@ import wootrevived.woot.client.render.item_infuser.ItemInfuserContainerScreen;
 import wootrevived.woot.registries.BlocksRegistry;
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(modid = Woot.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
+@EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
 public class RegisterMenus {
     @SubscribeEvent
     public static void registerMenus(RegisterMenuScreensEvent event) {

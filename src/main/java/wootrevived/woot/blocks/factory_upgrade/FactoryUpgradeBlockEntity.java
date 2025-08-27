@@ -4,8 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -19,12 +20,14 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootUpgradeItem;
 import wootrevived.woot.client.model.factory_upgrade.FactoryUpgradeBakedModel;
+import wootrevived.woot.data.FactoryUpgradeData;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.UpgradeItemsRegistry;
 
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.block.FactoryBlockBaseEntity;
-import wootrevived.woot.util.entity.WootTags;
+
+import java.util.Optional;
 
 public class FactoryUpgradeBlockEntity extends FactoryBlockBaseEntity {
     public FactoryUpgradeBlockEntity(BlockPos pos, BlockState state) {
@@ -94,45 +97,44 @@ public class FactoryUpgradeBlockEntity extends FactoryBlockBaseEntity {
         Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
-        tag.put(WootTags.Factory.UPGRADE_ITEM, StringTag.valueOf(getUpgradeItemName()));
+    private FactoryUpgradeData.Component getComponent(){
+        return new FactoryUpgradeData.Component(Optional.ofNullable(getUpgradeItemName()));
+    }
+
+    private void setComponent(FactoryUpgradeData.Component component){
+        component.upgradeItem().ifPresentOrElse(item -> {
+            this.upgradeItem = !item.isEmpty() && UpgradeItemsRegistry.has(item) ? UpgradeItemsRegistry.get(item).get() : null;
+        }, () -> {
+            this.upgradeItem = null;
+        });
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+        FactoryUpgradeData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
 
-        if(tag.contains(WootTags.Factory.UPGRADE_ITEM)) {
-            String item = tag.getString(WootTags.Factory.UPGRADE_ITEM);
-            this.upgradeItem = !item.isEmpty() && UpgradeItemsRegistry.has(item) ? UpgradeItemsRegistry.get(item).get() : null;
-        } else {
-            this.upgradeItem = null;
-        }
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+        FactoryUpgradeData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
 
-
     @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-
-        if(level == null || level.isClientSide) return;
-        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookupProvider){
+        super.handleUpdateTag(tag, lookupProvider);
+        loadAdditional(tag, lookupProvider);
     }
 
     @Override
@@ -152,7 +154,7 @@ public class FactoryUpgradeBlockEntity extends FactoryBlockBaseEntity {
             return;
 
         ModelData data = level.getModelDataManager().getAt(getBlockPos());
-        if(data != null && data.has(FactoryUpgradeBakedModel.UPGRADE_PROPERTY)){
+        if(data.has(FactoryUpgradeBakedModel.UPGRADE_PROPERTY)){
             if(upgradeItem == null && !data.get(FactoryUpgradeBakedModel.UPGRADE_PROPERTY).isEmpty()){
                 requestModelDataUpdate();
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);

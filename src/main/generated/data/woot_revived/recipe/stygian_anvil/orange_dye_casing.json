@@ -1,0 +1,15 @@
+{
+  "type": "woot_revived:stygian_anvil",
+  "inputIngredients": [
+    {
+      "item": "woot_revived:dye_casing_mold"
+    },
+    {
+      "tag": "c:dyes/orange"
+    }
+  ],
+  "outputItem": {
+    "count": 1,
+    "id": "woot_revived:orange_dye_casing"
+  }
+}

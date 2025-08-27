@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -14,7 +15,6 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.util.render.WootContainerMenu;
-import wootrevived.woot.util.helper.EnchantmentHelper;
 import wootrevived.woot.blocks.enchanted_liquifier.EnchantedLiquifierBlockEntity;
 import wootrevived.woot.util.render.WootSlot;
 
@@ -72,7 +72,7 @@ public class EnchantedLiquifierContainerMenu extends WootContainerMenu {
 
         if (index >= MACHINE_INV_SIZE) {
             // player slot
-            if (EnchantmentHelper.isEnchanted(stack)) {
+            if (EnchantmentHelper.hasAnyEnchantments(stack)) {
                 // -> machine
                 startIndex = 0;
                 endIndex = MACHINE_INV_SIZE;

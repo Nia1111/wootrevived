@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.woot.Woot;
@@ -17,7 +17,7 @@ import wootrevived.woot.registries.WootFactoryMobsRegistry;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = Woot.MOD_ID, value = { Dist.CLIENT })
+@EventBusSubscriber(modid = Woot.MOD_ID, value = { Dist.CLIENT })
 public class GuideCacheLivingEntities {
     private static final Map<EntityType<?>, LivingEntity> livingEntities = new HashMap<>();
 

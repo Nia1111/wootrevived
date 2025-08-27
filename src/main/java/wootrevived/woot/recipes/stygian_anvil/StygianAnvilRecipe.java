@@ -2,7 +2,10 @@ package wootrevived.woot.recipes.stygian_anvil;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.world.Container;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -10,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.RecipesRegistry;
 import wootrevived.woot.util.recipes.WootRecipe;
+import wootrevived.woot.util.recipes.WootRecipeInput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +23,12 @@ public class StygianAnvilRecipe extends WootRecipe {
             Ingredient.CODEC.listOf().fieldOf("inputIngredients").forGetter(StygianAnvilRecipe::getInputItems),
             ItemStack.CODEC.fieldOf("outputItem").forGetter(StygianAnvilRecipe::getOutputItem)
     ).apply(inst, StygianAnvilRecipe::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, StygianAnvilRecipe> STREAM_CODEC = StreamCodec.composite(
+            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity)), StygianAnvilRecipe::getInputItems,
+            ItemStack.STREAM_CODEC, StygianAnvilRecipe::getOutputItem,
+            StygianAnvilRecipe::new
+    );
 
     public StygianAnvilRecipe(@Nullable List<Ingredient> inputItems, @Nullable ItemStack outputItem) {
         super(0, inputItems, null, outputItem, null);
@@ -47,15 +57,15 @@ public class StygianAnvilRecipe extends WootRecipe {
     }
 
     @Override
-    public boolean matches(@NotNull Container container, @NotNull Level level) {
-        if(!getRecipeBaseIngredient().test(container.getItem(0)))
+    public boolean matches(@NotNull WootRecipeInput input, @NotNull Level level) {
+        if(!getRecipeBaseIngredient().test(input.getItem(0)))
             return false;
 
         List<Ingredient> ingredients = getRecipeIngredients();
 
         int count = 0;
-        for(int i = 1; i < container.getContainerSize(); i++){
-            if(!container.getItem(i).isEmpty())
+        for(int i = 1; i < input.size(); i++){
+            if(!input.getItem(i).isEmpty())
                 count++;
         }
 
@@ -64,8 +74,8 @@ public class StygianAnvilRecipe extends WootRecipe {
 
         List<Integer> matchedSlots = new ArrayList<>();
         for(Ingredient ingredient : ingredients){
-            for(int i = 1; i < container.getContainerSize(); i++){
-                if(!matchedSlots.contains(i) && ingredient.test(container.getItem(i))){
+            for(int i = 1; i < input.size(); i++){
+                if(!matchedSlots.contains(i) && ingredient.test(input.getItem(i))){
                     matchedSlots.add(i);
                     break;
                 }

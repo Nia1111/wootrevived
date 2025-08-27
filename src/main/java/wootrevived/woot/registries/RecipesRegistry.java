@@ -28,24 +28,22 @@ public class RecipesRegistry {
     /* Anvil */
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<StygianAnvilRecipe>> ANVIL_RECIPE_TYPE = RECIPE_TYPES.register(BlocksRegistry.STYGIAN_ANVIL_TAG, () -> RecipeType.simple(ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.STYGIAN_ANVIL_TAG)));
-    public static final DeferredHolder<RecipeSerializer<?>, WootRecipeSerializer<StygianAnvilRecipe>> ANVIL_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register(BlocksRegistry.STYGIAN_ANVIL_TAG, () -> new WootRecipeSerializer<StygianAnvilRecipe>(
+    public static final DeferredHolder<RecipeSerializer<?>, WootRecipeSerializer<StygianAnvilRecipe>> ANVIL_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register(BlocksRegistry.STYGIAN_ANVIL_TAG, () -> new WootRecipeSerializer<>(
             StygianAnvilRecipe.CODEC,
-            (energy, inputItems, inputFluids, outputItem, outputFluid) ->
-                    new StygianAnvilRecipe(inputItems, outputItem)
+            StygianAnvilRecipe.STREAM_CODEC
     ));
 
     /* Dye Liquifier */
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<DyeLiquifierRecipe>> DYE_LIQUIFIER_RECIPE_TYPE = RECIPE_TYPES.register(BlocksRegistry.DYE_LIQUIFIER_TAG, () -> RecipeType.simple(ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.DYE_LIQUIFIER_TAG)));
-    public static final DeferredHolder<RecipeSerializer<?>, DyeLiquifierRecipeSerializer> DYE_LIQUIFIER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register(BlocksRegistry.DYE_LIQUIFIER_TAG, () -> new DyeLiquifierRecipeSerializer(DyeLiquifierRecipe::new));
+    public static final DeferredHolder<RecipeSerializer<?>, DyeLiquifierRecipeSerializer> DYE_LIQUIFIER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register(BlocksRegistry.DYE_LIQUIFIER_TAG, () -> new DyeLiquifierRecipeSerializer());
 
     /* Fluid Infuser */
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<FluidInfuserRecipe>> FLUID_INFUSER_RECIPE_TYPE = RECIPE_TYPES.register(BlocksRegistry.FLUID_INFUSER_TAG, () -> RecipeType.simple(ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.FLUID_INFUSER_TAG)));
     public static final DeferredHolder<RecipeSerializer<?>, WootRecipeSerializer<FluidInfuserRecipe>> FLUID_INFUSER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register(BlocksRegistry.FLUID_INFUSER_TAG, () ->  new WootRecipeSerializer<>(
             FluidInfuserRecipe.CODEC,
-            (energy, inputItems, inputFluids, outputItem, outputFluid) ->
-                    new FluidInfuserRecipe(energy, inputItems, inputFluids, outputFluid)
+            FluidInfuserRecipe.STREAM_CODEC
     ));
 
     /* Item Infuser */
@@ -53,8 +51,7 @@ public class RecipesRegistry {
     public static final DeferredHolder<RecipeType<?>, RecipeType<ItemInfuserRecipe>> ITEM_INFUSER_RECIPE_TYPE = RECIPE_TYPES.register(BlocksRegistry.ITEM_INFUSER_TAG, () -> RecipeType.simple(ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.ITEM_INFUSER_TAG)));
     public static final DeferredHolder<RecipeSerializer<?>, WootRecipeSerializer<ItemInfuserRecipe>> ITEM_INFUSER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register(BlocksRegistry.ITEM_INFUSER_TAG, () ->  new WootRecipeSerializer<>(
             ItemInfuserRecipe.CODEC,
-            (energy, inputItems, inputFluids, outputItem, outputFluid) ->
-                    new ItemInfuserRecipe(energy, inputItems, inputFluids, outputItem)
+            ItemInfuserRecipe.STREAM_CODEC
     ));
 
     /* Enchanted Liquifier (JEI) */

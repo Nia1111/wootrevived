@@ -1,0 +1,15 @@
+{
+  "type": "woot_revived:stygian_anvil",
+  "inputIngredients": [
+    {
+      "item": "woot_revived:plate_mold"
+    },
+    {
+      "item": "woot_revived:stygian_ingot"
+    }
+  ],
+  "outputItem": {
+    "count": 1,
+    "id": "woot_revived:stygian_plate"
+  }
+}

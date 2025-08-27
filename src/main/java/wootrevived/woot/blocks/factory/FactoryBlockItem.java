@@ -66,7 +66,7 @@ public class FactoryBlockItem extends BlockItem {
             updateCustomBlockEntityTag(pos, level, player, heldItem, state);
             level.updateNeighborsAt(pos, state.getBlock());
             block.setPlacedBy(level, pos, state, player, heldItem);
-            level.playSound(null, pos, state.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.8F);
+            level.playSound(null, pos, state.getSoundType(level, pos, player).getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.8F);
             level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(player, state));
             player.swing(context.getHand());
 

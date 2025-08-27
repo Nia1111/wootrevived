@@ -19,6 +19,7 @@ import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
 import net.neoforged.neoforge.client.model.geometry.UnbakedGeometryHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootUpgradeItem;
 import wootrevived.woot.Woot;
 import wootrevived.woot.registries.UpgradeItemsRegistry;
@@ -36,13 +37,13 @@ public class FactoryUpgradeUnbakedModel implements IUnbakedGeometry<FactoryUpgra
     }
 
     @Override
-    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation){
+    public @NotNull BakedModel bake(IGeometryBakingContext context, @NotNull ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides) {
         TextureAtlasSprite factory = spriteGetter.apply(context.getMaterial("north"));
 
         FactoryUpgradeBakedModel.Builder builder = new FactoryUpgradeBakedModel.Builder(context.useAmbientOcclusion(), context.useBlockLight(), context.isGui3d(), context.getTransforms(), overrides)
                 .addParticle("", factory);
 
-        addQuads(context, builder, spriteGetter, modelState, modelLocation, factory, "");
+        addQuads(context, builder, spriteGetter, modelState, factory, "");
 
         for(DeferredHolder<Item, ? extends WootUpgradeItem> upgradeItem : UpgradeItemsRegistry.getValues()){
             String name = UpgradeItemsRegistry.getNameFromItem(upgradeItem);
@@ -54,7 +55,7 @@ public class FactoryUpgradeUnbakedModel implements IUnbakedGeometry<FactoryUpgra
 
             builder.addParticle(name, texture);
 
-            addQuads(context, builder, spriteGetter, modelState, modelLocation, texture, name);
+            addQuads(context, builder, spriteGetter, modelState, texture, name);
         }
 
         return builder.build();
@@ -71,7 +72,7 @@ public class FactoryUpgradeUnbakedModel implements IUnbakedGeometry<FactoryUpgra
     }
 
     @SuppressWarnings("deprecation")
-    protected void addQuads(IGeometryBakingContext context, FactoryUpgradeBakedModel.Builder modelBuilder, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation, TextureAtlasSprite customSprite, String upgrade)
+    protected void addQuads(IGeometryBakingContext context, FactoryUpgradeBakedModel.Builder modelBuilder, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, TextureAtlasSprite customSprite, String upgrade)
     {
         var postTransform = QuadTransformers.empty();
         var rootTransform = context.getRootTransform();
@@ -83,11 +84,11 @@ public class FactoryUpgradeUnbakedModel implements IUnbakedGeometry<FactoryUpgra
             for (Direction direction : element.faces.keySet())
             {
                 var face = element.faces.get(direction);
-                var sprite = direction != Direction.DOWN && direction != Direction.UP ? customSprite : spriteGetter.apply(context.getMaterial(face.texture));
-                var quad = BlockModel.bakeFace(element, face, sprite, direction, modelState, modelLocation);
+                var sprite = direction != Direction.DOWN && direction != Direction.UP ? customSprite : spriteGetter.apply(context.getMaterial(face.texture()));
+                var quad = BlockModel.bakeFace(element, face, sprite, direction, modelState);
                 postTransform.processInPlace(quad);
 
-                modelBuilder.addFace(modelState.getRotation().rotateTransform(face.cullForDirection), upgrade, quad);
+                modelBuilder.addFace(modelState.getRotation().rotateTransform(face.cullForDirection()), upgrade, quad);
             }
         }
     }

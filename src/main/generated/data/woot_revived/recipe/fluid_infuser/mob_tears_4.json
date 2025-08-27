@@ -1,0 +1,19 @@
+{
+  "type": "woot_revived:fluid_infuser",
+  "energy": 1000,
+  "inputFluids": [
+    {
+      "amount": 1000,
+      "id": "minecraft:water"
+    }
+  ],
+  "inputIngredients": [
+    {
+      "item": "minecraft:fermented_spider_eye"
+    }
+  ],
+  "outputFluid": {
+    "amount": 1500,
+    "id": "woot_revived:mob_tears_fluid"
+  }
+}

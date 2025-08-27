@@ -1,0 +1,35 @@
+{
+  "parent": "woot_revived:main/diamond_shard_upgrade",
+  "criteria": {
+    "netherite_shard_upgrade": {
+      "conditions": {
+        "items": [
+          {
+            "items": "woot_revived:netherite_shard_drop_upgrade"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.netherite_shard_upgrade.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "woot_revived:netherite_shard_drop_upgrade"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.netherite_shard_upgrade.title"
+    }
+  },
+  "requirements": [
+    [
+      "netherite_shard_upgrade"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -19,20 +19,20 @@ import wootrevived.woot.util.common.DyeMakeup;
 public class ItemInfuser {
     public static void registerRecipes(Recipes recipes, RecipeOutput consumer) {
         ItemInfuserRecipeBuilder.itemInfuserRecipe(ItemsRegistry.PRISM_ITEM.get())
-                .ingredient(Ingredient.of(Tags.Items.GLASS))
+                .ingredient(Ingredient.of(Tags.Items.GLASS_BLOCKS))
                 .fluid(FluidsRegistry.SOURCE_PURE_DYE_FLUID.get(), 1000)
                 .energy(1000)
                 .save(consumer);
 
         ItemInfuserRecipeBuilder.itemInfuserRecipe(Items.SOUL_SOIL)
                 .ingredient(Ingredient.of(Items.SOUL_SAND))
-                .augment(Ingredient.of(Tags.Items.SAND))
+                .augment(Ingredient.of(Tags.Items.SANDS))
                 .fluid(FluidsRegistry.SOURCE_MOB_TEARS_FLUID.get(), 1000)
                 .energy(1000)
                 .save(consumer);
 
         ItemInfuserRecipeBuilder.itemInfuserRecipe(Items.CRYING_OBSIDIAN)
-                .ingredient(Ingredient.of(Tags.Items.OBSIDIAN))
+                .ingredient(Ingredient.of(Tags.Items.OBSIDIANS))
                 .fluid(FluidsRegistry.SOURCE_MOB_TEARS_FLUID.get(), 1000)
                 .energy(1000)
                 .save(consumer);

@@ -14,8 +14,6 @@ public class BasicItem extends Item {
 
     public BasicItem(Type itemType) { this(itemType, 64); }
 
-    public Type getItemType() { return itemType; }
-
     @Override
     public boolean isFoil(@NotNull ItemStack stack) {
         return itemType == Type.COPPER_ENCHANTED_PLATE ||

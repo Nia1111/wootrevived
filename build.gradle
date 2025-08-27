@@ -53,7 +53,7 @@ runs {
 }
 
 processResources {
-    filesMatching('META-INF/mods.toml') {
+    filesMatching('META-INF/neoforge.mods.toml') {
         expand 'file': [
                         'modId': mod_id,
                         'jarVersion': mod_version
@@ -62,8 +62,7 @@ processResources {
                 'neo_version': neo_version,
                 'guideme_version': guideme_version,
                 'jei_version': jei_version,
-                'jade_version': jade_version,
-                'neo_major_version': neo_version.split('\\.')[0]
+                'jade_version': jade_version
     }
 }
 
@@ -90,13 +89,14 @@ dependencies {
     compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
 
-    implementation "maven.modrinth:jade:${jade_version}-neoforge"
+    implementation "maven.modrinth:jade:${jade_version}"
 
-    implementation "maven.modrinth:guideme:${guideme_version}"
+    compileOnly "org.appliedenergistics:guideme:${guideme_version}:api"
+    runtimeOnly "org.appliedenergistics:guideme:${guideme_version}"
 
-    //localRuntime "org.embeddedt:embeddium-${mc_version}:${embeddium_version}"
-    //localRuntime "maven.modrinth:modernfix:${modernfix_version}"
-    //localRuntime "maven.modrinth:ferrite-core:${ferritecore_version}"
+    localRuntime "org.embeddedt:embeddium-${mc_version}:${embeddium_version}"
+    localRuntime "maven.modrinth:modernfix:${modernfix_version}"
+    localRuntime "maven.modrinth:ferrite-core:${ferritecore_version}"
 }
 
 publishing {

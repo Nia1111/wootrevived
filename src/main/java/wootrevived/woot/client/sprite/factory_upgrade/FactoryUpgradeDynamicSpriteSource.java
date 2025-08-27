@@ -1,7 +1,7 @@
 package wootrevived.woot.client.sprite.factory_upgrade;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.atlas.SpriteResourceLoader;
@@ -20,7 +20,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootUpgradeItem;
 import wootrevived.woot.Woot;
-import wootrevived.woot.events.client.RegisterSpriteSources;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.UpgradeItemsRegistry;
 
@@ -30,11 +29,13 @@ import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public record FactoryUpgradeDynamicSpriteSource(ResourceLocation id) implements SpriteSource {
-    public static final Codec<FactoryUpgradeDynamicSpriteSource> CODEC = RecordCodecBuilder.create(instance ->
-                    instance.group(
-                            ResourceLocation.CODEC.fieldOf("id").forGetter(FactoryUpgradeDynamicSpriteSource::id)
-                    ).apply(instance, FactoryUpgradeDynamicSpriteSource::new)
+    private static final MapCodec<FactoryUpgradeDynamicSpriteSource> CODEC = RecordCodecBuilder.mapCodec(instance ->
+                instance.group(
+                        ResourceLocation.CODEC.fieldOf("id").forGetter(FactoryUpgradeDynamicSpriteSource::id)
+                ).apply(instance, FactoryUpgradeDynamicSpriteSource::new)
     );
+
+    public static final SpriteSourceType TYPE = new SpriteSourceType(CODEC);
 
     @Override
     public void run(@NotNull ResourceManager manager, @NotNull Output output){
@@ -66,7 +67,7 @@ public record FactoryUpgradeDynamicSpriteSource(ResourceLocation id) implements 
 
     @Override
     public @NotNull SpriteSourceType type() {
-        return RegisterSpriteSources.getUpgradeLoader();
+        return TYPE;
     }
 
     public record UpgradeSpriteSupplier(WootUpgradeItem upgradeItem, LazyLoadedImage lazyFactoryImage, LazyLoadedImage lazyUpgradeImage, ResourceLocation location) implements SpriteSource.SpriteSupplier {

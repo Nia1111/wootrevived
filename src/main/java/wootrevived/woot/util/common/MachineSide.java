@@ -4,22 +4,20 @@ import com.google.common.base.CaseFormat;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 import static wootrevived.woot.util.render.WootStyles.DIRECTION_STYLE;
 
-public enum MachineSide {
+public enum MachineSide implements StringRepresentable {
     FRONT,
     BACK,
     TOP,
     BOTTOM,
     RIGHT,
     LEFT;
-
-    public static MachineSide byIndex(int index) {
-        if (index < 0 && index >= MachineSide.values().length)
-            return FRONT;
-        return MachineSide.values()[index];
-    }
 
     public static MachineSide getMachineSide(Direction facing, Direction side){
         if(side == BACK.getRealDirection(facing)) return BACK;
@@ -46,5 +44,10 @@ public enum MachineSide {
 
     public MutableComponent getComponent(){
         return Component.literal(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, this.toString()));
+    }
+
+    @Override
+    public @NotNull String getSerializedName() {
+        return name().toLowerCase(Locale.ROOT);
     }
 }

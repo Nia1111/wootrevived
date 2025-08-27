@@ -1,18 +1,18 @@
 package wootrevived.woot.blocks.item_infuser;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
@@ -30,9 +30,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.data.ItemInfuserData;
 import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.util.Config;
-import wootrevived.woot.util.entity.WootTags;
 
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.render.WootContainerScreen;
@@ -83,65 +84,64 @@ public class ItemInfuserBlock extends Block implements EntityBlock {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable BlockGetter block, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, block, tooltip, flag);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext ctx, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, ctx, tooltip, flag);
 
-        CompoundTag tag = stack.getTagElement("BlockEntityTag");
-        if(tag == null)
+        ItemInfuserData.Component component = stack.get(ComponentsRegistry.ITEM_INFUSER_DATA);
+        if(component == null)
             return;
 
-        if(tag.contains(WootTags.ENERGY_TAG)){
-            CompoundTag energyTag = tag.getCompound(WootTags.ENERGY_TAG);
-            tooltip.add(
-                    Component.empty()
-                            .append(Component.translatable("info.woot_revived.power").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
-                            .append(Component.literal(WootContainerScreen.formatInteger(energyTag.getInt(WootTags.ENERGY_TAG))))
-                            .append(Component.literal("/").setStyle(MACHINE_STYLE))
-                            .append(WootContainerScreen.formatInteger(Config.EnchantedLiquifier.ENERGY_CAPACITY))
-                            .append(Component.literal(" FE").setStyle(UNIT_STYLE))
-            );
-        }
+        tooltip.add(
+                Component.empty()
+                        .append(Component.translatable("info.woot_revived.power").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
+                        .append(Component.literal(WootContainerScreen.formatInteger(component.energy())))
+                        .append(Component.literal("/").setStyle(MACHINE_STYLE))
+                        .append(WootContainerScreen.formatInteger(Config.DyeLiquifier.ENERGY_CAPACITY))
+                        .append(Component.literal(" FE").setStyle(UNIT_STYLE))
+        );
 
-        if(tag.contains(WootTags.INPUT_TANK_TAG)){
-            FluidStack fluid = FluidStack.loadFluidStackFromNBT(tag.getCompound(WootTags.INPUT_TANK_TAG));
-            tooltip.add(
-                    Component.empty()
-                            .append(Component.translatable("info.woot_revived.input_fluid").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
-                            .append(fluid != null && !fluid.isEmpty() ? fluid.getDisplayName() : Component.translatable("info.woot_revived.empty"))
-            );
+        FluidStack fluid = component.inputFluid();
 
-            tooltip.add(
-                    Component.empty()
-                            .append(Component.translatable("info.woot_revived.input_amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
-                            .append(WootContainerScreen.formatInteger(fluid.getAmount()))
-                            .append(Component.literal("/").setStyle(MACHINE_STYLE))
-                            .append(WootContainerScreen.formatInteger(Config.DyeLiquifier.OUTPUT_TANK_CAPACITY))
-                            .append(Component.literal("mB").setStyle(UNIT_STYLE))
-            );
-        }
+        tooltip.add(
+                Component.empty()
+                        .append(Component.translatable("info.woot_revived.input_fluid").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
+                        .append(!fluid.isEmpty() ? fluid.getHoverName() : Component.translatable("info.woot_revived.empty"))
+        );
+
+        tooltip.add(
+                Component.empty()
+                        .append(Component.translatable("info.woot_revived.input_amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
+                        .append(WootContainerScreen.formatInteger(fluid.getAmount()))
+                        .append(Component.literal("/").setStyle(MACHINE_STYLE))
+                        .append(WootContainerScreen.formatInteger(Config.ItemInfuser.INPUT_TANK_CAPACITY))
+                        .append(Component.literal("mB").setStyle(UNIT_STYLE))
+        );
     }
 
     public static class State extends BlockState {
-        public State(Block block, ImmutableMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
+        public State(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
             super(block, map, codec);
         }
 
         @Override
-        public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        public @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack heldItem, @NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
             if (level.isClientSide)
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
+
+            if (FluidUtil.getFluidHandler(heldItem).isPresent())
+                return FluidUtil.interactWithFluidHandler(player, hand, level, hit.getBlockPos(), hit.getDirection()) ? ItemInteractionResult.SUCCESS : ItemInteractionResult.FAIL;
 
             if (!(level.getBlockEntity(hit.getBlockPos()) instanceof ItemInfuserBlockEntity itemInfuserBlockEntity))
                 throw new IllegalStateException("BlockEntity is missing");
 
-            ItemStack heldItem = player.getItemInHand(hand);
-
-            if (FluidUtil.getFluidHandler(heldItem).isPresent())
-                return FluidUtil.interactWithFluidHandler(player, hand, level, hit.getBlockPos(), hit.getDirection()) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
-
             player.openMenu(itemInfuserBlockEntity, buf -> buf.writeBlockPos(hit.getBlockPos()));
 
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        @Override
+        public @NotNull InteractionResult useWithoutItem(@NotNull Level level, @NotNull Player player, @NotNull BlockHitResult hit){
+            return useItemOn(ItemStack.EMPTY, level, player, InteractionHand.MAIN_HAND, hit).result();
         }
 
         @Override

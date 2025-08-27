@@ -2,6 +2,7 @@ package wootrevived.woot.items.dye_plate;
 
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.MapColor;
 
 public class DyePlateItem extends Item {
     final DyeColor color;
@@ -12,7 +13,10 @@ public class DyePlateItem extends Item {
     }
 
     public int getColor() {
-        float[] colors = color.getTextureDiffuseColors();
-        return (int)(colors[0] * 255F) << 16 | (int)(colors[1] * 255F) << 8 | (int)(colors[2] * 255F);
+        int rgbColor = color.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH);
+        return 0xFF000000 |
+                ((rgbColor & 0xFF) << 16) |
+                (((rgbColor >> 8) & 0xFF) << 8) |
+                ((rgbColor >> 16) & 0xFF);
     }
 }

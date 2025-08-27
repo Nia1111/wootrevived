@@ -2,18 +2,20 @@ package wootrevived.woot.blocks.cell;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.data.CellData;
 import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.util.Config;
 import wootrevived.woot.util.block.FactoryBlockBaseEntity;
-import wootrevived.woot.util.entity.WootTags;
 import wootrevived.woot.util.handlers.WootFluidTankHandler;
 
 public class CellBlockEntity extends FactoryBlockBaseEntity {
@@ -25,7 +27,7 @@ public class CellBlockEntity extends FactoryBlockBaseEntity {
     public final WootFluidTankHandler tankHandler = createTank();
 
     private WootFluidTankHandler createTank() {
-        return new WootFluidTankHandler(1000, false, (stack) -> stack.isFluidEqual(new FluidStack(FluidsRegistry.SOURCE_VITALITY_FUEL_FLUID.get(), 1))) {
+        return new WootFluidTankHandler(1000, false, (stack) -> stack.is(FluidsRegistry.SOURCE_VITALITY_FUEL_FLUID.get())) {
             @Override
             protected void onContentsChanged() {
                 setChanged();
@@ -51,39 +53,56 @@ public class CellBlockEntity extends FactoryBlockBaseEntity {
         return blockEntity.tankHandler;
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
+    private CellData.Component getComponent(){
+        return new CellData.Component(
+                tankHandler.getFluid()
+        );
+    }
 
-        tag.put(WootTags.INPUT_TANK_TAG, tankHandler.writeToNBT(new CompoundTag()));
+    private void setComponent(CellData.Component component){
+        tankHandler.setFluid(component.tankFluid());
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    protected void applyImplicitComponents(DataComponentInput input){
+        CellData.Component component = input.get(ComponentsRegistry.CELL_DATA);
+        if(component == null)
+            return;
 
-        tankHandler.readFromNBT(tag.getCompound(WootTags.INPUT_TANK_TAG));
+        setComponent(component);
+        setChanged();
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder){
+        builder.set(ComponentsRegistry.CELL_DATA, getComponent());
+    }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+        CellData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
+
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+        CellData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-
-        if(this.level == null || this.level.isClientSide) return;
-        this.level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookupProvider){
+        super.handleUpdateTag(tag, lookupProvider);
+        loadAdditional(tag, lookupProvider);
     }
 }

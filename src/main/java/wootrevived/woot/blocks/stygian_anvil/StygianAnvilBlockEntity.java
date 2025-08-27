@@ -1,7 +1,9 @@
 package wootrevived.woot.blocks.stygian_anvil;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -9,7 +11,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -29,6 +30,7 @@ import wootrevived.woot.recipes.stygian_anvil.StygianAnvilRecipe;
 import wootrevived.woot.registries.RecipesRegistry;
 import wootrevived.woot.util.entity.WootTags;
 import wootrevived.woot.items.mob_shard.MobShardItem;
+import wootrevived.woot.util.recipes.WootRecipeInput;
 
 public class StygianAnvilBlockEntity extends BlockEntity {
     public StygianAnvilBlockEntity(BlockPos pos, BlockState state) {
@@ -44,7 +46,7 @@ public class StygianAnvilBlockEntity extends BlockEntity {
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             if(slot == BASE_SLOT){
-                if(stack.getItem() instanceof MobShardItem mobShardItem)
+                if(stack.getItem() instanceof MobShardItem)
                     return MobShardItem.isFullyProgrammed(stack);
 
                 return StygianAnvilRecipe.Validator.isBaseValid(stack);
@@ -114,12 +116,13 @@ public class StygianAnvilBlockEntity extends BlockEntity {
         }
 
         RecipeHolder<StygianAnvilRecipe> recipeHolder = level.getRecipeManager().getRecipeFor(RecipesRegistry.ANVIL_RECIPE_TYPE.get(),
-                new SimpleContainer(
-                        inventoryHandler.getStackInSlot(BASE_SLOT),
-                        inventoryHandler.getStackInSlot(INGREDIENT_1_SLOT),
-                        inventoryHandler.getStackInSlot(INGREDIENT_2_SLOT),
-                        inventoryHandler.getStackInSlot(INGREDIENT_3_SLOT),
-                        inventoryHandler.getStackInSlot(INGREDIENT_4_SLOT)),
+                new WootRecipeInput(
+                        Either.left(inventoryHandler.getStackInSlot(BASE_SLOT)),
+                        Either.left(inventoryHandler.getStackInSlot(INGREDIENT_1_SLOT)),
+                        Either.left(inventoryHandler.getStackInSlot(INGREDIENT_2_SLOT)),
+                        Either.left(inventoryHandler.getStackInSlot(INGREDIENT_3_SLOT)),
+                        Either.left(inventoryHandler.getStackInSlot(INGREDIENT_4_SLOT))
+                ),
                 level).orElse(null);
         if (recipeHolder == null)
             return;
@@ -151,32 +154,30 @@ public class StygianAnvilBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
-
-        tag.put(WootTags.INPUT_INVENTORY_TAG, inventoryHandler.serializeNBT());
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+        tag.put(WootTags.INPUT_INVENTORY_TAG, inventoryHandler.serializeNBT(provider));
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
-
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
         if(tag.contains(WootTags.INPUT_INVENTORY_TAG))
-            inventoryHandler.deserializeNBT(tag.getCompound(WootTags.INPUT_INVENTORY_TAG));
+            inventoryHandler.deserializeNBT(provider, tag.getCompound(WootTags.INPUT_INVENTORY_TAG));
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookupProvider){
+        super.handleUpdateTag(tag, lookupProvider);
+        loadAdditional(tag, lookupProvider);
     }
 
     @Override

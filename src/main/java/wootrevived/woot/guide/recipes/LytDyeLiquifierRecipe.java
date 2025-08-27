@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
 import wootrevived.woot.client.render.dye_liquifier.DyeLiquifierContainerScreen;
@@ -55,10 +56,10 @@ public class LytDyeLiquifierRecipe extends LytBox {
         DyeLiquifierRecipe recipe = recipeHolder.value();
         append(energy = new LytEnergy(recipe.getEnergy(), Config.DyeLiquifier.ENERGY_CAPACITY));
         append(inputSlot = new LytSlot(Ingredient.of(Tags.Items.DYES)));
-        append(redColorBar = new LytColorBar(DyeMakeup.LCM, DyeMakeup.LCM * 2, DyeColor.RED.getTextureDiffuseColors(), Component.translatable("info.woot_revived.dye.red")));
-        append(yellowColorBar = new LytColorBar(DyeMakeup.LCM, DyeMakeup.LCM * 2, DyeColor.YELLOW.getTextureDiffuseColors(), Component.translatable("info.woot_revived.dye.yellow")));
-        append(blueColorBar = new LytColorBar(DyeMakeup.LCM, DyeMakeup.LCM * 2, DyeColor.BLUE.getTextureDiffuseColors(), Component.translatable("info.woot_revived.dye.blue")));
-        append(whiteColorBar = new LytColorBar(DyeMakeup.LCM, DyeMakeup.LCM * 2, DyeColor.WHITE.getTextureDiffuseColors(), Component.translatable("info.woot_revived.dye.white")));
+        append(redColorBar = new LytColorBar(DyeMakeup.LCM, DyeMakeup.LCM * 2, DyeColor.RED.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH), Component.translatable("info.woot_revived.dye.red")));
+        append(yellowColorBar = new LytColorBar(DyeMakeup.LCM, DyeMakeup.LCM * 2, DyeColor.YELLOW.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH), Component.translatable("info.woot_revived.dye.yellow")));
+        append(blueColorBar = new LytColorBar(DyeMakeup.LCM, DyeMakeup.LCM * 2, DyeColor.BLUE.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH), Component.translatable("info.woot_revived.dye.blue")));
+        append(whiteColorBar = new LytColorBar(DyeMakeup.LCM, DyeMakeup.LCM * 2, DyeColor.WHITE.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH), Component.translatable("info.woot_revived.dye.white")));
         append(outputFluid = new LytFluid(new FluidStack(FluidsRegistry.SOURCE_PURE_DYE_FLUID.get(), DyeMakeup.LCM * 4), Config.DyeLiquifier.OUTPUT_TANK_CAPACITY));
     }
 

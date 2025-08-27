@@ -1,0 +1,35 @@
+{
+  "parent": "woot_revived:main/factory_base",
+  "criteria": {
+    "fluid_infuser": {
+      "conditions": {
+        "items": [
+          {
+            "items": "woot_revived:fluid_infuser"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.fluid_infuser.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "woot_revived:fluid_infuser"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.fluid_infuser.title"
+    }
+  },
+  "requirements": [
+    [
+      "fluid_infuser"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,20 @@
+{
+  "type": "woot_revived:item_infuser",
+  "energy": 500,
+  "inputFluids": [
+    {
+      "amount": 360,
+      "id": "woot_revived:pure_dye_fluid"
+    }
+  ],
+  "inputIngredients": [
+    {
+      "item": "woot_revived:white_dye_casing"
+    },
+    []
+  ],
+  "outputItem": {
+    "count": 1,
+    "id": "woot_revived:white_dye_plate"
+  }
+}

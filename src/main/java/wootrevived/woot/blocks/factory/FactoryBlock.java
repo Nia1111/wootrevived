@@ -1,7 +1,7 @@
 package wootrevived.woot.blocks.factory;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -39,7 +39,7 @@ public class FactoryBlock extends FactoryBlockBase {
     }
 
     public static class State extends FactoryBlockBase.State {
-        public State(Block block, ImmutableMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
+        public State(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
             super(block, map, codec);
         }
     }

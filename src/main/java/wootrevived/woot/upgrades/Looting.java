@@ -1,12 +1,15 @@
 package wootrevived.woot.upgrades;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +18,6 @@ import wootrevived.api.registrations.WootUpgradeItemRegistration;
 import wootrevived.api.WootUpgradeItem;
 import wootrevived.woot.Woot;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static wootrevived.woot.util.render.WootStyles.DESCRIPTION_STYLE;
@@ -27,12 +29,18 @@ public class Looting extends WootUpgradeItem {
     public void applySpawnProperties(WootSpawnProperties properties) {
         ItemStack itemStack = properties.getMainHandItem();
 
-        if(itemStack.getItem().isEnchantable(itemStack))
-            itemStack.enchant(Enchantments.MOB_LOOTING, getLevel());
+        if(itemStack.getItem().isEnchantable(itemStack)) {
+            RegistryAccess accessor = properties.getLevel().registryAccess();
+            HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
+
+            lookup.get(Enchantments.LOOTING).ifPresent(enchantment -> {
+                itemStack.enchant(enchantment.getDelegate(), getLevel());
+            });
+        }
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltip, @NotNull TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext ctx, List<Component> tooltip, @NotNull TooltipFlag flag) {
         tooltip.add(Component.translatable("info.woot_revived.upgrade.looting.desc.0", getLevel()).setStyle(DESCRIPTION_STYLE));
     }
 

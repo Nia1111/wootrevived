@@ -1,5 +1,6 @@
 package wootrevived.woot.guide;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -36,7 +37,7 @@ public class GuideBookPersistentState extends SavedData {
         setDirty();
     }
 
-    public static GuideBookPersistentState fromTag(CompoundTag tag){
+    public static GuideBookPersistentState fromTag(CompoundTag tag, HolderLookup.Provider provider){
         Set<String> receivedPlayers = new HashSet<>();
         ListTag list = tag.getList(WootTags.GUIDE_PLAYER_TAG, Tag.TAG_STRING);
         for(int i = 0; i < list.size(); i++){
@@ -46,7 +47,7 @@ public class GuideBookPersistentState extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
         ListTag list = new ListTag();
         for(String receivedPlayer : receivedPlayers) {
             list.add(StringTag.valueOf(receivedPlayer));

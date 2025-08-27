@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "woot_revived:copper_cell",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "enabled": "true"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "woot_revived:cell_data"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "woot_revived:copper_cell"
+        }
+      ],
+      "name": "woot_revived:copper_cell",
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "woot_revived:blocks/copper_cell"
+}

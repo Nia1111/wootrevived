@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import wootrevived.woot.Woot;
@@ -28,6 +29,7 @@ import wootrevived.woot.blocks.dye_liquifier.DyeLiquifierBlockEntity;
 import wootrevived.woot.blocks.enchanted_liquifier.EnchantedLiquifierBlock;
 import wootrevived.woot.blocks.enchanted_liquifier.EnchantedLiquifierBlockEntity;
 import wootrevived.woot.blocks.factory.FactoryBlock;
+import wootrevived.woot.data.*;
 import wootrevived.woot.util.block.FactoryBlockBaseEntity;
 import wootrevived.woot.blocks.factory.FactoryBlockItem;
 import wootrevived.woot.blocks.fluid_infuser.FluidInfuserBlock;
@@ -47,6 +49,8 @@ import wootrevived.woot.client.render.fluid_infuser.FluidInfuserContainerMenu;
 import wootrevived.woot.client.render.heart.HeartContainerMenu;
 import wootrevived.woot.client.render.item_infuser.ItemInfuserContainerMenu;
 import wootrevived.woot.init.Registry;
+
+import java.util.ArrayList;
 
 public class BlocksRegistry {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, Woot.MOD_ID);
@@ -73,7 +77,7 @@ public class BlocksRegistry {
 
     public static final String CREATIVE_TANK_TAG = "creative_tank";
     public static final DeferredHolder<Block, Block> CREATIVE_TANK_BLOCK = BLOCKS.register(CREATIVE_TANK_TAG, CreativeTankBlock::new);
-    public static final DeferredHolder<Item, Item> CREATIVE_TANK_BLOCK_ITEM = ITEMS.register(CREATIVE_TANK_TAG, () -> new BlockItem(CREATIVE_TANK_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> CREATIVE_TANK_BLOCK_ITEM = ITEMS.register(CREATIVE_TANK_TAG, () -> new BlockItem(CREATIVE_TANK_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.CREATIVE_TANK_DATA, new CreativeTankData.Component(FluidStack.EMPTY))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeTankBlockEntity>> CREATIVE_TANK_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(CREATIVE_TANK_TAG, () -> BlockEntityType.Builder.of(CreativeTankBlockEntity::new, CREATIVE_TANK_BLOCK.get()).build(null));
 
     /* Factory Base */
@@ -86,25 +90,25 @@ public class BlocksRegistry {
 
     public static final String ITEM_INFUSER_TAG = "item_infuser";
     public static final DeferredHolder<Block, ItemInfuserBlock> ITEM_INFUSER_BLOCK = BLOCKS.register(ITEM_INFUSER_TAG, ItemInfuserBlock::new);
-    public static final DeferredHolder<Item, Item> ITEM_INFUSER_BLOCK_ITEM = ITEMS.register(ITEM_INFUSER_TAG, () -> new BlockItem(ITEM_INFUSER_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> ITEM_INFUSER_BLOCK_ITEM = ITEMS.register(ITEM_INFUSER_TAG, () -> new BlockItem(ITEM_INFUSER_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.ITEM_INFUSER_DATA, new ItemInfuserData.Component(0, FluidStack.EMPTY, new ArrayList<>()))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ItemInfuserBlockEntity>> ITEM_INFUSER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(ITEM_INFUSER_TAG, () -> BlockEntityType.Builder.of(ItemInfuserBlockEntity::new, ITEM_INFUSER_BLOCK.get()).build(null));
     public static final DeferredHolder<MenuType<?>, MenuType<ItemInfuserContainerMenu>> ITEM_INFUSER_BLOCK_MENU = MENU_TYPES.register(ITEM_INFUSER_TAG, () -> IMenuTypeExtension.create(ItemInfuserContainerMenu::new));
 
     public static final String FLUID_INFUSER_TAG = "fluid_infuser";
     public static final DeferredHolder<Block, FluidInfuserBlock> FLUID_INFUSER_BLOCK = BLOCKS.register(FLUID_INFUSER_TAG, FluidInfuserBlock::new);
-    public static final DeferredHolder<Item, Item> FLUID_INFUSER_BLOCK_ITEM = ITEMS.register(FLUID_INFUSER_TAG, () -> new BlockItem(FLUID_INFUSER_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> FLUID_INFUSER_BLOCK_ITEM = ITEMS.register(FLUID_INFUSER_TAG, () -> new BlockItem(FLUID_INFUSER_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.FLUID_INFUSER_DATA, new FluidInfuserData.Component(0, FluidStack.EMPTY, FluidStack.EMPTY, new ArrayList<>()))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidInfuserBlockEntity>> FLUID_INFUSER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(FLUID_INFUSER_TAG, () -> BlockEntityType.Builder.of(FluidInfuserBlockEntity::new, FLUID_INFUSER_BLOCK.get()).build(null));
     public static final DeferredHolder<MenuType<?>, MenuType<FluidInfuserContainerMenu>> FLUID_INFUSER_BLOCK_MENU = MENU_TYPES.register(FLUID_INFUSER_TAG, () -> IMenuTypeExtension.create(FluidInfuserContainerMenu::new));
 
     public static final String DYE_LIQUIFIER_TAG = "dye_liquifier";
     public static final DeferredHolder<Block, DyeLiquifierBlock> DYE_LIQUIFIER_BLOCK = BLOCKS.register(DYE_LIQUIFIER_TAG, DyeLiquifierBlock::new);
-    public static final DeferredHolder<Item, Item> DYE_LIQUIFIER_BLOCK_ITEM = ITEMS.register(DYE_LIQUIFIER_TAG, () -> new BlockItem(DYE_LIQUIFIER_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> DYE_LIQUIFIER_BLOCK_ITEM = ITEMS.register(DYE_LIQUIFIER_TAG, () -> new BlockItem(DYE_LIQUIFIER_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.DYE_LIQUIFIER_DATA, new DyeLiquifierData.Component(0, 0, 0, 0, 0, FluidStack.EMPTY, new ArrayList<>()))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DyeLiquifierBlockEntity>> DYE_LIQUIFIER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(DYE_LIQUIFIER_TAG, () -> BlockEntityType.Builder.of(DyeLiquifierBlockEntity::new, DYE_LIQUIFIER_BLOCK.get()).build(null));
     public static final DeferredHolder<MenuType<?>, MenuType<DyeLiquifierContainerMenu>> DYE_LIQUIFIER_BLOCK_MENU = MENU_TYPES.register(DYE_LIQUIFIER_TAG, () -> IMenuTypeExtension.create(DyeLiquifierContainerMenu::new));
 
     public static final String ENCHANTED_LIQUIFIER_TAG = "enchanted_liquifier";
     public static final DeferredHolder<Block, EnchantedLiquifierBlock> ENCHANTED_LIQUIFIER_BLOCK = BLOCKS.register(ENCHANTED_LIQUIFIER_TAG, EnchantedLiquifierBlock::new);
-    public static final DeferredHolder<Item, Item> ENCHANTED_LIQUIFIER_BLOCK_ITEM = ITEMS.register(ENCHANTED_LIQUIFIER_TAG, () -> new BlockItem(ENCHANTED_LIQUIFIER_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> ENCHANTED_LIQUIFIER_BLOCK_ITEM = ITEMS.register(ENCHANTED_LIQUIFIER_TAG, () -> new BlockItem(ENCHANTED_LIQUIFIER_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.ENCHANTED_LIQUIFIER_DATA, new EnchantedLiquifierData.Component(0, FluidStack.EMPTY, new ArrayList<>()))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnchantedLiquifierBlockEntity>> ENCHANTED_LIQUIFIER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(ENCHANTED_LIQUIFIER_TAG, () -> BlockEntityType.Builder.of(EnchantedLiquifierBlockEntity::new, ENCHANTED_LIQUIFIER_BLOCK.get()).build(null));
     public static final DeferredHolder<MenuType<?>, MenuType<EnchantedLiquifierContainerMenu>> ENCHANTED_LIQUIFIER_BLOCK_MENU = MENU_TYPES.register(ENCHANTED_LIQUIFIER_TAG, () -> IMenuTypeExtension.create(EnchantedLiquifierContainerMenu::new));
 
@@ -174,7 +178,7 @@ public class BlocksRegistry {
 
     public static final String COPPER_CELL_TAG = "copper_cell";
     public static final DeferredHolder<Block, Block> COPPER_CELL_BLOCK = BLOCKS.register(COPPER_CELL_TAG, () -> new CellBlock(BlocksRegistry.COPPER_CELL_BLOCK_ENTITY::get));
-    public static final DeferredHolder<Item, Item> COPPER_CELL_BLOCK_ITEM = ITEMS.register(COPPER_CELL_TAG, () -> new FactoryBlockItem(COPPER_CELL_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> COPPER_CELL_BLOCK_ITEM = ITEMS.register(COPPER_CELL_TAG, () -> new FactoryBlockItem(COPPER_CELL_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.CELL_DATA, new CellData.Component(FluidStack.EMPTY))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CellBlockEntity>> COPPER_CELL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(COPPER_CELL_TAG, () -> BlockEntityType.Builder.of((pos, state) -> new CellBlockEntity(BlocksRegistry.COPPER_CELL_BLOCK_ENTITY.get(), pos, state), COPPER_CELL_BLOCK.get()).build(null));
 
     // Iron Tier Blocks
@@ -191,7 +195,7 @@ public class BlocksRegistry {
 
     public static final String IRON_CELL_TAG = "iron_cell";
     public static final DeferredHolder<Block, Block> IRON_CELL_BLOCK = BLOCKS.register(IRON_CELL_TAG, () -> new CellBlock(BlocksRegistry.IRON_CELL_BLOCK_ENTITY::get));
-    public static final DeferredHolder<Item, Item> IRON_CELL_BLOCK_ITEM = ITEMS.register(IRON_CELL_TAG, () -> new FactoryBlockItem(IRON_CELL_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> IRON_CELL_BLOCK_ITEM = ITEMS.register(IRON_CELL_TAG, () -> new FactoryBlockItem(IRON_CELL_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.CELL_DATA, new CellData.Component(FluidStack.EMPTY))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CellBlockEntity>> IRON_CELL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(IRON_CELL_TAG, () -> BlockEntityType.Builder.of((pos, state) -> new CellBlockEntity(BlocksRegistry.IRON_CELL_BLOCK_ENTITY.get(), pos, state), IRON_CELL_BLOCK.get()).build(null));
 
     // Gold Tier Blocks
@@ -208,7 +212,7 @@ public class BlocksRegistry {
 
     public static final String GOLD_CELL_TAG = "gold_cell";
     public static final DeferredHolder<Block, Block> GOLD_CELL_BLOCK = BLOCKS.register(GOLD_CELL_TAG, () -> new CellBlock(BlocksRegistry.GOLD_CELL_BLOCK_ENTITY::get));
-    public static final DeferredHolder<Item, Item> GOLD_CELL_BLOCK_ITEM = ITEMS.register(GOLD_CELL_TAG, () -> new FactoryBlockItem(GOLD_CELL_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> GOLD_CELL_BLOCK_ITEM = ITEMS.register(GOLD_CELL_TAG, () -> new FactoryBlockItem(GOLD_CELL_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.CELL_DATA, new CellData.Component(FluidStack.EMPTY))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CellBlockEntity>> GOLD_CELL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(GOLD_CELL_TAG, () -> BlockEntityType.Builder.of((pos, state) -> new CellBlockEntity(BlocksRegistry.GOLD_CELL_BLOCK_ENTITY.get(), pos, state), GOLD_CELL_BLOCK.get()).build(null));
 
     // Diamond Tier Blocks
@@ -225,7 +229,7 @@ public class BlocksRegistry {
 
     public static final String DIAMOND_CELL_TAG = "diamond_cell";
     public static final DeferredHolder<Block, Block> DIAMOND_CELL_BLOCK = BLOCKS.register(DIAMOND_CELL_TAG, () -> new CellBlock(BlocksRegistry.DIAMOND_CELL_BLOCK_ENTITY::get));
-    public static final DeferredHolder<Item, Item> DIAMOND_CELL_BLOCK_ITEM = ITEMS.register(DIAMOND_CELL_TAG, () -> new FactoryBlockItem(DIAMOND_CELL_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> DIAMOND_CELL_BLOCK_ITEM = ITEMS.register(DIAMOND_CELL_TAG, () -> new FactoryBlockItem(DIAMOND_CELL_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.CELL_DATA, new CellData.Component(FluidStack.EMPTY))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CellBlockEntity>> DIAMOND_CELL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(DIAMOND_CELL_TAG, () -> BlockEntityType.Builder.of((pos, state) -> new CellBlockEntity(BlocksRegistry.DIAMOND_CELL_BLOCK_ENTITY.get(), pos, state), DIAMOND_CELL_BLOCK.get()).build(null));
 
     // Netherite Tier Blocks
@@ -242,7 +246,7 @@ public class BlocksRegistry {
 
     public static final String NETHERITE_CELL_TAG = "netherite_cell";
     public static final DeferredHolder<Block, Block> NETHERITE_CELL_BLOCK = BLOCKS.register(NETHERITE_CELL_TAG, () -> new CellBlock(BlocksRegistry.NETHERITE_CELL_BLOCK_ENTITY::get));
-    public static final DeferredHolder<Item, Item> NETHERITE_CELL_BLOCK_ITEM = ITEMS.register(NETHERITE_CELL_TAG, () -> new FactoryBlockItem(NETHERITE_CELL_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, Item> NETHERITE_CELL_BLOCK_ITEM = ITEMS.register(NETHERITE_CELL_TAG, () -> new FactoryBlockItem(NETHERITE_CELL_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.CELL_DATA, new CellData.Component(FluidStack.EMPTY))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CellBlockEntity>> NETHERITE_CELL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(NETHERITE_CELL_TAG, () -> BlockEntityType.Builder.of((pos, state) -> new CellBlockEntity(BlocksRegistry.NETHERITE_CELL_BLOCK_ENTITY.get(), pos, state), NETHERITE_CELL_BLOCK.get()).build(null));
 
     /* Anvil */

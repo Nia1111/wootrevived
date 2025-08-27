@@ -2,7 +2,9 @@ package wootrevived.woot.multiblock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -16,8 +18,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.api.enums.Tier;
-import wootrevived.woot.util.common.WootTier;
-import wootrevived.woot.util.entity.WootTags;
+import wootrevived.woot.data.MultiBlockFactoryData;
 
 public abstract class MultiBlockFactoryEntity extends BlockEntity implements BlockEntityTicker<BlockEntity>  {
     public MultiBlockFactoryEntity(BlockEntityType<?> type, BlockPos pos, BlockState state){
@@ -58,31 +59,40 @@ public abstract class MultiBlockFactoryEntity extends BlockEntity implements Blo
         return tier;
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
+    private MultiBlockFactoryData.Component getComponent(){
+        return new MultiBlockFactoryData.Component(tier);
+    }
 
-        tag.putInt(WootTags.Factory.FACTORY_TIER, tier.ordinal());
+    private void setComponent(MultiBlockFactoryData.Component component){
+        tier = component.tier();
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-
-        tier = WootTier.byIndex(tag.getInt(WootTags.Factory.FACTORY_TIER));
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+        MultiBlockFactoryData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+        MultiBlockFactoryData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
+    }
+
+    @NotNull
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookupProvider){
+        super.handleUpdateTag(tag, lookupProvider);
+        loadAdditional(tag, lookupProvider);
     }
 
     @Override

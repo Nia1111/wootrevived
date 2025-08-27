@@ -1,8 +1,11 @@
 package wootrevived.woot.util.handlers;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +15,44 @@ import java.util.*;
 public class WootImportItemHandler implements IItemHandler {
     private final Map<Integer, List<ItemStack>> importItems = new HashMap<>();
     private final Map<Integer, List<Integer>> items = new HashMap<>();
+
+    private Map<Integer, List<ItemStack>> getImportItems() {
+        return importItems;
+    }
+
+    private Map<Integer, List<Integer>> getItems() {
+        return items;
+    }
+
+    public static final Codec<WootImportItemHandler> CODEC = RecordCodecBuilder.create(inst ->
+            inst.group(
+                    Codec.unboundedMap(Codec.INT, ItemStack.OPTIONAL_CODEC.listOf()).fieldOf("ImportItems").forGetter(WootImportItemHandler::getImportItems),
+                    Codec.unboundedMap(Codec.INT, Codec.INT.listOf()).fieldOf("Items").forGetter(WootImportItemHandler::getItems)
+            ).apply(inst, WootImportItemHandler::new)
+    );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, WootImportItemHandler> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.map(
+                    HashMap::new,
+                    ByteBufCodecs.INT,
+                    ItemStack.OPTIONAL_LIST_STREAM_CODEC
+            ), WootImportItemHandler::getImportItems,
+
+            ByteBufCodecs.map(
+                    HashMap::new,
+                    ByteBufCodecs.INT,
+                    ByteBufCodecs.INT.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity))
+            ), WootImportItemHandler::getItems,
+
+            WootImportItemHandler::new
+    );
+
+    public WootImportItemHandler() {}
+
+    private WootImportItemHandler(Map<Integer, List<ItemStack>> importItems, Map<Integer, List<Integer>> items) {
+        this.importItems.putAll(importItems);
+        this.items.putAll(items);
+    }
 
     public void setImportItem(int index, List<ItemStack> importItem){
         if(isEqual(importItems.get(index), importItem)) return;
@@ -29,8 +70,7 @@ public class WootImportItemHandler implements IItemHandler {
             ItemStack item2 = list2.get(i);
 
             if(item1.getCount() != item2.getCount()) return false;
-            if(item1.getItem() != item2.getItem()) return false;
-            if(!Objects.equals(item1.getTag(), item2.getTag())) return false;
+            if(!ItemStack.isSameItemSameComponents(item1, item2)) return false;
         }
 
         return true;
@@ -71,7 +111,7 @@ public class WootImportItemHandler implements IItemHandler {
                 continue;
 
             for(ItemStack s : list){
-                if(stack.getItem() == s.getItem() && Objects.equals(stack.getTag(), s.getTag()))
+                if(ItemStack.isSameItemSameComponents(s, stack))
                     return true;
             }
         }
@@ -93,7 +133,7 @@ public class WootImportItemHandler implements IItemHandler {
 
             for(int j = 0; j < list.size(); j++){
                 ItemStack s = list.get(j);
-                if(stack.getItem() == s.getItem() && Objects.equals(stack.getTag(), s.getTag())){
+                if(ItemStack.isSameItemSameComponents(s, stack)){
                     int amount = item.get(j);
                     int needToBeAdded = s.getCount() - amount;
                     if(stack.getCount() <= needToBeAdded){
@@ -133,54 +173,5 @@ public class WootImportItemHandler implements IItemHandler {
             }
         }
         return count;
-    }
-
-    public void save(CompoundTag tag){
-        ListTag list = new ListTag();
-        for(int i = 0; i < 4; i++){
-            CompoundTag compoundTag = new CompoundTag();
-            List<ItemStack> stackList = importItems.get(i);
-            compoundTag.putBoolean("IsNull", stackList == null);
-            if(stackList == null) {
-                list.add(compoundTag);
-                continue;
-            }
-
-            ListTag stackListTag = new ListTag();
-            for(int j = 0; j < stackList.size(); j++){
-                CompoundTag stackTag = new CompoundTag();
-                ItemStack itemStack = stackList.get(j);
-                stackTag.put("Item", itemStack.save(new CompoundTag()));
-                stackTag.putInt("Count", items.get(i).get(j));
-                stackListTag.add(stackTag);
-            }
-
-            compoundTag.put("Stacks", stackListTag);
-            list.add(compoundTag);
-        }
-        tag.put("ItemHandler",  list);
-    }
-
-    public void load(CompoundTag tag){
-        importItems.clear();
-        items.clear();
-
-        ListTag list = tag.getList("ItemHandler", Tag.TAG_COMPOUND);
-        for(int i = 0; i < 4; i++){
-            CompoundTag compoundTag = list.getCompound(i);
-            if(compoundTag.getBoolean("IsNull"))
-                continue;
-
-            ListTag stackListTag = compoundTag.getList("Stacks", Tag.TAG_COMPOUND);
-            List<ItemStack> stackList = new ArrayList<>();
-            List<Integer> items = new ArrayList<>();
-            for(int j = 0; j < stackListTag.size(); j++){
-                CompoundTag stackTag = stackListTag.getCompound(j);
-                stackList.add(ItemStack.of(stackTag.getCompound("Item")));
-                items.add(stackTag.getInt("Count"));
-            }
-            importItems.put(i, stackList);
-            this.items.put(i, items);
-        }
     }
 }

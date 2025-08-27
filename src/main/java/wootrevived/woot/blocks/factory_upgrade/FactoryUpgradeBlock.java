@@ -1,10 +1,11 @@
 package wootrevived.woot.blocks.factory_upgrade;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -53,33 +54,37 @@ public class FactoryUpgradeBlock extends FactoryBlockBase {
     }
 
     public static class State extends FactoryBlockBase.State {
-        public State(Block block, ImmutableMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
+        public State(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
             super(block, map, codec);
         }
 
         @Override
-        public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        public @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
             if(!getValue(BlockStateProperties.ENABLED))
-                return super.use(level, player, hand, hit);
+                return super.useItemOn(stack, level, player, hand, hit);
 
             if (!level.isClientSide) {
-                ItemStack stack = player.getItemInHand(hand);
                 if(stack.isEmpty() && player.isShiftKeyDown()){
                     BlockEntity blockEntity = level.getBlockEntity(hit.getBlockPos());
                     if (blockEntity instanceof FactoryUpgradeBlockEntity factoryUpgradeBlockEntity) {
                         factoryUpgradeBlockEntity.removeUpgrade(level, player, hand);
-                        return InteractionResult.SUCCESS;
+                        return ItemInteractionResult.SUCCESS;
                     }
                 } else if (!stack.isEmpty() && stack.getItem() instanceof WootUpgradeItem upgradeItem) {
                     BlockEntity blockEntity = level.getBlockEntity(hit.getBlockPos());
                     if (blockEntity instanceof FactoryUpgradeBlockEntity factoryUpgradeBlockEntity) {
                         factoryUpgradeBlockEntity.addUpgrade(level, player, hand, stack, upgradeItem);
-                        return InteractionResult.SUCCESS;
+                        return ItemInteractionResult.SUCCESS;
                     }
                 }
             }
 
-            return super.use(level, player, hand, hit);
+            return super.useItemOn(stack, level, player, hand, hit);
+        }
+
+        @Override
+        public @NotNull InteractionResult useWithoutItem(@NotNull Level level, @NotNull Player player, @NotNull BlockHitResult hit){
+            return useItemOn(ItemStack.EMPTY, level, player, InteractionHand.MAIN_HAND, hit).result();
         }
 
         @Override

@@ -1,22 +1,22 @@
 package wootrevived.woot.blocks.enchanted_liquifier;
 
 import com.google.common.collect.Maps;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.*;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +26,9 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.client.render.enchanted_liquifier.EnchantedLiquifierContainerMenu;
+import wootrevived.woot.data.EnchantedLiquifierData;
 import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.util.Config;
 import wootrevived.woot.util.common.MachineSide;
@@ -36,17 +38,15 @@ import wootrevived.woot.util.handlers.WootItemStackHandler;
 import wootrevived.woot.util.entity.WootTags;
 import wootrevived.woot.util.entity.WootMachineBlockEntity;
 import wootrevived.woot.util.handlers.WootItemStackHandlerWrapper;
-import wootrevived.woot.util.helper.EnchantmentHelper;
-
 
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implements MenuProvider {
-    private final List<Map<MachineSide, MachineSideProperty>> directionsProperties = new ArrayList<>(2);
+    private final List<EnumMap<MachineSide, MachineSideProperty>> directionsProperties = new ArrayList<>(2);
 
     public static final int OUTPUT_FLUID_PROPERTY = 0;
     public static final int INGREDIENT_PROPERTY = 1;
@@ -54,7 +54,7 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
     public EnchantedLiquifierBlockEntity(BlockPos pos, BlockState state) {
         super(BlocksRegistry.ENCHANTED_LIQUIFIER_BLOCK_ENTITY.get(), pos, state);
         for(int i = 0; i < 2; i++){
-            Map<MachineSide, MachineSideProperty> properties = Maps.newEnumMap(MachineSide.class);
+            EnumMap<MachineSide, MachineSideProperty> properties = Maps.newEnumMap(MachineSide.class);
             for(MachineSide side : MachineSide.values()){
                 properties.put(side, MachineSideProperty.ENABLED);
             }
@@ -87,7 +87,7 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return stack.getItem() == Items.ENCHANTED_BOOK && EnchantmentHelper.isEnchanted(stack);
+            return stack.getItem() == Items.ENCHANTED_BOOK && EnchantmentHelper.hasAnyEnchantments(stack);
         }
     };
 
@@ -124,19 +124,54 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
         return null;
     }
 
-    @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    private EnchantedLiquifierData.Component getComponent(){
+        return new EnchantedLiquifierData.Component(
+                energyHandler.getEnergyStored(),
+                getOutputTank().getFluid(),
+                getAllMachineSidesProperties()
+        );
+    }
 
-        if(tag.contains(WootTags.INPUT_INVENTORY_TAG))
-            inventoryHandler.deserializeNBT(tag.getCompound(WootTags.INPUT_INVENTORY_TAG));
+    private void setComponent(EnchantedLiquifierData.Component component){
+        energyHandler.setEnergy(component.energy());
+        getOutputTank().setFluid(component.outputFluid());
+        setAllMachineSidesProperties(component.listMachineProperties());
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
+    protected void applyImplicitComponents(DataComponentInput input){
+        EnchantedLiquifierData.Component component = input.get(ComponentsRegistry.ENCHANTED_LIQUIFIER_DATA);
+        if(component == null)
+            return;
 
-        tag.put(WootTags.INPUT_INVENTORY_TAG, inventoryHandler.serializeNBT());
+        setComponent(component);
+        setChanged();
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder){
+        builder.set(ComponentsRegistry.ENCHANTED_LIQUIFIER_DATA, getComponent());
+    }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+
+        tag.put(WootTags.INPUT_INVENTORY_TAG, inventoryHandler.serializeNBT(provider));
+
+        EnchantedLiquifierData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
+
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+
+        if(tag.contains(WootTags.INPUT_INVENTORY_TAG))
+            inventoryHandler.deserializeNBT(provider, tag.getCompound(WootTags.INPUT_INVENTORY_TAG));
+
+        EnchantedLiquifierData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     public void dropContents(Level level, BlockPos pos) {
@@ -160,17 +195,17 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
     }
 
     @Override
-    public Map<MachineSide, MachineSideProperty> getMachineSideProperties(int index) {
+    public EnumMap<MachineSide, MachineSideProperty> getMachineSideProperties(int index) {
         return directionsProperties.get(index);
     }
 
     @Override
-    public List<Map<MachineSide, MachineSideProperty>> getAllMachineSidesProperties() {
+    public List<EnumMap<MachineSide, MachineSideProperty>> getAllMachineSidesProperties() {
         return directionsProperties;
     }
 
     @Override
-    public void setAllMachineSidesProperties(List<Map<MachineSide, MachineSideProperty>> directionsProperties){
+    public void setAllMachineSidesProperties(List<EnumMap<MachineSide, MachineSideProperty>> directionsProperties){
         for(int i = 0; i < directionsProperties.size(); i++){
             this.directionsProperties.set(i, directionsProperties.get(i));
         }
@@ -219,7 +254,7 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
         if (itemStack.isEmpty())
             return false;
 
-        if (!EnchantmentHelper.isEnchanted(itemStack))
+        if (!EnchantmentHelper.hasAnyEnchantments(itemStack))
             return false;
 
         int amount = getEnchantAmount(itemStack);
@@ -230,38 +265,22 @@ public class EnchantedLiquifierBlockEntity extends WootMachineBlockEntity implem
 
     private int getEnchantAmount(ItemStack itemStack) {
         int amount = 0;
-        if (!itemStack.isEmpty() && EnchantmentHelper.isEnchanted(itemStack)) {
-            ListTag listNBT;
-            if (itemStack.getItem() == Items.ENCHANTED_BOOK)
-                listNBT = EnchantedBookItem.getEnchantments(itemStack);
-            else
-                listNBT = itemStack.getEnchantmentTags();
+        if (!itemStack.isEmpty() && EnchantmentHelper.hasAnyEnchantments(itemStack)) {
+            ItemEnchantments enchantments = itemStack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
 
-            for (int i = 0; i < listNBT.size(); i++) {
-                CompoundTag compoundNBT = listNBT.getCompound(i);
-                Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(ResourceLocation.tryParse(compoundNBT.getString("id")));
-                if (enchantment != null && compoundNBT.contains("lvl"))
-                    amount += Mth.clamp(compoundNBT.getInt("lvl"), 1, Config.EnchantedLiquifier.MAX_ENCHANT_LVL) * Config.EnchantedLiquifier.PER_ENCHANT_FLUID;
-            }
+            for(Holder<Enchantment> enchantmentHolder : enchantments.keySet())
+                amount += Mth.clamp(enchantments.getLevel(enchantmentHolder), 1, Config.EnchantedLiquifier.MAX_ENCHANT_LVL) * Config.EnchantedLiquifier.PER_ENCHANT_FLUID;
         }
         return amount;
     }
 
     private int getEnchantEnergy(ItemStack itemStack) {
         int amount = 0;
-        if (!itemStack.isEmpty() && EnchantmentHelper.isEnchanted(itemStack)) {
-            ListTag listNBT;
-            if (itemStack.getItem() == Items.ENCHANTED_BOOK)
-                listNBT = EnchantedBookItem.getEnchantments(itemStack);
-            else
-                listNBT = itemStack.getEnchantmentTags();
+        if (!itemStack.isEmpty() && EnchantmentHelper.hasAnyEnchantments(itemStack)) {
+            ItemEnchantments enchantments = itemStack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
 
-            for (int i = 0; i < listNBT.size(); i++) {
-                CompoundTag compoundNBT = listNBT.getCompound(i);
-                Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(ResourceLocation.tryParse(compoundNBT.getString("id")));
-                if (enchantment != null && compoundNBT.contains("lvl"))
-                    amount += Mth.clamp(compoundNBT.getInt("lvl"), 1, Config.EnchantedLiquifier.MAX_ENCHANT_LVL) * Config.EnchantedLiquifier.PER_ENCHANT_ENERGY;
-            }
+            for(Holder<Enchantment> enchantmentHolder : enchantments.keySet())
+                amount += Mth.clamp(enchantments.getLevel(enchantmentHolder), 1, Config.EnchantedLiquifier.MAX_ENCHANT_LVL) * Config.EnchantedLiquifier.PER_ENCHANT_ENERGY;
         }
         return amount;
     }

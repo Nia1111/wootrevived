@@ -16,10 +16,10 @@ import java.util.Optional;
 public class LytColorBar extends LytBlock implements InteractiveElement {
     private final int amount;
     private final int capacity;
-    private final float[] color;
+    private final int color;
     private final MutableComponent colorName;
 
-    public LytColorBar(int amount, int capacity, float[] color, MutableComponent colorName) {
+    public LytColorBar(int amount, int capacity, int color, MutableComponent colorName) {
         this.amount = amount;
         this.capacity = capacity;
         this.color = color;

@@ -9,10 +9,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.woot.Woot;
+import wootrevived.woot.recipes.enchanted_liquifier.EnchantedLiquifierRecipe;
 import wootrevived.woot.recipes.stygian_anvil.StygianAnvilRecipe;
 import wootrevived.woot.recipes.dye_liquifier.DyeLiquifierRecipe;
 import wootrevived.woot.recipes.fluid_infuser.FluidInfuserRecipe;
@@ -24,7 +25,7 @@ import wootrevived.woot.registries.WootFactoryMobsRegistry;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Woot.MOD_ID)
+@EventBusSubscriber(modid = Woot.MOD_ID)
 public class InitServer {
     public static final List<ResourceLocation> mobLocations = new ArrayList<>();
 
@@ -35,6 +36,7 @@ public class InitServer {
         DyeLiquifierRecipe.loadRecipes(recipeManager);
         FluidInfuserRecipe.loadRecipes(recipeManager);
         ItemInfuserRecipe.loadRecipes(recipeManager);
+        EnchantedLiquifierRecipe.loadRecipes(event.getServer().getLevel(ServerLevel.OVERWORLD));
 
         ServerLevel level = event.getServer().getLevel(DropSimulatorDimension.DROP_SIMULATOR_LEVEL);
         if(level != null){

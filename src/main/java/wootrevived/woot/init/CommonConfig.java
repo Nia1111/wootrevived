@@ -1,6 +1,6 @@
 package wootrevived.woot.init;
 
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -22,7 +22,7 @@ public class CommonConfig {
         COMMON_CONFIG = COMMON_BUILDER.build();
     }
 
-    public static void init(){
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_CONFIG);
+    public static void init(ModContainer container){
+        container.registerConfig(ModConfig.Type.COMMON, COMMON_CONFIG);
     }
 }

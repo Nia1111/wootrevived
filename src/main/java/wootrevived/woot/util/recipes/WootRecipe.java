@@ -1,12 +1,8 @@
 package wootrevived.woot.util.recipes;
 
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.Container;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class WootRecipe implements Recipe<Container> {
+public abstract class WootRecipe implements Recipe<WootRecipeInput> {
     protected final ArrayList<Ingredient> inputItems = new ArrayList<>();
     protected final ArrayList<FluidStack> inputFluids = new ArrayList<>();
 
@@ -57,7 +53,7 @@ public abstract class WootRecipe implements Recipe<Container> {
 
     // Recipe
     @Override
-    public @NotNull ItemStack assemble(@NotNull Container container, @NotNull RegistryAccess registryAccess) {
+    public @NotNull ItemStack assemble(WootRecipeInput input, HolderLookup.@NotNull Provider provider){
         return ItemStack.EMPTY;
     }
 
@@ -67,7 +63,7 @@ public abstract class WootRecipe implements Recipe<Container> {
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(@NotNull RegistryAccess registryAccess) {
+    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registryAccess) {
         return ItemStack.EMPTY;
     }
 

@@ -1,7 +1,7 @@
 package wootrevived.woot.util.block;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -57,7 +57,7 @@ public abstract class FactoryBlockBase extends Block implements EntityBlock {
     }
 
     public static class State extends BlockState {
-        public State(Block block, ImmutableMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
+        public State(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
             super(block, map, codec);
         }
 

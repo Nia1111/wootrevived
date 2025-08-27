@@ -2,6 +2,7 @@ package wootrevived.woot.datagen;
 
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -10,8 +11,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import wootrevived.woot.datagen.recipes.*;
 
+import java.util.concurrent.CompletableFuture;
+
 public class Recipes extends RecipeProvider {
-    public Recipes(PackOutput packOutput) { super(packOutput); }
+    public Recipes(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> provider) { super(packOutput, provider); }
 
     @Override
     protected void buildRecipes(RecipeOutput output) {

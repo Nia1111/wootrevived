@@ -1,8 +1,11 @@
 package wootrevived.woot.util.handlers;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +15,44 @@ import java.util.*;
 public class WootImportFluidHandler implements IFluidHandler {
     private final Map<Integer, List<FluidStack>> importFluids = new HashMap<>();
     private final Map<Integer, List<Integer>> tanks = new HashMap<>();
+
+    private Map<Integer, List<FluidStack>> getImportFluids() {
+        return importFluids;
+    }
+
+    private Map<Integer, List<Integer>> getInternalTanks(){
+        return tanks;
+    }
+
+    public static final Codec<WootImportFluidHandler> CODEC = RecordCodecBuilder.create(inst ->
+            inst.group(
+                    Codec.unboundedMap(Codec.INT, FluidStack.OPTIONAL_CODEC.listOf()).fieldOf("ImportTanlks").forGetter(WootImportFluidHandler::getImportFluids),
+                    Codec.unboundedMap(Codec.INT, Codec.INT.listOf()).fieldOf("Tanks").forGetter(WootImportFluidHandler::getInternalTanks)
+            ).apply(inst, WootImportFluidHandler::new)
+    );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, WootImportFluidHandler> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.map(
+                    HashMap::new,
+                    ByteBufCodecs.INT,
+                    FluidStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity))
+            ), WootImportFluidHandler::getImportFluids,
+
+            ByteBufCodecs.map(
+                    HashMap::new,
+                    ByteBufCodecs.INT,
+                    ByteBufCodecs.INT.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity))
+            ), WootImportFluidHandler::getInternalTanks,
+
+            WootImportFluidHandler::new
+    );
+
+    public WootImportFluidHandler() {}
+
+    private WootImportFluidHandler(Map<Integer, List<FluidStack>> importFluids, Map<Integer, List<Integer>> tanks) {
+        this.importFluids.putAll(importFluids);
+        this.tanks.putAll(tanks);
+    }
 
     public void setImportFluid(int index, List<FluidStack> importFluid){
         if(isEqual(importFluids.get(index), importFluid)) return;
@@ -29,7 +70,7 @@ public class WootImportFluidHandler implements IFluidHandler {
             FluidStack fluid2 = list2.get(i);
 
             if(fluid1.getAmount() != fluid2.getAmount()) return false;
-            if(!fluid1.isFluidEqual(fluid2)) return false;
+            if(!FluidStack.isSameFluidSameComponents(fluid1, fluid2)) return false;
         }
 
         return true;
@@ -91,7 +132,7 @@ public class WootImportFluidHandler implements IFluidHandler {
                 continue;
 
             for(FluidStack s : list){
-                if(s.isFluidEqual(stack))
+                if(FluidStack.isSameFluidSameComponents(s, stack))
                     return true;
             }
         }
@@ -114,7 +155,7 @@ public class WootImportFluidHandler implements IFluidHandler {
 
             for(int j = 0; j < list.size(); j++){
                 FluidStack stack = list.get(j);
-                if(stack.isFluidEqual(resource)){
+                if(FluidStack.isSameFluidSameComponents(stack, resource)){
                     int amount = tank.get(j);
                     int needToBeFill = stack.getAmount() - amount;
                     if(resource.getAmount() <= needToBeFill){
@@ -140,57 +181,5 @@ public class WootImportFluidHandler implements IFluidHandler {
     @Override
     public @NotNull FluidStack drain(int maxDrain, FluidAction action) {
         return FluidStack.EMPTY;
-    }
-
-    public void save(CompoundTag tag){
-        ListTag list = new ListTag();
-        for(int i = 0; i < 4; i++){
-            CompoundTag compoundTag = new CompoundTag();
-            List<FluidStack> stackList = importFluids.get(i);
-            compoundTag.putBoolean("IsNull", stackList == null);
-            if(stackList == null) {
-                list.add(compoundTag);
-                continue;
-            }
-
-            ListTag stackListTag = new ListTag();
-            for(int j = 0; j < stackList.size(); j++){
-                CompoundTag stackTag = new CompoundTag();
-                FluidStack fluidStack = stackList.get(j);
-                CompoundTag fluidTag = new CompoundTag();
-                fluidStack.writeToNBT(fluidTag);
-                stackTag.put("Fluid", fluidTag);
-                stackTag.putInt("Amount", tanks.get(i).get(j));
-                stackListTag.add(stackTag);
-            }
-
-            compoundTag.put("Stacks", stackListTag);
-            list.add(compoundTag);
-        }
-        tag.put("FluidHandler",  list);
-    }
-
-    public void load(CompoundTag tag){
-        importFluids.clear();
-        tanks.clear();
-
-        ListTag list = tag.getList("FluidHandler", Tag.TAG_COMPOUND);
-        for(int i = 0; i < 4; i++){
-            CompoundTag compoundTag = list.getCompound(i);
-            if(compoundTag.getBoolean("IsNull"))
-                continue;
-
-            ListTag stackListTag = compoundTag.getList("Stacks", Tag.TAG_COMPOUND);
-            List<FluidStack> stackList = new ArrayList<>();
-            List<Integer> tanks = new ArrayList<>();
-            for(int j = 0; j < stackListTag.size(); j++){
-                CompoundTag stackTag = stackListTag.getCompound(j);
-                CompoundTag fluid = stackTag.getCompound("Fluid");
-                stackList.add(FluidStack.loadFluidStackFromNBT(fluid));
-                tanks.add(stackTag.getInt("Amount"));
-            }
-            importFluids.put(i, stackList);
-            this.tanks.put(i, tanks);
-        }
     }
 }

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "woot_revived:enchanted_liquifier_data"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "woot_revived:enchanted_liquifier"
+        }
+      ],
+      "name": "woot_revived:enchanted_liquifier",
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "woot_revived:blocks/enchanted_liquifier"
+}

@@ -11,8 +11,6 @@ import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
-import java.util.function.Consumer;
-
 public class WootFluidType extends FluidType {
     private final ResourceLocation stillTexture;
     private final ResourceLocation flowingTexture;
@@ -32,6 +30,34 @@ public class WootFluidType extends FluidType {
         this.fogColorB = fogColorB;
         this.fogColor = new Vector3f((float)fogColorR / 255f, (float)fogColorG / 255f, (float)fogColorB / 255f);
     }
+
+    public final IClientFluidTypeExtensions EXTENSION = new IClientFluidTypeExtensions() {
+        @Override
+        public ResourceLocation getStillTexture() {
+            return stillTexture;
+        }
+
+        @Override
+        public ResourceLocation getFlowingTexture() {
+            return flowingTexture;
+        }
+
+        @Override
+        public ResourceLocation getOverlayTexture() {
+            return overlayTexture;
+        }
+
+        @Override
+        public @NotNull Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor){
+            return fogColor;
+        }
+
+        @Override
+        public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape){
+            RenderSystem.setShaderFogStart(1f);
+            RenderSystem.setShaderFogEnd(6f);
+        }
+    };
 
     public ResourceLocation getStillTexture() {
         return stillTexture;
@@ -55,36 +81,5 @@ public class WootFluidType extends FluidType {
 
     public Vector3f getFogColor(){
         return this.fogColor;
-    }
-
-    @Override
-    public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer){
-        consumer.accept(new IClientFluidTypeExtensions() {
-            @Override
-            public ResourceLocation getStillTexture() {
-                return stillTexture;
-            }
-
-            @Override
-            public ResourceLocation getFlowingTexture() {
-                return flowingTexture;
-            }
-
-            @Override
-            public ResourceLocation getOverlayTexture() {
-                return overlayTexture;
-            }
-
-            @Override
-            public @NotNull Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor){
-                return fogColor;
-            }
-
-            @Override
-            public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape){
-                RenderSystem.setShaderFogStart(1f);
-                RenderSystem.setShaderFogEnd(6f);
-            }
-        });
     }
 }

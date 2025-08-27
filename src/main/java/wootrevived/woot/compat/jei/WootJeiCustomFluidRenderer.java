@@ -1,5 +1,6 @@
 package wootrevived.woot.compat.jei;
 
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -26,12 +27,19 @@ public class WootJeiCustomFluidRenderer implements IIngredientRenderer<FluidStac
     }
 
     @Override
-    public @NotNull List<Component> getTooltip(FluidStack ingredient, @NotNull TooltipFlag tooltipFlag) {
-        return List.of(
-                Component.empty()
-                        .append(Component.translatable("info.woot_revived.fluid").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
-                        .append(ingredient != null && !ingredient.isEmpty() ? ingredient.getDisplayName() : Component.translatable("info.woot_revived.empty")),
-                Component.empty()
+    @SuppressWarnings("removal")
+    public @NotNull List<Component> getTooltip(@NotNull FluidStack ingredient, @NotNull TooltipFlag tooltipFlag) {
+        return List.of();
+    }
+
+    @Override
+    public void getTooltip(@NotNull ITooltipBuilder tooltip, FluidStack ingredient, @NotNull TooltipFlag tooltipFlag) {
+        tooltip.add(Component.empty()
+                .append(Component.translatable("info.woot_revived.fluid").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
+                .append(ingredient != null && !ingredient.isEmpty() ? ingredient.getHoverName() : Component.translatable("info.woot_revived.empty"))
+        );
+
+        tooltip.add(Component.empty()
                         .append(Component.translatable("info.woot_revived.amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                         .append(WootContainerScreen.formatInteger(ingredient.getAmount()))
                         .append(Component.literal("mB").setStyle(UNIT_STYLE))

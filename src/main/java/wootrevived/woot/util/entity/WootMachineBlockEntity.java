@@ -2,9 +2,8 @@ package wootrevived.woot.util.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -37,9 +36,8 @@ import wootrevived.woot.util.render.WootContainerData;
 import wootrevived.woot.blocks.dye_liquifier.DyeLiquifierBlockEntity;
 import wootrevived.woot.client.render.dye_liquifier.DyeLiquifierContainerMenu;
 
-
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -100,7 +98,7 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
         }
 
         @Override
-        public Map<MachineSide, MachineSideProperty> getMachineSideProperties(int index) {
+        public EnumMap<MachineSide, MachineSideProperty> getMachineSideProperties(int index) {
             return WootMachineBlockEntity.this.getMachineSideProperties(index);
         }
 
@@ -131,9 +129,9 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     }
 
     protected RedstoneMode redstoneMode = RedstoneMode.ALWAYS_ON;
-    public abstract Map<MachineSide, MachineSideProperty> getMachineSideProperties(int index);
-    public abstract List<Map<MachineSide, MachineSideProperty>> getAllMachineSidesProperties();
-    public abstract void setAllMachineSidesProperties(List<Map<MachineSide, MachineSideProperty>> directionsProperties);
+    public abstract EnumMap<MachineSide, MachineSideProperty> getMachineSideProperties(int index);
+    public abstract List<EnumMap<MachineSide, MachineSideProperty>> getAllMachineSidesProperties();
+    public abstract void setAllMachineSidesProperties(List<EnumMap<MachineSide, MachineSideProperty>> directionsProperties);
 
     private boolean isProcessActive = false;
     private int processMax = 0;
@@ -370,43 +368,18 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
 
         long progress = ((long)processMax << 32) | (long) processRemaining;
         tag.putLong(WootTags.PROGRESS_TAG, progress);
 
         tag.putInt(WootTags.REDSTONE_MODE_TAG, redstoneMode.ordinal());
-
-        ListTag list = new ListTag();
-
-        List<Map<MachineSide, MachineSideProperty>> directionsProperties = getAllMachineSidesProperties();
-        for(Map<MachineSide, MachineSideProperty> machineProperties : directionsProperties){
-            ListTag properties = new ListTag();
-            for(Map.Entry<MachineSide, MachineSideProperty> entry : machineProperties.entrySet()){
-                CompoundTag compoundTag = new CompoundTag();
-                compoundTag.putInt(WootTags.DirectionProperties.SIDE, entry.getKey().ordinal());
-                compoundTag.putInt(WootTags.DirectionProperties.PROPERTY, entry.getValue().ordinal());
-                properties.add(compoundTag);
-            }
-            list.add(properties);
-        }
-
-        tag.put(WootTags.DirectionProperties.LIST, list);
-
-        if(hasEnergyCapability())
-            tag.put(WootTags.ENERGY_TAG, energyHandler.serializeNBT());
-
-        if(hasInputFluidCapability())
-            tag.put(WootTags.INPUT_TANK_TAG, inputTankHandler.writeToNBT(new CompoundTag()));
-
-        if(hasOutputFluidCapability())
-            tag.put(WootTags.OUTPUT_TANK_TAG, outputTankHandler.writeToNBT(new CompoundTag()));
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
 
         long progress = tag.getLong(WootTags.PROGRESS_TAG);
         processMax = (int)(progress >> 32);
@@ -417,45 +390,21 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
         }
 
         redstoneMode = RedstoneMode.byIndex(tag.getInt(WootTags.REDSTONE_MODE_TAG));
-
-        ListTag list = tag.getList(WootTags.DirectionProperties.LIST, Tag.TAG_LIST);
-
-        for(int i = 0; i < list.size(); i++){
-            Map<MachineSide, MachineSideProperty> properties = getAllMachineSidesProperties().get(i);
-            ListTag propertiesList = list.getList(i);
-            for(int j = 0; j < propertiesList.size(); j++){
-                CompoundTag compoundTag = propertiesList.getCompound(j);
-                properties.put(
-                        MachineSide.byIndex(compoundTag.getInt(WootTags.DirectionProperties.SIDE)),
-                        MachineSideProperty.byIndex(compoundTag.getInt(WootTags.DirectionProperties.PROPERTY))
-                );
-            }
-        }
-
         hasSidePropertiesChanged = true;
-
-        if(hasEnergyCapability())
-            energyHandler.deserializeNBT(tag.getCompound(WootTags.ENERGY_TAG));
-
-        if(hasInputFluidCapability())
-            inputTankHandler.readFromNBT(tag.getCompound(WootTags.INPUT_TANK_TAG));
-
-        if(hasOutputFluidCapability())
-            outputTankHandler.readFromNBT(tag.getCompound(WootTags.OUTPUT_TANK_TAG));
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookupProvider){
+        super.handleUpdateTag(tag, lookupProvider);
+        loadAdditional(tag, lookupProvider);
     }
 
     @Override
@@ -479,7 +428,7 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     }
 
     public void sendNewState(){
-        PacketDistributor.SERVER.noArg().send(new WootMachineUpdate(getBlockPos(), redstoneMode, getAllMachineSidesProperties()));
+        PacketDistributor.sendToServer(new WootMachineUpdate(getBlockPos(), redstoneMode, getAllMachineSidesProperties()));
     }
 
     public void handleNewState(WootMachineUpdate update){

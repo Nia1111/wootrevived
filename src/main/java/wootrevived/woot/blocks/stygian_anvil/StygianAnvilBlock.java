@@ -1,7 +1,7 @@
 package wootrevived.woot.blocks.stygian_anvil;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ParticleStatus;
 import net.minecraft.core.BlockPos;
@@ -10,6 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -93,21 +94,18 @@ public class StygianAnvilBlock extends Block implements EntityBlock {
     }
 
     public static class State extends BlockState {
-        public State(Block block, ImmutableMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
+        public State(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
             super(block, map, codec);
         }
 
         @Override
-        public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        public @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack heldItem, @NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
             if (level.isClientSide)
-                super.use(level, player, hand, hit);
+                super.useItemOn(heldItem, level, player, hand, hit);
 
             BlockEntity be = level.getBlockEntity(hit.getBlockPos());
             if (be instanceof StygianAnvilBlockEntity anvil) {
-                ItemStack heldItem = player.getItemInHand(hand);
-
-                if (player.isShiftKeyDown() && heldItem.isEmpty()) {
-                    // Sneak with empty hand to empty
+                if(player.isShiftKeyDown() && heldItem.isEmpty()){
                     anvil.dropItem(player, hand);
                 } else if (heldItem.getItem() == ItemsRegistry.STYGIAN_HAMMER_ITEM.get()) {
                     // Crafting
@@ -133,7 +131,12 @@ public class StygianAnvilBlock extends Block implements EntityBlock {
                 }
             }
 
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        @Override
+        public @NotNull InteractionResult useWithoutItem(@NotNull Level level, @NotNull Player player, @NotNull BlockHitResult hit){
+            return useItemOn(ItemStack.EMPTY, level, player, InteractionHand.MAIN_HAND, hit).result();
         }
 
         @Override

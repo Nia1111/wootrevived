@@ -3,7 +3,7 @@ package wootrevived.woot.drops.simulator;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -27,7 +27,7 @@ public class DropSimulatorDimension {
     public static final ResourceKey<Level> DROP_SIMULATOR_LEVEL = ResourceKey.create(Registries.DIMENSION, ResourceLocation.tryBuild(Woot.MOD_ID, DROP_SIMULATOR_TAG));
     public static final ResourceKey<LevelStem> DROP_SIMULATOR_LEVEL_STEM = ResourceKey.create(Registries.LEVEL_STEM, ResourceLocation.tryBuild(Woot.MOD_ID, DROP_SIMULATOR_TAG));
 
-    public static void bootstrapType(BootstapContext<DimensionType> context) {
+    public static void bootstrapType(BootstrapContext<DimensionType> context) {
         context.register(DROP_SIMULATOR_DIMENSION_TYPE, new DimensionType(
                 OptionalLong.of(0), // fixedTime
                 false, // hasSkylight
@@ -47,7 +47,7 @@ public class DropSimulatorDimension {
         ));
     }
 
-    public static void bootstrapStem(BootstapContext<LevelStem> context) {
+    public static void bootstrapStem(BootstrapContext<LevelStem> context) {
         HolderGetter<Biome> biomeRegistry = context.lookup(Registries.BIOME);
         HolderGetter<DimensionType> dimTypes = context.lookup(Registries.DIMENSION_TYPE);
         HolderGetter<NoiseGeneratorSettings> noiseSettings = context.lookup(Registries.NOISE_SETTINGS);

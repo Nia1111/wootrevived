@@ -291,7 +291,7 @@ public abstract class WootContainerScreen<T extends WootContainerMenu> extends A
                 tooltip = List.of(
                         Component.empty()
                                 .append(Component.translatable("info.woot_revived.fluid").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
-                                .append(fluid != null && !fluid.isEmpty() ? fluid.getDisplayName() : Component.translatable("info.woot_revived.empty")),
+                                .append(fluid != null && !fluid.isEmpty() ? fluid.getHoverName() : Component.translatable("info.woot_revived.empty")),
                         Component.empty()
                                 .append(Component.translatable("info.woot_revived.amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                                 .append(formatInteger(fluid.getAmount()))
@@ -303,7 +303,7 @@ public abstract class WootContainerScreen<T extends WootContainerMenu> extends A
                 tooltip = List.of(
                         Component.empty()
                                 .append(Component.translatable("info.woot_revived.fluid").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
-                                .append(fluid != null && !fluid.isEmpty() ? fluid.getDisplayName() : Component.translatable("info.woot_revived.empty")),
+                                .append(fluid != null && !fluid.isEmpty() ? fluid.getHoverName() : Component.translatable("info.woot_revived.empty")),
                         Component.empty()
                                 .append(Component.translatable("info.woot_revived.amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                                 .append(formatInteger(fluid.getAmount()))
@@ -348,16 +348,15 @@ public abstract class WootContainerScreen<T extends WootContainerMenu> extends A
         float green = (color >>  8 & 0xFF) / 255.0f;
         float blue  = (color       & 0xFF) / 255.0f;
 
-        BufferBuilder builder = Tesselator.getInstance().getBuilder();
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
         Matrix4f matrix = guiGraphics.pose().last().pose();
-        builder.vertex(matrix, x, y + height, 0).uv(minU, minV + (maxV - minV) * height / 16F).color(red, green, blue, 1).endVertex();
-        builder.vertex(matrix, x + width, y + height, 0).uv(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).color(red, green, blue, 1).endVertex();
-        builder.vertex(matrix, x + width, y, 0).uv(minU + (maxU - minU) * width / 16F, minV).color(red, green, blue, 1).endVertex();
-        builder.vertex(matrix, x, y, 0).uv(minU, minV).color(red, green, blue, 1).endVertex();
+        builder.addVertex(matrix, x, y + height, 0).setUv(minU, minV + (maxV - minV) * height / 16F).setColor(red, green, blue, 1);
+        builder.addVertex(matrix, x + width, y + height, 0).setUv(minU + (maxU - minU) * width / 16F, minV + (maxV - minV) * height / 16F).setColor(red, green, blue, 1);
+        builder.addVertex(matrix, x + width, y, 0).setUv(minU + (maxU - minU) * width / 16F, minV).setColor(red, green, blue, 1);
+        builder.addVertex(matrix, x, y, 0).setUv(minU, minV).setColor(red, green, blue, 1);
 
-        BufferUploader.drawWithShader(builder.end());
+        BufferUploader.drawWithShader(builder.buildOrThrow());
     }
 
     public static void renderProgressArrowBg(@NotNull GuiGraphics gui, int x, int y){
@@ -406,14 +405,14 @@ public abstract class WootContainerScreen<T extends WootContainerMenu> extends A
         }
     }
 
-    public static void renderColorBarBg(@NotNull GuiGraphics gui, int x, int y, float[] color){
+    public static void renderColorBarBg(@NotNull GuiGraphics gui, int x, int y, int color){
         gui.blit(GUI, x, y, 177, 57, 56, 11);
-        gui.innerBlit(GUI, x + 3, x + 53, y + 3, y + 8, 0, 180F / 256F, 230F / 256F, 69F / 256F, 74F / 256F, color[0], color[1], color[2], 1F);
+        gui.innerBlit(GUI, x + 3, x + 53, y + 3, y + 8, 0, 180F / 256F, 230F / 256F, 69F / 256F, 74F / 256F,(color & 0xFF) / 255F, ((color >> 8) & 0xFF) / 255F, ((color >> 16) & 0xFF) / 255F, 1F);
     }
 
-    public static void renderColorBar(@NotNull GuiGraphics gui, int x, int y, int fill, int capacity, float[] color){
+    public static void renderColorBar(@NotNull GuiGraphics gui, int x, int y, int fill, int capacity, int color){
         int fillWidth = Mth.clamp(fill * 50 / capacity, 0, 50);
-        gui.innerBlit(GUI, x + 3, x + 3 + fillWidth, y + 3, y + 8, 0, 180F / 256F, (180F + (float)fillWidth) / 256F, 75F / 256F, 80F / 256F, color[0], color[1], color[2], 1F);
+        gui.innerBlit(GUI, x + 3, x + 3 + fillWidth, y + 3, y + 8, 0, 180F / 256F, (180F + (float)fillWidth) / 256F, 75F / 256F, 80F / 256F, (color & 0xFF) / 255F, ((color >> 8) & 0xFF) / 255F, ((color >> 16) & 0xFF) / 255F, 1F);
     }
 
     public void renderColorBarTooltip(@NotNull GuiGraphics gui, int mouseX, int mouseY, int x, int y, int fill, int capacity, MutableComponent colorName) {

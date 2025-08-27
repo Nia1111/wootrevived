@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.registries.ItemsRegistry;
 import wootrevived.woot.util.render.WootStyles;
 
-import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,8 +134,8 @@ public class XpItem extends Item {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext ctx, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, ctx, tooltip, flag);
 
         tooltip.add(Component.translatable("info.woot_revived.shard.0").setStyle(WootStyles.DESCRIPTION_STYLE));
         tooltip.add(Component.translatable("info.woot_revived.shard.1").setStyle(WootStyles.DESCRIPTION_STYLE));

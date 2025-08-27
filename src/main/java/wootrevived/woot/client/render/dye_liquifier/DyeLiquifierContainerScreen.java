@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -48,10 +49,10 @@ public class DyeLiquifierContainerScreen extends WootContainerScreen<DyeLiquifie
     @Override
     protected void renderMenuBackground(@NotNull GuiGraphics gui) {
         renderSlot(gui, INPUT_SLOT_X, INPUT_SLOT_Y, INPUT_SLOT_COLOR);
-        renderColorBarBg(gui, COLOR_BAR_X, RED_COLOR_BAR_Y, DyeColor.RED.getTextureDiffuseColors());
-        renderColorBarBg(gui, COLOR_BAR_X, YELLOW_COLOR_BAR_Y, DyeColor.YELLOW.getTextureDiffuseColors());
-        renderColorBarBg(gui, COLOR_BAR_X, BLUE_COLOR_BAR_Y, DyeColor.BLUE.getTextureDiffuseColors());
-        renderColorBarBg(gui, COLOR_BAR_X, WHITE_COLOR_BAR_Y, DyeColor.WHITE.getTextureDiffuseColors());
+        renderColorBarBg(gui, COLOR_BAR_X, RED_COLOR_BAR_Y, DyeColor.RED.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH));
+        renderColorBarBg(gui, COLOR_BAR_X, YELLOW_COLOR_BAR_Y, DyeColor.YELLOW.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH));
+        renderColorBarBg(gui, COLOR_BAR_X, BLUE_COLOR_BAR_Y, DyeColor.BLUE.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH));
+        renderColorBarBg(gui, COLOR_BAR_X, WHITE_COLOR_BAR_Y, DyeColor.WHITE.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH));
         renderEnergyBg(gui, ENERGY_X, ENERGY_Y);
         renderFluidBg(gui, OUTPUT_FLUID_X, OUTPUT_FLUID_Y);
         renderProgressBg(gui, PROGRESS_X, PROGRESS_Y);
@@ -60,10 +61,10 @@ public class DyeLiquifierContainerScreen extends WootContainerScreen<DyeLiquifie
     @Override
     protected void renderState(@NotNull GuiGraphics gui) {
         renderEnergy(gui, ENERGY_X, ENERGY_Y, menu.getEnergy(), Config.DyeLiquifier.ENERGY_CAPACITY);
-        renderColorBar(gui, COLOR_BAR_X, RED_COLOR_BAR_Y, menu.getRedDyeAmount(), Config.DyeLiquifier.RED_TANK_CAPACITY, DyeColor.RED.getTextureDiffuseColors());
-        renderColorBar(gui, COLOR_BAR_X, YELLOW_COLOR_BAR_Y, menu.getYellowDyeAmount(), Config.DyeLiquifier.YELLOW_TANK_CAPACITY, DyeColor.YELLOW.getTextureDiffuseColors());
-        renderColorBar(gui, COLOR_BAR_X, BLUE_COLOR_BAR_Y, menu.getBlueDyeAmount(), Config.DyeLiquifier.BLUE_TANK_CAPACITY, DyeColor.BLUE.getTextureDiffuseColors());
-        renderColorBar(gui, COLOR_BAR_X, WHITE_COLOR_BAR_Y, menu.getWhiteDyeAmount(), Config.DyeLiquifier.WHITE_TANK_CAPACITY, DyeColor.WHITE.getTextureDiffuseColors());
+        renderColorBar(gui, COLOR_BAR_X, RED_COLOR_BAR_Y, menu.getRedDyeAmount(), Config.DyeLiquifier.RED_TANK_CAPACITY, DyeColor.RED.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH));
+        renderColorBar(gui, COLOR_BAR_X, YELLOW_COLOR_BAR_Y, menu.getYellowDyeAmount(), Config.DyeLiquifier.YELLOW_TANK_CAPACITY, DyeColor.YELLOW.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH));
+        renderColorBar(gui, COLOR_BAR_X, BLUE_COLOR_BAR_Y, menu.getBlueDyeAmount(), Config.DyeLiquifier.BLUE_TANK_CAPACITY, DyeColor.BLUE.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH));
+        renderColorBar(gui, COLOR_BAR_X, WHITE_COLOR_BAR_Y, menu.getWhiteDyeAmount(), Config.DyeLiquifier.WHITE_TANK_CAPACITY, DyeColor.WHITE.getMapColor().calculateRGBColor(MapColor.Brightness.HIGH));
         renderFluid(gui, OUTPUT_FLUID_X, OUTPUT_FLUID_Y, menu.getOutputFluid(), Config.DyeLiquifier.OUTPUT_TANK_CAPACITY);
         renderProgress(gui, PROGRESS_X, PROGRESS_Y, menu.getProgress());
     }

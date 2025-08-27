@@ -1,0 +1,22 @@
+{
+  "type": "woot_revived:item_infuser",
+  "energy": 3000,
+  "inputFluids": [
+    {
+      "amount": 3000,
+      "id": "woot_revived:enchanted_fluid"
+    }
+  ],
+  "inputIngredients": [
+    {
+      "item": "woot_revived:iron_enchanted_plate"
+    },
+    {
+      "item": "woot_revived:gold_shard"
+    }
+  ],
+  "outputItem": {
+    "count": 1,
+    "id": "woot_revived:gold_enchanted_plate"
+  }
+}

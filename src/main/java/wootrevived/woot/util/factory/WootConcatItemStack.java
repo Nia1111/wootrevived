@@ -1,6 +1,6 @@
 package wootrevived.woot.util.factory;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -8,23 +8,23 @@ import java.util.*;
 
 public class WootConcatItemStack {
     final Item item;
-    final CompoundTag tag;
+    final DataComponentMap components;
 
-    public WootConcatItemStack(Item item, CompoundTag tag) {
+    public WootConcatItemStack(Item item, DataComponentMap components) {
         this.item = item;
-        this.tag = tag;
+        this.components = components;
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(item, tag);
+        return Objects.hash(item, components);
     }
 
     @Override
     public boolean equals(Object o){
         if(this == o) return true;
         if(!(o instanceof WootConcatItemStack stack)) return false;
-        return item == stack.item && Objects.equals(tag, stack.tag);
+        return item == stack.item && Objects.equals(components, stack.components);
     }
 
     public static List<ItemStack> merge(List<ItemStack> unconcatItems){
@@ -32,7 +32,7 @@ public class WootConcatItemStack {
 
         for(ItemStack itemStack : unconcatItems){
             if(itemStack.isEmpty()) continue;
-            WootConcatItemStack stack = new WootConcatItemStack(itemStack.getItem(), itemStack.getTag());
+            WootConcatItemStack stack = new WootConcatItemStack(itemStack.getItem(), itemStack.getComponents());
             if(map.containsKey(stack)){
                 ItemStack existing = map.get(stack);
                 existing.grow(itemStack.getCount());

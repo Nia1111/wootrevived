@@ -1,9 +1,12 @@
 package wootrevived.woot.blocks.fake_spawner;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -11,11 +14,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.api.enums.Tier;
+import wootrevived.woot.data.FakeSpawnerData;
 import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.registries.WootFactoryMobsRegistry;
 import wootrevived.woot.util.block.FactoryBlockBaseEntity;
-import wootrevived.woot.util.entity.WootTags;
 import wootrevived.woot.util.handlers.WootFluidTankHandler;
+
+import java.util.Optional;
 
 public class FakeSpawnerBlockEntity extends FactoryBlockBaseEntity {
     public FakeSpawnerBlockEntity(BlockPos pos, BlockState state) {
@@ -123,59 +129,64 @@ public class FakeSpawnerBlockEntity extends FactoryBlockBaseEntity {
     public static ItemStack getItemStack(CompoundTag tag) {
         ItemStack itemStack = BlocksRegistry.FAKE_SPAWNER_BLOCK.get().asItem().getDefaultInstance();
 
-        CompoundTag blockTag = itemStack.getOrCreateTagElement("BlockEntityTag");
-        blockTag.put(WootTags.MOB_TAG, tag);
+        itemStack.applyComponents(DataComponentPatch.builder().set(ComponentsRegistry.FAKE_SPAWNER_DATA.get(), new FakeSpawnerData.Component(
+                Optional.ofNullable(tag),
+                0, 0, 0, 0, 0
+        )).build());
+
         return itemStack;
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
+    private FakeSpawnerData.Component getComponent(){
+        return new FakeSpawnerData.Component(
+                Optional.ofNullable(getMobTag()),
+                numOfSim, vitalityCost, totalDrained, perTickRatio, accumulator
+        );
+    }
 
-        CompoundTag mobTag = getMobTag();
-        if(mobTag != null)
-            tag.put(WootTags.MOB_TAG, mobTag);
-
-        tag.putInt(WootTags.Factory.NUMBER_OF_SIMULATIONS, numOfSim);
-        tag.putInt(WootTags.Factory.VITALITY_COST, vitalityCost);
-        tag.putInt(WootTags.Factory.TOTAL_DRAINED, totalDrained);
-        tag.putDouble(WootTags.Factory.PER_TICK_RATIO, perTickRatio);
-        tag.putDouble(WootTags.Factory.ACCUMULATOR, accumulator);
+    public void setComponent(FakeSpawnerData.Component component){
+        mobTag = component.mobTag().orElse(null);
+        numOfSim = component.numberOfSimulations();
+        vitalityCost = component.vitalityCost();
+        totalDrained = component.totalDrained();
+        perTickRatio = component.perTickRatio();
+        accumulator = component.accumulator();
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    protected void applyImplicitComponents(DataComponentInput input){
+        FakeSpawnerData.Component component = input.get(ComponentsRegistry.FAKE_SPAWNER_DATA);
+        if(component == null)
+            return;
 
-        if(tag.contains(WootTags.MOB_TAG))
-            mobTag = tag.getCompound(WootTags.MOB_TAG);
+        setComponent(component);
+        setChanged();
+    }
 
-        numOfSim = tag.getInt(WootTags.Factory.NUMBER_OF_SIMULATIONS);
-        vitalityCost = tag.getInt(WootTags.Factory.VITALITY_COST);
-        totalDrained = tag.getInt(WootTags.Factory.TOTAL_DRAINED);
-        perTickRatio = tag.getDouble(WootTags.Factory.PER_TICK_RATIO);
-        accumulator = tag.getDouble(WootTags.Factory.ACCUMULATOR);
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder){
+        builder.set(ComponentsRegistry.FAKE_SPAWNER_DATA, getComponent());
+    }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+        FakeSpawnerData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
+
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+        FakeSpawnerData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
-    }
-
-    @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-
-        if(level == null || level.isClientSide) return;
-        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 }

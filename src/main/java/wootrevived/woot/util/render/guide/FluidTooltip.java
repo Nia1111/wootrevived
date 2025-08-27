@@ -30,7 +30,7 @@ public class FluidTooltip implements GuideTooltip {
         List<Component> lines = List.of(
                 Component.empty()
                         .append(Component.translatable("info.woot_revived.fluid").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
-                        .append(!stack.isEmpty() ? stack.getDisplayName() : Component.translatable("info.woot_revived.empty")),
+                        .append(!stack.isEmpty() ? stack.getHoverName() : Component.translatable("info.woot_revived.empty")),
                 Component.empty()
                         .append(Component.translatable("info.woot_revived.amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                         .append(WootContainerScreen.formatInteger(stack.getAmount()))

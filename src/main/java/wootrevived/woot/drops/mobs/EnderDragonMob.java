@@ -1,18 +1,23 @@
 package wootrevived.woot.drops.mobs;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.api.enums.Tier;
 import wootrevived.api.registrations.WootFactoryMobRegistration;
-import wootrevived.woot.util.helper.EnchantmentHelper;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EnderDragonMob extends WootFactoryMob<EnderDragon> {
     public EnderDragonMob(EntityType<EnderDragon> entityType, Properties properties) {
@@ -28,14 +33,19 @@ public class EnderDragonMob extends WootFactoryMob<EnderDragon> {
 
         generatedDrops.add(Items.DRAGON_EGG.getDefaultInstance());
 
-        int looting = 0;
+        AtomicInteger looting = new AtomicInteger();
         ItemStack stack = properties.getMainHandItem();
-        if(EnchantmentHelper.isEnchanted(stack)){
-            looting = stack.getEnchantmentLevel(Enchantments.MOB_LOOTING);
+        if(EnchantmentHelper.hasAnyEnchantments(stack)){
+            RegistryAccess accessor = properties.getLevel().registryAccess();
+            HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
+
+            lookup.get(Enchantments.LOOTING).ifPresent(enchantment -> {
+                looting.set(stack.getEnchantmentLevel(enchantment.getDelegate()));
+            });
         }
 
         ItemStack dragonBreath = Items.DRAGON_BREATH.getDefaultInstance();
-        dragonBreath.setCount(16 * (looting + 1));
+        dragonBreath.setCount(16 * (looting.get() + 1));
         generatedDrops.add(dragonBreath);
 
         if(properties.doSimulateChargedCreeper()){

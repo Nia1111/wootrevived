@@ -2,7 +2,10 @@ package wootrevived.woot.blocks.creative_tank;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -15,8 +18,10 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import wootrevived.woot.data.CreativeTankData;
 import wootrevived.woot.registries.BlocksRegistry;
-import wootrevived.woot.util.entity.WootTags;
+import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.util.handlers.WootFluidTankHandler;
 
 public class CreativeTankBlockEntity extends BlockEntity implements BlockEntityTicker<BlockEntity> {
@@ -59,7 +64,7 @@ public class CreativeTankBlockEntity extends BlockEntity implements BlockEntityT
         if(fluidStack.isEmpty())
             return;
 
-        if(!inputTankHandler.getFluid().isFluidEqual(fluidStack))
+        if(!FluidStack.isSameFluidSameComponents(inputTankHandler.getFluid(), fluidStack))
             inputTankHandler.setFluid(FluidStack.EMPTY);
     }
 
@@ -67,37 +72,59 @@ public class CreativeTankBlockEntity extends BlockEntity implements BlockEntityT
         return blockEntity.inputTankHandler;
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
+    private CreativeTankData.Component getComponent(){
+        return new CreativeTankData.Component(inputTankHandler.getFluid());
+    }
 
-        tag.put(WootTags.INPUT_TANK_TAG, inputTankHandler.writeToNBT(new CompoundTag()));
+    private void setComponent(CreativeTankData.Component component){
+        inputTankHandler.setFluid(component.tankFluid());
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    protected void applyImplicitComponents(DataComponentInput input){
+        CreativeTankData.Component component = input.get(ComponentsRegistry.CREATIVE_TANK_DATA);
+        if(component == null)
+            return;
 
-        inputTankHandler.readFromNBT(tag.getCompound(WootTags.INPUT_TANK_TAG));
+        setComponent(component);
+        setChanged();
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder){
+        builder.set(ComponentsRegistry.CREATIVE_TANK_DATA, getComponent());
+    }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+        CreativeTankData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
+
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+        CreativeTankData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(){
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider provider){
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag){
-        super.handleUpdateTag(tag);
-        load(tag);
+    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider lookupProvider){
+        super.handleUpdateTag(tag, lookupProvider);
+        loadAdditional(tag, lookupProvider);
     }
 
-    @org.jetbrains.annotations.Nullable
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket(){
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket(){
         return ClientboundBlockEntityDataPacket.create(this);
     }
 

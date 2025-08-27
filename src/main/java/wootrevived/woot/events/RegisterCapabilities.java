@@ -1,7 +1,7 @@
 package wootrevived.woot.events;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import wootrevived.woot.Woot;
@@ -17,7 +17,7 @@ import wootrevived.woot.blocks.stygian_anvil.StygianAnvilBlockEntity;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.util.entity.WootMachineBlockEntity;
 
-@Mod.EventBusSubscriber(modid = Woot.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class RegisterCapabilities {
     @SubscribeEvent
     public static void registerCapabilites(RegisterCapabilitiesEvent event) {

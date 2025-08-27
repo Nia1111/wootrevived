@@ -1,6 +1,7 @@
 package wootrevived.woot;
 
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import wootrevived.woot.guide.WootGuide;
 import wootrevived.woot.init.CommonConfig;
 import wootrevived.woot.init.Registry;
@@ -12,9 +13,9 @@ public class Woot
 {
     public static final String MOD_ID = "woot_revived";
 
-    public Woot(IEventBus bus)
+    public Woot(ModContainer container, IEventBus bus)
     {
-        CommonConfig.init();
+        CommonConfig.init(container);
 
         WootPlugins.registerPlugins();
 

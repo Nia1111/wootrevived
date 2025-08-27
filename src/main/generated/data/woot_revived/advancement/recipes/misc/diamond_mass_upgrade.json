@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "a": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:gems/diamond"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "b": {
+      "conditions": {
+        "items": [
+          {
+            "items": "woot_revived:gold_mass_upgrade"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "woot_revived:diamond_mass_upgrade"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "a",
+      "b"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "woot_revived:diamond_mass_upgrade"
+    ]
+  }
+}

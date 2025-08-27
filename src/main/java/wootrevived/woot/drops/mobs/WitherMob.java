@@ -1,18 +1,23 @@
 package wootrevived.woot.drops.mobs;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.api.enums.Tier;
 import wootrevived.api.registrations.WootFactoryMobRegistration;
-import wootrevived.woot.util.helper.EnchantmentHelper;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class WitherMob extends WootFactoryMob<WitherBoss> {
     public WitherMob(EntityType<WitherBoss> entityType, Properties properties) {
@@ -26,14 +31,19 @@ public class WitherMob extends WootFactoryMob<WitherBoss> {
 
         List<ItemStack> generatedDrops = properties.getItemDrops();
 
-        int looting = 0;
+        AtomicInteger looting = new AtomicInteger();
         ItemStack handStack = properties.getMainHandItem();
-        if(EnchantmentHelper.isEnchanted(handStack)){
-            looting = handStack.getEnchantmentLevel(Enchantments.MOB_LOOTING);
+        if(EnchantmentHelper.hasAnyEnchantments(handStack)){
+            RegistryAccess accessor = properties.getLevel().registryAccess();
+            HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
+
+            lookup.get(Enchantments.LOOTING).ifPresent(enchantment -> {
+                looting.set(handStack.getEnchantmentLevel(enchantment.getDelegate()));
+            });
         }
 
         ItemStack stack = Items.WITHER_ROSE.getDefaultInstance();
-        stack.setCount(1 + looting);
+        stack.setCount(1 + looting.get());
         generatedDrops.add(stack);
     }
 

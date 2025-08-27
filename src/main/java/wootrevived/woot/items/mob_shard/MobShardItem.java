@@ -16,26 +16,28 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootFactoryMob;
+import wootrevived.woot.data.MobShardData;
+import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.registries.ItemsRegistry;
 import wootrevived.woot.registries.WootFactoryMobsRegistry;
-import wootrevived.woot.util.entity.WootTags;
 
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.helper.ModNameHelper;
+import wootrevived.woot.util.helper.SerializeEntityNBTHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static wootrevived.woot.util.render.WootStyles.*;
 
 public class MobShardItem extends Item {
     public MobShardItem() {
-        super(new Properties().stacksTo(1));
+        super(new Properties().stacksTo(1).component(ComponentsRegistry.MOB_SHARD_DATA, new MobShardData.Component(Optional.empty(), 0, false)));
     }
 
     @Override
     public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, LivingEntity tmpAttacker) {
-        if (tmpAttacker.getCommandSenderWorld().isClientSide() || !(tmpAttacker instanceof Player attacker))
+        if (tmpAttacker.getCommandSenderWorld().isClientSide() || !(tmpAttacker instanceof Player))
             return false;
 
         if(!WootFactoryMobsRegistry.hasFactoryMob(target.getType()))
@@ -48,26 +50,35 @@ public class MobShardItem extends Item {
         if (isProgrammed(stack))
             return false;
 
-        return setProgrammedMob(stack, mob.saveTag(target.serializeNBT()));
+        return setProgrammedMob(stack, mob.saveTag(SerializeEntityNBTHelper.serialize(target)));
     }
 
     public static boolean isProgrammed(ItemStack itemStack) {
-        return itemStack.getOrCreateTag().contains(WootTags.MOB_TAG);
+        MobShardData.Component component = itemStack.get(ComponentsRegistry.MOB_SHARD_DATA);
+        if(component == null)
+            return false;
+
+        return component.mobTag().isPresent();
     }
 
     public static CompoundTag getProgrammedMob(ItemStack itemStack) {
-        CompoundTag tag = itemStack.getOrCreateTag();
-        if(tag.contains(WootTags.MOB_TAG))
-            return tag.getCompound(WootTags.MOB_TAG);
-        return null;
+        MobShardData.Component component = itemStack.get(ComponentsRegistry.MOB_SHARD_DATA);
+        if(component == null)
+            return null;
+
+        return component.mobTag().orElse(null);
     }
 
     private boolean setProgrammedMob(ItemStack itemStack, CompoundTag mobTag) {
         if(!WootFactoryMobsRegistry.hasFactoryMob(mobTag))
             return false;
-        CompoundTag stackTag = itemStack.getOrCreateTag();
-        stackTag.put(WootTags.MOB_TAG, mobTag);
-        stackTag.putInt(WootTags.KILLS_TAG, 0);
+
+        itemStack.set(ComponentsRegistry.MOB_SHARD_DATA, new MobShardData.Component(
+                Optional.ofNullable(mobTag),
+                0,
+                false
+        ));
+
         return true;
     }
 
@@ -116,34 +127,42 @@ public class MobShardItem extends Item {
         if(itemStack.getItem() != ItemsRegistry.MOB_SHARD_ITEM.get())
             return;
 
-        CompoundTag mobTag = getProgrammedMob(itemStack);
-        if(mobTag == null)
+        MobShardData.Component component = itemStack.get(ComponentsRegistry.MOB_SHARD_DATA);
+        if(component == null)
             return;
 
-        int killCount = itemStack.getOrCreateTag().getInt(WootTags.KILLS_TAG);
+        int killCount = component.killCount();
         if(!isFull(itemStack)){
             killCount += amount;
-            itemStack.getOrCreateTag().putInt(WootTags.KILLS_TAG, killCount);
+            itemStack.set(ComponentsRegistry.MOB_SHARD_DATA, new MobShardData.Component(component.mobTag(), killCount, false));
         }
     }
 
     private static boolean isFull(ItemStack itemStack) {
-        int killCount = itemStack.getOrCreateTag().getInt(WootTags.KILLS_TAG);
-        CompoundTag mobTag = getProgrammedMob(itemStack);
-        if(mobTag == null)
+        MobShardData.Component component = itemStack.get(ComponentsRegistry.MOB_SHARD_DATA);
+        if(component == null)
             return false;
 
-        return killCount >= 5;
+        if(component.mobTag().isEmpty())
+            return false;
+
+        return component.killCount() >= 5;
     }
 
     public static void setJEIShard(ItemStack itemStack) {
-        CompoundTag tag = new CompoundTag();
-        tag.putInt("nbt_jei_shard", 1);
-        itemStack.setTag(tag);
+        itemStack.set(ComponentsRegistry.MOB_SHARD_DATA, new MobShardData.Component(
+                Optional.empty(),
+                0,
+                true
+        ));
     }
 
     public static boolean isJEIShard(ItemStack itemStack) {
-        return itemStack.getOrCreateTag().contains("nbt_jei_shard");
+        MobShardData.Component component = itemStack.get(ComponentsRegistry.MOB_SHARD_DATA);
+        if(component == null)
+            return false;
+
+        return component.jeiShard();
     }
 
     public static boolean isFullyProgrammed(ItemStack itemStack) {
@@ -158,8 +177,8 @@ public class MobShardItem extends Item {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag){
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext ctx, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag){
+        super.appendHoverText(stack, ctx, tooltip, flag);
 
         if(isJEIShard(stack)) {
             tooltip.add(Component.translatable("info.woot_revived.mobshard.programmed").setStyle(SHARD_PROGRAM_STYLE));
@@ -180,7 +199,10 @@ public class MobShardItem extends Item {
             tooltip.add(ModNameHelper.getModName(modId).setStyle(MOD_NAME_STYLE));
         }
 
-        int killCount = stack.getOrCreateTag().getInt(WootTags.KILLS_TAG);
+        int killCount = 0;
+        MobShardData.Component component = stack.get(ComponentsRegistry.MOB_SHARD_DATA);
+        if(component != null) killCount = component.killCount();
+
         if(isFull(stack)){
             tooltip.add(Component.translatable("info.woot_revived.mobshard.programmed").setStyle(SHARD_PROGRAM_STYLE));
         } else {
@@ -210,14 +232,14 @@ public class MobShardItem extends Item {
     }
 
     @Override
-    public int getUseDuration(@NotNull ItemStack stack) {
+    public int getUseDuration(@NotNull ItemStack stack, LivingEntity entity) {
         return 72000;
     }
 
     @Override
     public void releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, int timeLeft){
         if(!(entity instanceof Player player)) return;
-        int used = this.getUseDuration(stack) - timeLeft;
+        int used = this.getUseDuration(stack, entity) - timeLeft;
         float pull = Math.min(used / 20f, 1f);
 
         MobShardProjectile proj = new MobShardProjectile(player, level);

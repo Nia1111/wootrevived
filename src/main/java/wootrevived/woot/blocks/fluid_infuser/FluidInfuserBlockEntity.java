@@ -4,7 +4,10 @@ import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,8 +24,10 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.client.render.fluid_infuser.FluidInfuserContainerMenu;
+import wootrevived.woot.data.FluidInfuserData;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.recipes.fluid_infuser.FluidInfuserRecipe;
+import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.registries.RecipesRegistry;
 import wootrevived.woot.util.Config;
 import wootrevived.woot.util.common.MachineSide;
@@ -32,18 +37,17 @@ import wootrevived.woot.util.handlers.WootItemStackHandler;
 import wootrevived.woot.util.entity.WootTags;
 import wootrevived.woot.util.entity.WootMachineBlockEntity;
 
-
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.handlers.WootItemStackHandlerWrapper;
-import wootrevived.woot.util.recipes.WootContainer;
+import wootrevived.woot.util.recipes.WootRecipeInput;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements MenuProvider {
-    private final List<Map<MachineSide, MachineSideProperty>> directionsProperties = new ArrayList<>(3);
+    private final List<EnumMap<MachineSide, MachineSideProperty>> directionsProperties = new ArrayList<>(3);
 
     public static final int INPUT_FLUID_PROPERTY = 0;
     public static final int OUTPUT_FLUID_PROPERTY = 1;
@@ -52,7 +56,7 @@ public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements M
     public FluidInfuserBlockEntity(BlockPos pos, BlockState state) {
         super(BlocksRegistry.FLUID_INFUSER_BLOCK_ENTITY.get(), pos, state);
         for(int i = 0; i < 3; i++){
-            Map<MachineSide, MachineSideProperty> properties = Maps.newEnumMap(MachineSide.class);
+            EnumMap<MachineSide, MachineSideProperty> properties = Maps.newEnumMap(MachineSide.class);
             for(MachineSide side : MachineSide.values()){
                 properties.put(side, MachineSideProperty.ENABLED);
             }
@@ -132,19 +136,56 @@ public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements M
         return null;
     }
 
-    @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    private FluidInfuserData.Component getComponent(){
+        return new FluidInfuserData.Component(
+                energyHandler.getEnergyStored(),
+                getInputTank().getFluid(),
+                getOutputTank().getFluid(),
+                getAllMachineSidesProperties()
+        );
+    }
 
-        if(tag.contains(WootTags.INPUT_INVENTORY_TAG))
-            inventoryHandler.deserializeNBT(tag.getCompound(WootTags.INPUT_INVENTORY_TAG));
+    private void setComponent(FluidInfuserData.Component component){
+        energyHandler.setEnergy(component.energy());
+        getInputTank().setFluid(component.inputFluid());
+        getOutputTank().setFluid(component.outputFluid());
+        setAllMachineSidesProperties(component.listMachineProperties());
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
+    protected void applyImplicitComponents(DataComponentInput input){
+        FluidInfuserData.Component component = input.get(ComponentsRegistry.FLUID_INFUSER_DATA);
+        if(component == null)
+            return;
 
-        tag.put(WootTags.INPUT_INVENTORY_TAG, inventoryHandler.serializeNBT());
+        setComponent(component);
+        setChanged();
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder){
+        builder.set(ComponentsRegistry.FLUID_INFUSER_DATA, getComponent());
+    }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+
+        tag.put(WootTags.INPUT_INVENTORY_TAG, inventoryHandler.serializeNBT(provider));
+
+        FluidInfuserData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
+
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+
+        if(tag.contains(WootTags.INPUT_INVENTORY_TAG))
+            inventoryHandler.deserializeNBT(provider, tag.getCompound(WootTags.INPUT_INVENTORY_TAG));
+
+        FluidInfuserData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     public void dropContents(Level level, BlockPos pos) {
@@ -168,17 +209,17 @@ public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements M
     }
 
     @Override
-    public Map<MachineSide, MachineSideProperty> getMachineSideProperties(int index) {
+    public EnumMap<MachineSide, MachineSideProperty> getMachineSideProperties(int index) {
         return directionsProperties.get(index);
     }
 
     @Override
-    public List<Map<MachineSide, MachineSideProperty>> getAllMachineSidesProperties() {
+    public List<EnumMap<MachineSide, MachineSideProperty>> getAllMachineSidesProperties() {
         return directionsProperties;
     }
 
     @Override
-    public void setAllMachineSidesProperties(List<Map<MachineSide, MachineSideProperty>> directionsProperties){
+    public void setAllMachineSidesProperties(List<EnumMap<MachineSide, MachineSideProperty>> directionsProperties){
         for(int i = 0; i < directionsProperties.size(); i++){
             this.directionsProperties.set(i, directionsProperties.get(i));
         }
@@ -220,7 +261,7 @@ public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements M
         inputTankHandler.drain(finishedRecipe.getInputFluid().getAmount(),
                 IFluidHandler.FluidAction.EXECUTE);
 
-        outputTankHandler.fill(new FluidStack(finishedRecipe.getOutputFluid(),
+        outputTankHandler.fill(new FluidStack(finishedRecipe.getOutputFluid().getFluidHolder(),
                 finishedRecipe.getOutputFluid().getAmount()), IFluidHandler.FluidAction.EXECUTE);
         setChanged();
     }
@@ -258,7 +299,7 @@ public class FluidInfuserBlockEntity extends WootMachineBlockEntity implements M
 
         RecipeHolder<FluidInfuserRecipe> recipeHolder = level.getRecipeManager().getRecipeFor(
                 RecipesRegistry.FLUID_INFUSER_RECIPE_TYPE.get(),
-                new WootContainer(
+                new WootRecipeInput(
                         Either.right(inputTankHandler.getFluid()),
                         Either.left(inventoryHandler.getStackInSlot(INPUT_SLOT))
                 ), level).orElse(null);

@@ -1,0 +1,18 @@
+{
+  "type": "woot_revived:stygian_anvil",
+  "inputIngredients": [
+    {
+      "item": "woot_revived:mob_shard"
+    },
+    {
+      "item": "woot_revived:prism"
+    },
+    {
+      "item": "woot_revived:factory_base"
+    }
+  ],
+  "outputItem": {
+    "count": 1,
+    "id": "woot_revived:fake_spawner"
+  }
+}

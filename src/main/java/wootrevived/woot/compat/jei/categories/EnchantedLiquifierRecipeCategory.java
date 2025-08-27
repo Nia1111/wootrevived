@@ -22,7 +22,6 @@ import wootrevived.woot.util.Config;
 import wootrevived.woot.util.render.WootContainerScreen;
 
 public class EnchantedLiquifierRecipeCategory implements IRecipeCategory<EnchantedLiquifierRecipe> {
-    private static IDrawable background;
     private static IDrawable icon;
 
     private static final int GUI_WIDTH = 85;
@@ -41,7 +40,6 @@ public class EnchantedLiquifierRecipeCategory implements IRecipeCategory<Enchant
     private static final int PROGRESS_Y = 20;
 
     public EnchantedLiquifierRecipeCategory(IGuiHelper guiHelper) {
-        background = guiHelper.createBlankDrawable(GUI_WIDTH, GUI_HEIGHT);
         icon = guiHelper.createDrawableItemStack(BlocksRegistry.ENCHANTED_LIQUIFIER_BLOCK_ITEM.get().getDefaultInstance());
     }
 
@@ -63,8 +61,13 @@ public class EnchantedLiquifierRecipeCategory implements IRecipeCategory<Enchant
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return GUI_WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return GUI_HEIGHT;
     }
 
     @Override

@@ -11,7 +11,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +40,7 @@ public class WootEntityRenderer {
         scale = Math.min(scale, max_entity_size);
 
         pose.translate(size / 2 + padding, (size / 2) - padding * 2 + entity.getBbHeight() * scale, 64);
-        patchedScale(pose, 1F, 1F, -1F);
+        pose.scale(1F, 1F, -1F);
         pose.mulPose(Axis.YP.rotationDegrees((GlobalClientTicker.tickCounter * 4) % 360));
         pose.mulPose(Axis.ZP.rotationDegrees(180));
         pose.scale(scale, scale, scale);
@@ -56,7 +55,7 @@ public class WootEntityRenderer {
                 (int)Math.ceil(size * windowScale * poseScale.y)
         );
         Tesselator tesselator = Tesselator.getInstance();
-        MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(tesselator.getBuilder());
+        MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(tesselator.buffer);
         Lighting.setupForFlatItems();
 
         renderer.render(entity, 0F, 0F, pose, bufferSource, LightTexture.pack(15, 15));
@@ -66,18 +65,5 @@ public class WootEntityRenderer {
         Lighting.setupFor3DItems();
 
         pose.popPose();
-    }
-
-    // Fix MC-225170
-    public static void patchedScale(PoseStack poseStack, float x, float y, float z){
-        PoseStack.Pose pose = poseStack.last();
-        pose.pose().scale(x, y, z);
-
-        float fx = 1.0F / x;
-        float fy = 1.0F / y;
-        float fz = 1.0F / z;
-        float fw = Mth.fastInvCubeRoot(Math.abs(fx * fy * fz));
-
-        pose.normal().scale(fw * fx, fw * fy, fw * fz);
     }
 }

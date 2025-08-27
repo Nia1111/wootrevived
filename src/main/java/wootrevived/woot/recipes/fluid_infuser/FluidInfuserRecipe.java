@@ -3,7 +3,10 @@ package wootrevived.woot.recipes.fluid_infuser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.world.Container;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -11,7 +14,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.RecipesRegistry;
-import wootrevived.woot.util.recipes.WootContainer;
+import wootrevived.woot.util.recipes.WootRecipeInput;
 import wootrevived.woot.util.recipes.WootRecipe;
 
 import java.util.ArrayList;
@@ -24,6 +27,14 @@ public class FluidInfuserRecipe extends WootRecipe {
             FluidStack.CODEC.listOf().fieldOf("inputFluids").forGetter(FluidInfuserRecipe::getInputFluids),
             FluidStack.CODEC.fieldOf("outputFluid").forGetter(FluidInfuserRecipe::getOutputFluid)
     ).apply(inst, FluidInfuserRecipe::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, FluidInfuserRecipe> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, FluidInfuserRecipe::getEnergy,
+            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity)), FluidInfuserRecipe::getInputItems,
+            FluidStack.STREAM_CODEC.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity)), FluidInfuserRecipe::getInputFluids,
+            FluidStack.STREAM_CODEC, FluidInfuserRecipe::getOutputFluid,
+            FluidInfuserRecipe::new
+    );
 
     public FluidInfuserRecipe(int energy, @Nullable List<Ingredient> inputItems, @Nullable List<FluidStack> inputFluids, @Nullable FluidStack outputFluid) {
         super(energy, inputItems, inputFluids, null, outputFluid);
@@ -52,15 +63,11 @@ public class FluidInfuserRecipe extends WootRecipe {
     }
 
     @Override
-    public boolean matches(@NotNull Container container, @NotNull Level level) {
-        if(container instanceof WootContainer wootContainer){
-            if(!getInputFluid().isFluidEqual(wootContainer.getFluid(0)))
-                return false;
+    public boolean matches(@NotNull WootRecipeInput input, @NotNull Level level) {
+        if(!FluidStack.isSameFluidSameComponents(getInputFluid(), input.getFluid(0)))
+            return false;
 
-            return getInputIngredient().test(container.getItem(1));
-        }
-
-        return false;
+        return getInputIngredient().test(input.getItem(1));
     }
 
     public static void loadRecipes(@NotNull RecipeManager manager){
@@ -84,7 +91,7 @@ public class FluidInfuserRecipe extends WootRecipe {
 
         public static boolean isFluidValid(FluidStack fluid){
             for(FluidStack fluidStack : validFluids){
-                if(fluidStack.isFluidEqual(fluid))
+                if(FluidStack.isSameFluidSameComponents(fluidStack, fluid))
                     return true;
             }
             return false;

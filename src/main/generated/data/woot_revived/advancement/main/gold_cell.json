@@ -1,0 +1,35 @@
+{
+  "parent": "woot_revived:main/enchanted_gold_plate",
+  "criteria": {
+    "gold_cell": {
+      "conditions": {
+        "items": [
+          {
+            "items": "woot_revived:gold_cell"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.gold_cell.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "woot_revived:gold_cell"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.gold_cell.title"
+    }
+  },
+  "requirements": [
+    [
+      "gold_cell"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

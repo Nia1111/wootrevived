@@ -1,0 +1,35 @@
+{
+  "parent": "woot_revived:main/dye_mold",
+  "criteria": {
+    "black_dye_plate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "woot_revived:black_dye_plate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.black_dye_plate.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "woot_revived:black_dye_plate"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.black_dye_plate.title"
+    }
+  },
+  "requirements": [
+    [
+      "black_dye_plate"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

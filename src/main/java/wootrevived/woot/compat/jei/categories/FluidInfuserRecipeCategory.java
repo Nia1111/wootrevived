@@ -23,7 +23,6 @@ import wootrevived.woot.util.Config;
 import wootrevived.woot.util.render.WootContainerScreen;
 
 public class FluidInfuserRecipeCategory implements IRecipeCategory<FluidInfuserRecipe> {
-    private static IDrawable background;
     private static IDrawable icon;
 
     private static final int GUI_WIDTH = 129;
@@ -45,7 +44,6 @@ public class FluidInfuserRecipeCategory implements IRecipeCategory<FluidInfuserR
     private static final int PROGRESS_Y = 24;
 
     public FluidInfuserRecipeCategory(IGuiHelper guiHelper) {
-        background = guiHelper.createBlankDrawable(GUI_WIDTH, GUI_HEIGHT);
         icon = guiHelper.createDrawableItemStack(BlocksRegistry.FLUID_INFUSER_BLOCK_ITEM.get().getDefaultInstance());
     }
 
@@ -68,8 +66,13 @@ public class FluidInfuserRecipeCategory implements IRecipeCategory<FluidInfuserR
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return GUI_WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return GUI_HEIGHT;
     }
 
     @Override

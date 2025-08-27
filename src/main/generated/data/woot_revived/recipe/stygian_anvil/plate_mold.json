@@ -1,0 +1,18 @@
+{
+  "type": "woot_revived:stygian_anvil",
+  "inputIngredients": [
+    {
+      "item": "minecraft:iron_trapdoor"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "woot_revived:stygian_ingot"
+    }
+  ],
+  "outputItem": {
+    "count": 1,
+    "id": "woot_revived:plate_mold"
+  }
+}

@@ -8,7 +8,7 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -88,10 +88,10 @@ public class WootJeiPlugin implements IModPlugin {
         List<EnchantedLiquifierRecipe> enchantedLiquifierRecipes = new ArrayList<>();
 
         Map<Integer, List<ItemStack>> booksMap = new HashMap<>();
-        for(Enchantment enchantment : BuiltInRegistries.ENCHANTMENT){
+        for(Enchantment enchantment : EnchantedLiquifierRecipe.enchantments){
             for(int enchantLevel = enchantment.getMinLevel(); enchantLevel <= enchantment.getMaxLevel(); ++enchantLevel) {
                 ItemStack itemStack = Items.ENCHANTED_BOOK.getDefaultInstance();
-                itemStack.enchant(enchantment, enchantLevel);
+                itemStack.enchant(Holder.direct(enchantment), enchantLevel);
                 enchantLevel = Mth.clamp(enchantLevel, 1, Config.EnchantedLiquifier.MAX_ENCHANT_LVL);
                 booksMap.computeIfAbsent(enchantLevel, k -> new ArrayList<>());
                 booksMap.get(enchantLevel).add(itemStack);

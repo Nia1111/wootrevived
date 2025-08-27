@@ -1,12 +1,14 @@
 package wootrevived.woot.blocks.heart;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -71,24 +73,29 @@ public class HeartBlock extends MultiBlockFactory {
     }
 
     public static class State extends MultiBlockFactory.State {
-        public State(Block block, ImmutableMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
+        public State(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> map, MapCodec<BlockState> codec) {
             super(block, map, codec);
         }
 
         @Override
-        public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        public @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
             if (level.isClientSide)
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
 
             if(!getValue(BlockStateProperties.ENABLED))
-                return InteractionResult.PASS;
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
             if (!(level.getBlockEntity(hit.getBlockPos()) instanceof HeartBlockEntity heart))
                 throw new IllegalStateException("BlockEntity is missing");
 
             player.openMenu(heart, buf -> buf.writeBlockPos(hit.getBlockPos()));
 
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        @Override
+        public @NotNull InteractionResult useWithoutItem(@NotNull Level level, @NotNull Player player, @NotNull BlockHitResult hit){
+            return useItemOn(ItemStack.EMPTY, level, player, InteractionHand.MAIN_HAND, hit).result();
         }
 
         public BlockState rotate(LevelAccessor level, BlockPos pos, Rotation rotation) {

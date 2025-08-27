@@ -16,6 +16,8 @@ import java.util.function.Supplier;
 
 public class Registry {
     public static void register(IEventBus bus){
+        ComponentsRegistry.register(bus);
+
         BlocksRegistry.register(bus);
         ItemsRegistry.register(bus);
         FluidsRegistry.register(bus);

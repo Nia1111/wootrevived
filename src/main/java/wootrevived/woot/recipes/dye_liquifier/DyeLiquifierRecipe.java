@@ -3,7 +3,10 @@ package wootrevived.woot.recipes.dye_liquifier;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.world.Container;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -11,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.RecipesRegistry;
 import wootrevived.woot.util.recipes.WootRecipe;
+import wootrevived.woot.util.recipes.WootRecipeInput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +28,16 @@ public class DyeLiquifierRecipe extends WootRecipe {
             Codec.INT.fieldOf("white").forGetter(DyeLiquifierRecipe::getWhite),
             Ingredient.CODEC.listOf().fieldOf("inputIngredients").forGetter(DyeLiquifierRecipe::getInputItems)
     ).apply(inst, DyeLiquifierRecipe::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, DyeLiquifierRecipe> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, DyeLiquifierRecipe::getEnergy,
+            ByteBufCodecs.INT, DyeLiquifierRecipe::getRed,
+            ByteBufCodecs.INT, DyeLiquifierRecipe::getYellow,
+            ByteBufCodecs.INT, DyeLiquifierRecipe::getBlue,
+            ByteBufCodecs.INT, DyeLiquifierRecipe::getWhite,
+            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity)), DyeLiquifierRecipe::getInputItems,
+            DyeLiquifierRecipe::new
+    );
 
     private final int red;
     private final int yellow;
@@ -65,9 +79,9 @@ public class DyeLiquifierRecipe extends WootRecipe {
     }
 
     @Override
-    public boolean matches(Container container, Level level) {
+    public boolean matches(WootRecipeInput input, Level level) {
         for(Ingredient ingredient : inputItems){
-            if(ingredient.test(container.getItem(0)))
+            if(ingredient.test(input.getItem(0)))
                 return true;
         }
         return false;

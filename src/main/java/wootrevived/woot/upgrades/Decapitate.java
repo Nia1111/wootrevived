@@ -7,7 +7,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +16,6 @@ import wootrevived.api.registrations.WootUpgradeItemRegistration;
 import wootrevived.api.WootUpgradeItem;
 import wootrevived.woot.Woot;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static wootrevived.woot.util.render.WootStyles.DESCRIPTION_STYLE;
@@ -50,7 +48,7 @@ public class Decapitate extends WootUpgradeItem {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltip, @NotNull TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext ctx, List<Component> tooltip, @NotNull TooltipFlag flag) {
         tooltip.add(Component.translatable("info.woot_revived.upgrade.decapitate.desc.0", getLevel()).setStyle(DESCRIPTION_STYLE));
     }
 

@@ -310,14 +310,14 @@ public class HeartContainerScreen extends AbstractContainerScreen<HeartContainer
             List<Component> tooltip = new ArrayList<>(List.of(
                     Component.empty()
                             .append(Component.translatable("info.woot_revived.fluid").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
-                            .append(fluid != null && !fluid.isEmpty() ? fluid.getDisplayName() : Component.translatable("info.woot_revived.empty")),
+                            .append(fluid != null && !fluid.isEmpty() ? fluid.getHoverName() : Component.translatable("info.woot_revived.empty")),
                     Component.empty()
                             .append(Component.translatable("info.woot_revived.amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                             .append(WootContainerScreen.formatInteger(fluid.getAmount()))
                             .append(Component.literal("mB").setStyle(UNIT_STYLE))
             ));
 
-            if(fluid != null && !fluid.isEmpty()){
+            if(!fluid.isEmpty()){
                 String modId = BuiltInRegistries.FLUID.getKey(fluid.getFluid()).getNamespace();
                 tooltip.add(ModNameHelper.getModName(modId).setStyle(MOD_NAME_STYLE));
             }

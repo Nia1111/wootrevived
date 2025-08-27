@@ -1,0 +1,35 @@
+{
+  "parent": "woot_revived:main/gold_shard",
+  "criteria": {
+    "gold_plinth": {
+      "conditions": {
+        "items": [
+          {
+            "items": "woot_revived:gold_plinth"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.gold_plinth.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "woot_revived:gold_plinth"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.gold_plinth.title"
+    }
+  },
+  "requirements": [
+    [
+      "gold_plinth"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

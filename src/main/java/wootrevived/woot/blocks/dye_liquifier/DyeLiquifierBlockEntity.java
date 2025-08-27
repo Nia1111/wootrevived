@@ -1,13 +1,16 @@
 package wootrevived.woot.blocks.dye_liquifier;
 
 import com.google.common.collect.Maps;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -22,7 +25,9 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.client.render.dye_liquifier.DyeLiquifierContainerMenu;
+import wootrevived.woot.data.DyeLiquifierData;
 import wootrevived.woot.registries.BlocksRegistry;
+import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.recipes.dye_liquifier.DyeLiquifierRecipe;
 import wootrevived.woot.registries.RecipesRegistry;
@@ -35,13 +40,13 @@ import wootrevived.woot.util.entity.WootTags;
 import wootrevived.woot.util.common.DyeMakeup;
 import wootrevived.woot.util.entity.WootMachineBlockEntity;
 
-
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.handlers.WootItemStackHandlerWrapper;
+import wootrevived.woot.util.recipes.WootRecipeInput;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements MenuProvider {
@@ -50,7 +55,7 @@ public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements M
     private int blue = 0;
     private int white = 0;
 
-    private final List<Map<MachineSide, MachineSideProperty>> directionsProperties = new ArrayList<>(2);
+    private final List<EnumMap<MachineSide, MachineSideProperty>> directionsProperties = new ArrayList<>(2);
 
     public static final int OUTPUT_FLUID_PROPERTY = 0;
     public static final int INGREDIENT_PROPERTY = 1;
@@ -58,7 +63,7 @@ public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements M
     public DyeLiquifierBlockEntity(BlockPos pos, BlockState state) {
         super(BlocksRegistry.DYE_LIQUIFIER_BLOCK_ENTITY.get(), pos, state);
         for(int i = 0; i < 2; i++){
-            Map<MachineSide, MachineSideProperty> properties = Maps.newEnumMap(MachineSide.class);
+            EnumMap<MachineSide, MachineSideProperty> properties = Maps.newEnumMap(MachineSide.class);
             for(MachineSide side : MachineSide.values()){
                 properties.put(side, MachineSideProperty.ENABLED);
             }
@@ -128,34 +133,62 @@ public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements M
         return null;
     }
 
-    @Override
-    public void load(@NotNull CompoundTag tag){
-        super.load(tag);
+    private DyeLiquifierData.Component getComponent(){
+        return new DyeLiquifierData.Component(
+                energyHandler.getEnergyStored(),
+                getRed(),
+                getYellow(),
+                getBlue(),
+                getWhite(),
+                getOutputTank().getFluid(),
+                getAllMachineSidesProperties()
+        );
+    }
 
-        if(tag.contains(WootTags.INPUT_INVENTORY_TAG))
-            inventoryHandler.deserializeNBT(tag.getCompound(WootTags.INPUT_INVENTORY_TAG));
-
-        if(tag.contains(WootTags.DyeLiquifier.INTERNAL_DYE_TANKS_TAG)){
-            CompoundTag dyeTag = tag.getCompound(WootTags.DyeLiquifier.INTERNAL_DYE_TANKS_TAG);
-            red = dyeTag.getInt(WootTags.DyeLiquifier.RED_TAG);
-            yellow = dyeTag.getInt(WootTags.DyeLiquifier.YELLOW_TAG);
-            blue = dyeTag.getInt(WootTags.DyeLiquifier.BLUE_TAG);
-            white = dyeTag.getInt(WootTags.DyeLiquifier.WHITE_TAG);
-        }
+    private void setComponent(DyeLiquifierData.Component component){
+        energyHandler.setEnergy(component.energy());
+        red = component.red();
+        yellow = component.yellow();
+        blue = component.blue();
+        white = component.white();
+        getOutputTank().setFluid(component.outputFluid());
+        setAllMachineSidesProperties(component.listMachineProperties());
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag tag){
-        super.saveAdditional(tag);
+    protected void applyImplicitComponents(DataComponentInput input){
+        DyeLiquifierData.Component component = input.get(ComponentsRegistry.DYE_LIQUIFIER_DATA);
+        if(component == null)
+            return;
 
-        tag.put(WootTags.INPUT_INVENTORY_TAG, inventoryHandler.serializeNBT());
+        setComponent(component);
+        setChanged();
+    }
 
-        CompoundTag dyeTag = new CompoundTag();
-        dyeTag.putInt(WootTags.DyeLiquifier.RED_TAG, red);
-        dyeTag.putInt(WootTags.DyeLiquifier.YELLOW_TAG, yellow);
-        dyeTag.putInt(WootTags.DyeLiquifier.BLUE_TAG, blue);
-        dyeTag.putInt(WootTags.DyeLiquifier.WHITE_TAG, white);
-        tag.put(WootTags.DyeLiquifier.INTERNAL_DYE_TANKS_TAG, dyeTag);
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder){
+        builder.set(ComponentsRegistry.DYE_LIQUIFIER_DATA, getComponent());
+    }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.saveAdditional(tag, provider);
+
+        tag.put(WootTags.INPUT_INVENTORY_TAG, inventoryHandler.serializeNBT(provider));
+
+        DyeLiquifierData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
+            if(t instanceof CompoundTag compound) tag.merge(compound);
+        });
+    }
+
+    @Override
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider){
+        super.loadAdditional(tag, provider);
+
+        if(tag.contains(WootTags.INPUT_INVENTORY_TAG))
+            inventoryHandler.deserializeNBT(provider, tag.getCompound(WootTags.INPUT_INVENTORY_TAG));
+
+        DyeLiquifierData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }
 
     public void dropContents(Level level, BlockPos pos) {
@@ -179,17 +212,17 @@ public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements M
     }
 
     @Override
-    public Map<MachineSide, MachineSideProperty> getMachineSideProperties(int index) {
+    public EnumMap<MachineSide, MachineSideProperty> getMachineSideProperties(int index) {
         return directionsProperties.get(index);
     }
 
     @Override
-    public List<Map<MachineSide, MachineSideProperty>> getAllMachineSidesProperties() {
+    public List<EnumMap<MachineSide, MachineSideProperty>> getAllMachineSidesProperties() {
         return directionsProperties;
     }
 
     @Override
-    public void setAllMachineSidesProperties(List<Map<MachineSide, MachineSideProperty>> directionsProperties){
+    public void setAllMachineSidesProperties(List<EnumMap<MachineSide, MachineSideProperty>> directionsProperties){
         for(int i = 0; i < directionsProperties.size(); i++){
             this.directionsProperties.set(i, directionsProperties.get(i));
         }
@@ -264,7 +297,7 @@ public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements M
 
     private void getRecipe() {
         RecipeHolder<DyeLiquifierRecipe> recipeHolder = level.getRecipeManager().getRecipeFor(RecipesRegistry.DYE_LIQUIFIER_RECIPE_TYPE.get(),
-                new SimpleContainer(inventoryHandler.getStackInSlot(INPUT_SLOT)),
+                new WootRecipeInput(Either.left(inventoryHandler.getStackInSlot(INPUT_SLOT))),
                 level).orElse(null);
         recipe = recipeHolder == null ? null : recipeHolder.value();
     }

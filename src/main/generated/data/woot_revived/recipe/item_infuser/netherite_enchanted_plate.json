@@ -1,0 +1,22 @@
+{
+  "type": "woot_revived:item_infuser",
+  "energy": 5000,
+  "inputFluids": [
+    {
+      "amount": 5000,
+      "id": "woot_revived:enchanted_fluid"
+    }
+  ],
+  "inputIngredients": [
+    {
+      "item": "woot_revived:diamond_enchanted_plate"
+    },
+    {
+      "item": "woot_revived:netherite_shard"
+    }
+  ],
+  "outputItem": {
+    "count": 1,
+    "id": "woot_revived:netherite_enchanted_plate"
+  }
+}

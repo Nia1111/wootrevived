@@ -1,0 +1,35 @@
+{
+  "parent": "woot_revived:main/dye_liquifier",
+  "criteria": {
+    "pure_dye": {
+      "conditions": {
+        "items": [
+          {
+            "items": "woot_revived:pure_dye_fluid_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.pure_dye.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "woot_revived:pure_dye_fluid_bucket"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.pure_dye.title"
+    }
+  },
+  "requirements": [
+    [
+      "pure_dye"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

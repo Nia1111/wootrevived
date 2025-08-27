@@ -6,13 +6,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
 import wootrevived.woot.Woot;
 import wootrevived.woot.drops.simulator.DropSimulatorDimension;
 
-@Mod.EventBusSubscriber(modid = Woot.MOD_ID)
+@EventBusSubscriber(modid = Woot.MOD_ID)
 public class DropSimulatorDimensionGuard {
     @SubscribeEvent
     public static void onDimensionChange(EntityTravelToDimensionEvent event){

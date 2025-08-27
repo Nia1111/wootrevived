@@ -1,0 +1,35 @@
+{
+  "parent": "woot_revived:main/diamond_shard",
+  "criteria": {
+    "diamond_plinth": {
+      "conditions": {
+        "items": [
+          {
+            "items": "woot_revived:diamond_plinth"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.diamond_plinth.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "woot_revived:diamond_plinth"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.diamond_plinth.title"
+    }
+  },
+  "requirements": [
+    [
+      "diamond_plinth"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,5 +1,6 @@
 package wootrevived.woot.util.handlers;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -74,16 +75,18 @@ public class WootFluidTankHandlerWrapper extends WootFluidTankHandler {
     }
 
     @Override
-    public FluidTank readFromNBT(CompoundTag nbt) {
-        FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
+    public FluidTank readFromNBT(HolderLookup.Provider lookupProvider, CompoundTag nbt) {
+        FluidStack fluid = FluidStack.parseOptional(lookupProvider, nbt.getCompound("Fluid"));
         tank.setFluid(fluid);
         super.setFluid(fluid);
         return this;
     }
 
     @Override
-    public CompoundTag writeToNBT(CompoundTag nbt) {
-        tank.getFluid().writeToNBT(nbt);
+    public CompoundTag writeToNBT(HolderLookup.Provider lookupProvider, CompoundTag nbt) {
+        if (!tank.getFluid().isEmpty()) {
+            nbt.put("Fluid", tank.getFluid().save(lookupProvider));
+        }
         return nbt;
     }
 

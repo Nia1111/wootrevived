@@ -1,0 +1,35 @@
+{
+  "parent": "woot_revived:main/copper_shard",
+  "criteria": {
+    "copper_pylon": {
+      "conditions": {
+        "items": [
+          {
+            "items": "woot_revived:copper_pylon"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/block/black_concrete_powder.png",
+    "description": {
+      "translate": "advancements.woot_revived.copper_pylon.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "woot_revived:copper_pylon"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.woot_revived.copper_pylon.title"
+    }
+  },
+  "requirements": [
+    [
+      "copper_pylon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
