@@ -39,6 +39,7 @@ public class WootFactoryMob<T extends Entity> {
      * Override to provide a custom display name based on the mob's NBT.
      *
      * @param mobTag the mob's saved tag
+     * @param lookupProvider access to the current registry view
      * @return a localized display name
      */
     public MutableComponent getDisplayName(CompoundTag mobTag, HolderLookup.Provider lookupProvider) {
@@ -52,6 +53,7 @@ public class WootFactoryMob<T extends Entity> {
      * By default, delegates to {@link #getDisplayName(CompoundTag, HolderLookup.Provider)}.
      *
      * @param mobTag the mob's saved tag
+     * @param lookupProvider access to the current registry view
      * @return a localized tooltip name
      */
     public MutableComponent getTooltipKillName(CompoundTag mobTag, HolderLookup.Provider lookupProvider) {
@@ -65,6 +67,7 @@ public class WootFactoryMob<T extends Entity> {
      * The default implementation copies the {@code id} from the supplied tag.
      *
      * @param mobTag the source tag from the captured entity
+     * @param lookupProvider access to the current registry view
      * @return a saved tag used by the factory
      */
     public CompoundTag saveTag(CompoundTag mobTag, HolderLookup.Provider lookupProvider){
@@ -82,6 +85,7 @@ public class WootFactoryMob<T extends Entity> {
      *
      * @param shardTag the shard's stored tag
      * @param mobTag   the candidate mob's tag
+     * @param lookupProvider access to the current registry view
      * @return {@code true} if they match; otherwise {@code false}
      */
     public boolean isSame(CompoundTag shardTag, CompoundTag mobTag, HolderLookup.Provider lookupProvider){
@@ -106,6 +110,7 @@ public class WootFactoryMob<T extends Entity> {
      * Called before simulation. The list size is limited to 36 stacks.
      *
      * @param mobTag the mob's saved tag
+     * @param lookupProvider access to the current registry view
      * @return a list of required item stacks (may be empty)
      */
     public List<ItemStack> getImportItems(CompoundTag mobTag, HolderLookup.Provider lookupProvider){
@@ -118,6 +123,7 @@ public class WootFactoryMob<T extends Entity> {
      * Called before simulation. The list size is limited to 8 stacks.
      *
      * @param mobTag the mob's saved tag
+     * @param lookupProvider access to the current registry view
      * @return a list of required fluid stacks (may be empty)
      */
     public List<FluidStack> getImportFluids(CompoundTag mobTag, HolderLookup.Provider lookupProvider){
