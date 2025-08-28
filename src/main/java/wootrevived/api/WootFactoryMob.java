@@ -1,5 +1,6 @@
 package wootrevived.api;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,7 +41,7 @@ public class WootFactoryMob<T extends Entity> {
      * @param mobTag the mob's saved tag
      * @return a localized display name
      */
-    public MutableComponent getDisplayName(CompoundTag mobTag) {
+    public MutableComponent getDisplayName(CompoundTag mobTag, HolderLookup.Provider lookupProvider) {
         return Component.translatable(entityType.getDescriptionId());
     }
 
@@ -48,13 +49,13 @@ public class WootFactoryMob<T extends Entity> {
      * Returns the name shown in the descriptive tooltip that instructs
      * which mob to kill on the Mob Shard.
      * <p>
-     * By default, delegates to {@link #getDisplayName(CompoundTag)}.
+     * By default, delegates to {@link #getDisplayName(CompoundTag, HolderLookup.Provider)}.
      *
      * @param mobTag the mob's saved tag
      * @return a localized tooltip name
      */
-    public MutableComponent getTooltipKillName(CompoundTag mobTag) {
-        return getDisplayName(mobTag);
+    public MutableComponent getTooltipKillName(CompoundTag mobTag, HolderLookup.Provider lookupProvider) {
+        return getDisplayName(mobTag, lookupProvider);
     }
 
     /**
@@ -66,7 +67,7 @@ public class WootFactoryMob<T extends Entity> {
      * @param mobTag the source tag from the captured entity
      * @return a saved tag used by the factory
      */
-    public CompoundTag saveTag(CompoundTag mobTag){
+    public CompoundTag saveTag(CompoundTag mobTag, HolderLookup.Provider lookupProvider){
         CompoundTag tag = new CompoundTag();
         tag.putString("id", mobTag.getString("id"));
         return tag;
@@ -83,7 +84,7 @@ public class WootFactoryMob<T extends Entity> {
      * @param mobTag   the candidate mob's tag
      * @return {@code true} if they match; otherwise {@code false}
      */
-    public boolean isSame(CompoundTag shardTag, CompoundTag mobTag){
+    public boolean isSame(CompoundTag shardTag, CompoundTag mobTag, HolderLookup.Provider lookupProvider){
         return shardTag.getString("id").equals(mobTag.getString("id"));
     }
 
@@ -107,7 +108,7 @@ public class WootFactoryMob<T extends Entity> {
      * @param mobTag the mob's saved tag
      * @return a list of required item stacks (may be empty)
      */
-    public List<ItemStack> getImportItems(CompoundTag mobTag){
+    public List<ItemStack> getImportItems(CompoundTag mobTag, HolderLookup.Provider lookupProvider){
         return List.of();
     }
 
@@ -119,7 +120,7 @@ public class WootFactoryMob<T extends Entity> {
      * @param mobTag the mob's saved tag
      * @return a list of required fluid stacks (may be empty)
      */
-    public List<FluidStack> getImportFluids(CompoundTag mobTag){
+    public List<FluidStack> getImportFluids(CompoundTag mobTag, HolderLookup.Provider lookupProvider){
         return List.of();
     }
 

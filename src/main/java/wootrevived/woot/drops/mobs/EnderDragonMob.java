@@ -54,7 +54,7 @@ public class EnderDragonMob extends WootFactoryMob<EnderDragon> {
     }
 
     @Override
-    public List<ItemStack> getImportItems(CompoundTag mobTag){
+    public List<ItemStack> getImportItems(CompoundTag mobTag, HolderLookup.Provider lookupProvider){
         ItemStack endCrystal = Items.END_CRYSTAL.getDefaultInstance();
         endCrystal.setCount(4);
         return List.of(endCrystal);

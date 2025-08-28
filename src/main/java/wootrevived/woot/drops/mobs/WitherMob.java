@@ -48,7 +48,7 @@ public class WitherMob extends WootFactoryMob<WitherBoss> {
     }
 
     @Override
-    public List<ItemStack> getImportItems(CompoundTag mobTag){
+    public List<ItemStack> getImportItems(CompoundTag mobTag, HolderLookup.Provider lookupProvider){
         ItemStack witherSkeletonSkull = Items.WITHER_SKELETON_SKULL.getDefaultInstance();
         witherSkeletonSkull.setCount(3);
 
