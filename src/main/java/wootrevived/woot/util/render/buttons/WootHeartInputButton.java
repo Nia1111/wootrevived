@@ -24,6 +24,10 @@ public class WootHeartInputButton extends WootButton {
         }
     }
 
+    public int getFakeSpawnerIndex(){
+        return index;
+    }
+
     @Override
     public void onPress() {
         this.onPress.onPress(this);

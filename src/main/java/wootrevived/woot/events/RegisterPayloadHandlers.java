@@ -5,6 +5,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import wootrevived.woot.Woot;
+import wootrevived.woot.network.WootFakeSpawnerUpdate;
 import wootrevived.woot.network.WootMachineUpdate;
 
 @EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
@@ -17,6 +18,12 @@ public class RegisterPayloadHandlers {
                 WootMachineUpdate.TYPE,
                 WootMachineUpdate.STREAM_CODEC,
                 WootMachineUpdate::handler
+        );
+
+        registrar.playToServer(
+                WootFakeSpawnerUpdate.TYPE,
+                WootFakeSpawnerUpdate.STREAM_CODEC,
+                WootFakeSpawnerUpdate::handler
         );
     }
 }
