@@ -266,7 +266,6 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     public abstract IItemHandler getInventory();
 
     public final WootEnergyStorage energyHandler = createEnergy();
-
     private WootEnergyStorage createEnergy() {
         if(!hasEnergyCapability())
             return null;
@@ -295,7 +294,6 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     public abstract boolean hasEnergyCapability();
 
     public final WootFluidTankHandler inputTankHandler = createInputTank();
-
     private WootFluidTankHandler createInputTank() {
         if(!hasInputFluidCapability())
             return null;
@@ -343,7 +341,6 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
     }
 
     public final WootFluidTankHandler outputTankHandler = createOutputTank();
-
     private WootFluidTankHandler createOutputTank() {
         if(!hasOutputFluidCapability())
             return null;
@@ -390,7 +387,6 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
         }
 
         redstoneMode = RedstoneMode.byIndex(tag.getInt(WootTags.REDSTONE_MODE_TAG));
-        hasSidePropertiesChanged = true;
     }
 
     @NotNull
@@ -412,19 +408,12 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    private boolean hasSidePropertiesChanged = false;
-
     @Override
     public void setChanged() {
         super.setChanged();
 
         if(this.level == null || this.level.isClientSide) return;
         this.level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
-        if(hasSidePropertiesChanged){
-            hasSidePropertiesChanged = false;
-            invalidateCapabilities();
-            this.level.updateNeighborsAt(getBlockPos(), getBlockState().getBlock());
-        }
     }
 
     public void sendNewState(){
@@ -435,10 +424,8 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
         if(update.redstoneMode() != null)
             redstoneMode = update.redstoneMode();
 
-        if(update.listMachineProperties().size() == getAllMachineSidesProperties().size()) {
+        if(update.listMachineProperties().size() == getAllMachineSidesProperties().size())
             setAllMachineSidesProperties(update.listMachineProperties());
-            hasSidePropertiesChanged = true;
-        }
 
         setChanged();
     }
