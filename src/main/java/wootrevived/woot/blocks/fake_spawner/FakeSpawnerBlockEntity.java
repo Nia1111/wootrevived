@@ -73,9 +73,9 @@ public class FakeSpawnerBlockEntity extends FactoryBlockBaseEntity {
         return (float)perTickRatio;
     }
 
-    public void setActive(int rate, int cost, int numOfSim){
+    public boolean setActive(int rate, int cost, int numOfSim){
         if(isDisabled())
-            return;
+            return false;
 
         this.perTickRatio = ((double)cost) / ((double)rate);
         this.accumulator = 0;
@@ -83,6 +83,7 @@ public class FakeSpawnerBlockEntity extends FactoryBlockBaseEntity {
         this.totalDrained = 0;
         this.numOfSim = numOfSim;
         setChanged();
+        return true;
     }
 
     public boolean isActive(){
