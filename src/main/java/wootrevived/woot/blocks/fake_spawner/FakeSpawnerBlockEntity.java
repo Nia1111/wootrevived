@@ -142,8 +142,7 @@ public class FakeSpawnerBlockEntity extends FactoryBlockBaseEntity {
         ItemStack itemStack = BlocksRegistry.FAKE_SPAWNER_BLOCK.get().asItem().getDefaultInstance();
 
         itemStack.applyComponents(DataComponentPatch.builder().set(ComponentsRegistry.FAKE_SPAWNER_DATA.get(), new FakeSpawnerData.Component(
-                Optional.ofNullable(tag),
-                0, 0, 0, 0, 0
+                Optional.ofNullable(tag)
         )).build());
 
         return itemStack;
@@ -175,18 +174,12 @@ public class FakeSpawnerBlockEntity extends FactoryBlockBaseEntity {
 
     private FakeSpawnerData.Component getComponent(){
         return new FakeSpawnerData.Component(
-                Optional.ofNullable(getMobTag()),
-                numOfSim, vitalityCost, totalDrained, perTickRatio, accumulator
+                Optional.ofNullable(getMobTag())
         );
     }
 
     public void setComponent(FakeSpawnerData.Component component){
         mobTag = component.mobTag().orElse(null);
-        numOfSim = component.numberOfSimulations();
-        vitalityCost = component.vitalityCost();
-        totalDrained = component.totalDrained();
-        perTickRatio = component.perTickRatio();
-        accumulator = component.accumulator();
     }
 
     @Override
@@ -209,6 +202,11 @@ public class FakeSpawnerBlockEntity extends FactoryBlockBaseEntity {
         super.saveAdditional(tag, provider);
 
         tag.putInt(WootTags.REDSTONE_MODE_TAG, redstoneMode.ordinal());
+        tag.putInt(WootTags.Factory.NUMBER_OF_SIMULATIONS, numOfSim);
+        tag.putInt(WootTags.Factory.VITALITY_COST, vitalityCost);
+        tag.putInt(WootTags.Factory.TOTAL_DRAINED, totalDrained);
+        tag.putDouble(WootTags.Factory.PER_TICK_RATIO, perTickRatio);
+        tag.putDouble(WootTags.Factory.ACCUMULATOR, accumulator);
 
         FakeSpawnerData.CODEC.encodeStart(NbtOps.INSTANCE, getComponent()).result().ifPresent(t -> {
             if(t instanceof CompoundTag compound) tag.merge(compound);
@@ -220,6 +218,11 @@ public class FakeSpawnerBlockEntity extends FactoryBlockBaseEntity {
         super.loadAdditional(tag, provider);
 
         redstoneMode = RedstoneMode.byIndex(tag.getInt(WootTags.REDSTONE_MODE_TAG));
+        numOfSim = tag.getInt(WootTags.Factory.NUMBER_OF_SIMULATIONS);
+        vitalityCost = tag.getInt(WootTags.Factory.VITALITY_COST);
+        totalDrained = tag.getInt(WootTags.Factory.TOTAL_DRAINED);
+        perTickRatio = tag.getDouble(WootTags.Factory.PER_TICK_RATIO);
+        accumulator = tag.getDouble(WootTags.Factory.ACCUMULATOR);
 
         FakeSpawnerData.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result().ifPresent(this::setComponent);
     }

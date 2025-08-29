@@ -51,6 +51,7 @@ import wootrevived.woot.client.render.item_infuser.ItemInfuserContainerMenu;
 import wootrevived.woot.init.Registry;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class BlocksRegistry {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, Woot.MOD_ID);
@@ -131,7 +132,7 @@ public class BlocksRegistry {
 
     public static final String FAKE_SPAWNER_TAG = "fake_spawner";
     public static final DeferredHolder<Block, Block> FAKE_SPAWNER_BLOCK = BLOCKS.register(FAKE_SPAWNER_TAG, () -> new FactoryBlock(BlocksRegistry.FAKE_SPAWNER_BLOCK_ENTITY::get));
-    public static final DeferredHolder<Item, FakeSpawnerBlockItem> FAKE_SPAWNER_BLOCK_ITEM = ITEMS.register(FAKE_SPAWNER_TAG, () -> new FakeSpawnerBlockItem(FAKE_SPAWNER_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, FakeSpawnerBlockItem> FAKE_SPAWNER_BLOCK_ITEM = ITEMS.register(FAKE_SPAWNER_TAG, () -> new FakeSpawnerBlockItem(FAKE_SPAWNER_BLOCK.get(), new Item.Properties().component(ComponentsRegistry.FAKE_SPAWNER_DATA, new FakeSpawnerData.Component(Optional.empty()))));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<?>> FAKE_SPAWNER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(FAKE_SPAWNER_TAG, () -> BlockEntityType.Builder.of(FakeSpawnerBlockEntity::new, FAKE_SPAWNER_BLOCK.get()).build(null));
 
     public static final String FACTORY_CONNECT_TAG = "factory_connect";
