@@ -62,7 +62,8 @@ processResources {
                 'neo_version': neo_version,
                 'guideme_version': guideme_version,
                 'jei_version': jei_version,
-                'jade_version': jade_version
+                'jade_version': jade_version,
+                'kubejs_version': kubejs_version
     }
 }
 
@@ -85,15 +86,23 @@ dependencies {
 
     compileOnly 'org.jetbrains:annotations:22.0.0'
 
+    // JEI
     compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
 
+    // Jade
     implementation "maven.modrinth:jade:${jade_version}"
 
+    // GuideME
     compileOnly "org.appliedenergistics:guideme:${guideme_version}:api"
-    runtimeOnly "org.appliedenergistics:guideme:${guideme_version}"
+    localRuntime "org.appliedenergistics:guideme:${guideme_version}"
 
+    // KubeJS
+    implementation "maven.modrinth:kubejs:${kubejs_version}+KubeJS-1.21.1"
+    localRuntime "maven.modrinth:rhino:${rhino_version}+Rhino-1.21"
+
+    // Optimizations
     localRuntime "org.embeddedt:embeddium-${mc_version}:${embeddium_version}"
     localRuntime "maven.modrinth:modernfix:${modernfix_version}"
     localRuntime "maven.modrinth:ferrite-core:${ferritecore_version}"
