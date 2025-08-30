@@ -10,7 +10,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import wootrevived.woot.Woot;
 import wootrevived.woot.recipes.stygian_anvil.StygianAnvilRecipe;
 import wootrevived.woot.recipes.dye_liquifier.DyeLiquifierRecipe;
-import wootrevived.woot.recipes.dye_liquifier.DyeLiquifierRecipeSerializer;
 import wootrevived.woot.recipes.enchanted_liquifier.EnchantedLiquifierRecipe;
 import wootrevived.woot.recipes.fluid_infuser.FluidInfuserRecipe;
 import wootrevived.woot.recipes.item_infuser.ItemInfuserRecipe;
@@ -36,7 +35,10 @@ public class RecipesRegistry {
     /* Dye Liquifier */
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<DyeLiquifierRecipe>> DYE_LIQUIFIER_RECIPE_TYPE = RECIPE_TYPES.register(BlocksRegistry.DYE_LIQUIFIER_TAG, () -> RecipeType.simple(ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.DYE_LIQUIFIER_TAG)));
-    public static final DeferredHolder<RecipeSerializer<?>, DyeLiquifierRecipeSerializer> DYE_LIQUIFIER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register(BlocksRegistry.DYE_LIQUIFIER_TAG, () -> new DyeLiquifierRecipeSerializer());
+    public static final DeferredHolder<RecipeSerializer<?>, WootRecipeSerializer<DyeLiquifierRecipe>> DYE_LIQUIFIER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register(BlocksRegistry.DYE_LIQUIFIER_TAG, () -> new WootRecipeSerializer<>(
+            DyeLiquifierRecipe.CODEC,
+            DyeLiquifierRecipe.STREAM_CODEC
+    ));
 
     /* Fluid Infuser */
 
