@@ -3,7 +3,7 @@
   "energy": 500,
   "inputFluids": [
     {
-      "amount": 360,
+      "amount": 500,
       "id": "woot_revived:pure_dye_fluid"
     }
   ],
