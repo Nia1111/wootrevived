@@ -14,8 +14,8 @@ import wootrevived.woot.Woot;
 import wootrevived.woot.util.common.MachineSide;
 import wootrevived.woot.util.common.MachineSideProperty;
 import wootrevived.woot.util.common.RedstoneMode;
+import wootrevived.woot.util.common.WootCodecs;
 import wootrevived.woot.util.entity.WootMachineBlockEntity;
-import wootrevived.woot.util.helper.MachinePropertiesDataHelper;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -28,7 +28,7 @@ public record WootMachineUpdate(BlockPos blockPos, RedstoneMode redstoneMode,
     public static final StreamCodec<RegistryFriendlyByteBuf, WootMachineUpdate> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, WootMachineUpdate::blockPos,
             NeoForgeStreamCodecs.enumCodec(RedstoneMode.class), WootMachineUpdate::redstoneMode,
-            MachinePropertiesDataHelper.STREAM_CODEC, WootMachineUpdate::listMachineProperties,
+            WootCodecs.MACHINE_PROPERTIES_STREAM_CODEC, WootMachineUpdate::listMachineProperties,
             WootMachineUpdate::new
     );
 

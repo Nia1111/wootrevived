@@ -9,8 +9,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.util.common.MachineSide;
 import wootrevived.woot.util.common.MachineSideProperty;
+import wootrevived.woot.util.common.WootCodecs;
 import wootrevived.woot.util.entity.WootTags;
-import wootrevived.woot.util.helper.MachinePropertiesDataHelper;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -23,7 +23,7 @@ public final class FluidInfuserData {
                     Codec.INT.fieldOf(WootTags.ENERGY_TAG).forGetter(Component::energy),
                     FluidStack.OPTIONAL_CODEC.fieldOf(WootTags.INPUT_TANK_TAG).forGetter(Component::inputFluid),
                     FluidStack.OPTIONAL_CODEC.fieldOf(WootTags.OUTPUT_TANK_TAG).forGetter(Component::outputFluid),
-                    MachinePropertiesDataHelper.CODEC.fieldOf(WootTags.DirectionProperties.LIST).forGetter(Component::listMachineProperties)
+                    WootCodecs.MACHINE_PROPERTIES_CODEC.fieldOf(WootTags.DirectionProperties.LIST).forGetter(Component::listMachineProperties)
             ).apply(inst, Component::new)
     );
 
@@ -31,7 +31,7 @@ public final class FluidInfuserData {
             ByteBufCodecs.INT, Component::energy,
             FluidStack.OPTIONAL_STREAM_CODEC, Component::inputFluid,
             FluidStack.OPTIONAL_STREAM_CODEC, Component::outputFluid,
-            MachinePropertiesDataHelper.STREAM_CODEC, Component::listMachineProperties,
+            WootCodecs.MACHINE_PROPERTIES_STREAM_CODEC, Component::listMachineProperties,
             Component::new
     );
 

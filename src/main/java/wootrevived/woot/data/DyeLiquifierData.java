@@ -9,8 +9,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.woot.util.common.MachineSide;
 import wootrevived.woot.util.common.MachineSideProperty;
+import wootrevived.woot.util.common.WootCodecs;
 import wootrevived.woot.util.entity.WootTags;
-import wootrevived.woot.util.helper.MachinePropertiesDataHelper;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -26,7 +26,7 @@ public final class DyeLiquifierData {
                     Codec.INT.fieldOf(WootTags.DyeLiquifier.BLUE_TAG).forGetter(Component::blue),
                     Codec.INT.fieldOf(WootTags.DyeLiquifier.WHITE_TAG).forGetter(Component::white),
                     FluidStack.OPTIONAL_CODEC.fieldOf(WootTags.OUTPUT_TANK_TAG).forGetter(Component::outputFluid),
-                    MachinePropertiesDataHelper.CODEC.fieldOf(WootTags.DirectionProperties.LIST).forGetter(Component::listMachineProperties)
+                    WootCodecs.MACHINE_PROPERTIES_CODEC.fieldOf(WootTags.DirectionProperties.LIST).forGetter(Component::listMachineProperties)
             ).apply(inst, Component::new)
     );
 
@@ -39,7 +39,7 @@ public final class DyeLiquifierData {
             int blue = ByteBufCodecs.INT.decode(buf);
             int white = ByteBufCodecs.INT.decode(buf);
             FluidStack outputFluid = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
-            List<EnumMap<MachineSide, MachineSideProperty>> listMachineProperties = MachinePropertiesDataHelper.STREAM_CODEC.decode(buf);
+            List<EnumMap<MachineSide, MachineSideProperty>> listMachineProperties = WootCodecs.MACHINE_PROPERTIES_STREAM_CODEC.decode(buf);
             return new Component(energy, red, yellow, blue, white, outputFluid, listMachineProperties);
         }
 
@@ -51,7 +51,7 @@ public final class DyeLiquifierData {
             ByteBufCodecs.INT.encode(buf, component.blue);
             ByteBufCodecs.INT.encode(buf, component.white);
             FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, component.outputFluid);
-            MachinePropertiesDataHelper.STREAM_CODEC.encode(buf, component.listMachineProperties);
+            WootCodecs.MACHINE_PROPERTIES_STREAM_CODEC.encode(buf, component.listMachineProperties);
         }
     };
 

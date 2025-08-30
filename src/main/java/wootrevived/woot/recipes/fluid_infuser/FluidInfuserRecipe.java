@@ -7,6 +7,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class FluidInfuserRecipe extends WootRecipe {
     public static final MapCodec<FluidInfuserRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            Codec.INT.fieldOf("energy").forGetter(FluidInfuserRecipe::getEnergy),
+            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("energy").forGetter(FluidInfuserRecipe::getEnergy),
             Ingredient.CODEC.listOf().fieldOf("inputIngredients").forGetter(FluidInfuserRecipe::getInputItems),
             FluidStack.CODEC.listOf().fieldOf("inputFluids").forGetter(FluidInfuserRecipe::getInputFluids),
             FluidStack.CODEC.fieldOf("outputFluid").forGetter(FluidInfuserRecipe::getOutputFluid)
