@@ -30,10 +30,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.config.ItemInfuserConfig;
 import wootrevived.woot.data.ItemInfuserData;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.ComponentsRegistry;
-import wootrevived.woot.util.Config;
 
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.render.WootContainerScreen;
@@ -96,7 +96,7 @@ public class ItemInfuserBlock extends Block implements EntityBlock {
                         .append(Component.translatable("info.woot_revived.power").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                         .append(Component.literal(WootContainerScreen.formatInteger(component.energy())))
                         .append(Component.literal("/").setStyle(MACHINE_STYLE))
-                        .append(WootContainerScreen.formatInteger(Config.ItemInfuser.ENERGY_CAPACITY))
+                        .append(WootContainerScreen.formatInteger(ItemInfuserConfig.ENERGY_CAPACITY.get()))
                         .append(Component.literal(" FE").setStyle(UNIT_STYLE))
         );
 
@@ -113,7 +113,7 @@ public class ItemInfuserBlock extends Block implements EntityBlock {
                         .append(Component.translatable("info.woot_revived.input_amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                         .append(WootContainerScreen.formatInteger(fluid.getAmount()))
                         .append(Component.literal("/").setStyle(MACHINE_STYLE))
-                        .append(WootContainerScreen.formatInteger(Config.ItemInfuser.INPUT_TANK_CAPACITY))
+                        .append(WootContainerScreen.formatInteger(ItemInfuserConfig.INPUT_TANK_CAPACITY.get()))
                         .append(Component.literal("mB").setStyle(UNIT_STYLE))
         );
     }

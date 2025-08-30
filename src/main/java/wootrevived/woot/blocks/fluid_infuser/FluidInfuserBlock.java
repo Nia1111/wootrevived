@@ -30,10 +30,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.config.FluidInfuserConfig;
 import wootrevived.woot.data.FluidInfuserData;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.ComponentsRegistry;
-import wootrevived.woot.util.Config;
 
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.render.WootContainerScreen;
@@ -96,7 +96,7 @@ public class FluidInfuserBlock extends Block implements EntityBlock {
                         .append(Component.translatable("info.woot_revived.power").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                         .append(Component.literal(WootContainerScreen.formatInteger(component.energy())))
                         .append(Component.literal("/").setStyle(MACHINE_STYLE))
-                        .append(WootContainerScreen.formatInteger(Config.FluidInfuser.ENERGY_CAPACITY))
+                        .append(WootContainerScreen.formatInteger(FluidInfuserConfig.ENERGY_CAPACITY.get()))
                         .append(Component.literal(" FE").setStyle(UNIT_STYLE))
         );
 
@@ -113,7 +113,7 @@ public class FluidInfuserBlock extends Block implements EntityBlock {
                         .append(Component.translatable("info.woot_revived.input_amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                         .append(WootContainerScreen.formatInteger(inputFluid.getAmount()))
                         .append(Component.literal("/").setStyle(MACHINE_STYLE))
-                        .append(WootContainerScreen.formatInteger(Config.FluidInfuser.INPUT_TANK_CAPACITY))
+                        .append(WootContainerScreen.formatInteger(FluidInfuserConfig.INPUT_TANK_CAPACITY.get()))
                         .append(Component.literal("mB").setStyle(UNIT_STYLE))
         );
 
@@ -130,7 +130,7 @@ public class FluidInfuserBlock extends Block implements EntityBlock {
                         .append(Component.translatable("info.woot_revived.output_amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                         .append(WootContainerScreen.formatInteger(outputFluid.getAmount()))
                         .append(Component.literal("/").setStyle(MACHINE_STYLE))
-                        .append(WootContainerScreen.formatInteger(Config.FluidInfuser.OUTPUT_TANK_CAPACITY))
+                        .append(WootContainerScreen.formatInteger(FluidInfuserConfig.OUTPUT_TANK_CAPACITY.get()))
                         .append(Component.literal("mB").setStyle(UNIT_STYLE))
         );
     }

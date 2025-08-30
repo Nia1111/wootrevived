@@ -31,10 +31,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.config.DyeLiquifierConfig;
 import wootrevived.woot.data.DyeLiquifierData;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.ComponentsRegistry;
-import wootrevived.woot.util.Config;
 
 import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.render.WootContainerScreen;
@@ -97,14 +97,14 @@ public class DyeLiquifierBlock extends Block implements EntityBlock {
                         .append(Component.translatable("info.woot_revived.power").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                         .append(Component.literal(WootContainerScreen.formatInteger(component.energy())))
                         .append(Component.literal("/").setStyle(MACHINE_STYLE))
-                        .append(WootContainerScreen.formatInteger(Config.DyeLiquifier.ENERGY_CAPACITY))
+                        .append(WootContainerScreen.formatInteger(DyeLiquifierConfig.ENERGY_CAPACITY.get()))
                         .append(Component.literal(" FE").setStyle(UNIT_STYLE))
         );
 
-        appendColor(tooltip, component.red(), Config.DyeLiquifier.RED_TANK_CAPACITY, Component.translatable("info.woot_revived.dye.red"));
-        appendColor(tooltip, component.yellow(), Config.DyeLiquifier.YELLOW_TANK_CAPACITY, Component.translatable("info.woot_revived.dye.yellow"));
-        appendColor(tooltip, component.blue(), Config.DyeLiquifier.BLUE_TANK_CAPACITY, Component.translatable("info.woot_revived.dye.blue"));
-        appendColor(tooltip, component.white(), Config.DyeLiquifier.WHITE_TANK_CAPACITY, Component.translatable("info.woot_revived.dye.white"));
+        appendColor(tooltip, component.red(), DyeLiquifierConfig.RED_TANK_CAPACITY.get(), Component.translatable("info.woot_revived.dye.red"));
+        appendColor(tooltip, component.yellow(), DyeLiquifierConfig.YELLOW_TANK_CAPACITY.get(), Component.translatable("info.woot_revived.dye.yellow"));
+        appendColor(tooltip, component.blue(), DyeLiquifierConfig.BLUE_TANK_CAPACITY.get(), Component.translatable("info.woot_revived.dye.blue"));
+        appendColor(tooltip, component.white(), DyeLiquifierConfig.WHITE_TANK_CAPACITY.get(), Component.translatable("info.woot_revived.dye.white"));
 
         FluidStack fluid = component.outputFluid();
 
@@ -119,7 +119,7 @@ public class DyeLiquifierBlock extends Block implements EntityBlock {
                         .append(Component.translatable("info.woot_revived.output_amount").append(Component.literal(": ")).setStyle(MACHINE_STYLE))
                         .append(WootContainerScreen.formatInteger(fluid.getAmount()))
                         .append(Component.literal("/").setStyle(MACHINE_STYLE))
-                        .append(WootContainerScreen.formatInteger(Config.DyeLiquifier.OUTPUT_TANK_CAPACITY))
+                        .append(WootContainerScreen.formatInteger(DyeLiquifierConfig.OUTPUT_TANK_CAPACITY.get()))
                         .append(Component.literal("mB").setStyle(UNIT_STYLE))
         );
     }
