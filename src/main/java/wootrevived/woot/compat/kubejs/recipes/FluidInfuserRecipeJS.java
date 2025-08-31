@@ -9,13 +9,11 @@ import dev.latvian.mods.kubejs.recipe.schema.RecipeSchema;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-import java.util.List;
-
 public interface FluidInfuserRecipeJS {
-    RecipeKey<List<FluidStack>> INPUT_FLUID = FluidStackComponent.FLUID_STACK.asList().key("inputFluids", ComponentRole.INPUT);
-    RecipeKey<List<Ingredient>> INPUT_ITEM = IngredientComponent.INGREDIENT.asList().key("inputIngredients", ComponentRole.INPUT);
-    RecipeKey<FluidStack> OUTPUT_FLUID = FluidStackComponent.FLUID_STACK.key("outputFluid", ComponentRole.OUTPUT);
+    RecipeKey<FluidStack> OUTPUT_FLUID = FluidStackComponent.FLUID_STACK.key("output_fluid", ComponentRole.OUTPUT);
     RecipeKey<Integer> ENERGY = NumberComponent.INT.key("energy", ComponentRole.OTHER);
+    RecipeKey<FluidStack> INPUT_FLUID = FluidStackComponent.FLUID_STACK.key("input_fluid", ComponentRole.INPUT);
+    RecipeKey<Ingredient> INGREDIENT = IngredientComponent.INGREDIENT.key("ingredient", ComponentRole.INPUT);
 
-    RecipeSchema SCHEMA = new RecipeSchema(INPUT_FLUID, INPUT_ITEM, OUTPUT_FLUID, ENERGY);
+    RecipeSchema SCHEMA = new RecipeSchema(OUTPUT_FLUID, ENERGY, INPUT_FLUID, INGREDIENT);
 }

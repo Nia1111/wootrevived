@@ -289,14 +289,16 @@ public class ItemInfuserBlockEntity extends WootMachineBlockEntity implements Me
             return;
         }
 
-        final int inputSize = recipe.getInputIngredient().getItems()[0].getCount();
-        final int augmentSize = !recipe.getAugmentIngredient().isEmpty() ? recipe.getAugmentIngredient().getItems()[0].getCount() : 1;
+        ItemInfuserRecipe recipe = this.recipe;
+
+        final int inputSize = recipe.ingredientCount(inputSlotHandler.getStackInSlot(INPUT_SLOT).getItem());
+        final int augmentSize = recipe.augmentCount(augmentSlotHandler.getStackInSlot(AUGMENT_SLOT).getItem());
 
         inputSlotHandler.extractItem(INPUT_SLOT, inputSize, false);
-        if (!recipe.getAugmentIngredient().isEmpty())
-            inputSlotHandler.extractItem(AUGMENT_SLOT, augmentSize, false);
+        if (recipe.getAugment().isPresent())
+            augmentSlotHandler.extractItem(AUGMENT_SLOT, augmentSize, false);
 
-        ItemStack itemStack = recipe.getOutputItem();
+        ItemStack itemStack = recipe.getOutput();
         ItemStack output = outputSlotHandler.getStackInSlot(OUTPUT_SLOT);
         if(!output.isEmpty()){
             output.grow(itemStack.getCount());
@@ -304,7 +306,7 @@ public class ItemInfuserBlockEntity extends WootMachineBlockEntity implements Me
             outputSlotHandler.setStackInSlot(OUTPUT_SLOT, itemStack);
         }
 
-        inputTankHandler.drain(recipe.getInputFluid().getAmount(), IFluidHandler.FluidAction.EXECUTE);
+        inputTankHandler.drain(recipe.getFluid().getAmount(), IFluidHandler.FluidAction.EXECUTE);
         setChanged();
     }
 
@@ -317,7 +319,7 @@ public class ItemInfuserBlockEntity extends WootMachineBlockEntity implements Me
         if (recipe == null)
             return false;
 
-        return inputTankHandler.getFluid().getAmount() >= recipe.getInputFluid().getAmount();
+        return inputTankHandler.getFluid().getAmount() >= recipe.getFluid().getAmount();
     }
     //endregion
 

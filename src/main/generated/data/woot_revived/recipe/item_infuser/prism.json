@@ -1,19 +1,14 @@
 {
   "type": "woot_revived:item_infuser",
   "energy": 1000,
-  "inputFluids": [
-    {
-      "amount": 1000,
-      "id": "woot_revived:pure_dye_fluid"
-    }
-  ],
-  "inputIngredients": [
-    {
-      "tag": "c:glass_blocks"
-    },
-    []
-  ],
-  "outputItem": {
+  "fluid": {
+    "amount": 1000,
+    "id": "woot_revived:pure_dye_fluid"
+  },
+  "ingredient": {
+    "tag": "c:glass_blocks"
+  },
+  "output": {
     "count": 1,
     "id": "woot_revived:prism"
   }

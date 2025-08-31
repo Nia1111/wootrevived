@@ -2,7 +2,7 @@ package wootrevived.woot.recipes.stygian_anvil;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.NonNullList;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -10,28 +10,55 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.RecipesRegistry;
-import wootrevived.woot.util.recipes.WootRecipe;
 import wootrevived.woot.util.recipes.WootRecipeInput;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class StygianAnvilRecipe extends WootRecipe {
+public class StygianAnvilRecipe implements Recipe<WootRecipeInput> {
     public static final MapCodec<StygianAnvilRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            Ingredient.CODEC.listOf().fieldOf("inputIngredients").forGetter(StygianAnvilRecipe::getInputItems),
-            ItemStack.CODEC.fieldOf("outputItem").forGetter(StygianAnvilRecipe::getOutputItem)
+            Ingredient.CODEC.fieldOf("base").forGetter(StygianAnvilRecipe::getBase),
+            Ingredient.CODEC.optionalFieldOf("first_complementary").forGetter(StygianAnvilRecipe::getFirstComplementary),
+            Ingredient.CODEC.optionalFieldOf("second_complementary").forGetter(StygianAnvilRecipe::getSecondComplementary),
+            Ingredient.CODEC.optionalFieldOf("third_complementary").forGetter(StygianAnvilRecipe::getThirdComplementary),
+            Ingredient.CODEC.optionalFieldOf("fourth_complementary").forGetter(StygianAnvilRecipe::getFourthComplementary),
+            ItemStack.CODEC.fieldOf("output").forGetter(StygianAnvilRecipe::getOutput)
     ).apply(inst, StygianAnvilRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, StygianAnvilRecipe> STREAM_CODEC = StreamCodec.composite(
-            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity)), StygianAnvilRecipe::getInputItems,
-            ItemStack.STREAM_CODEC, StygianAnvilRecipe::getOutputItem,
+            Ingredient.CONTENTS_STREAM_CODEC, StygianAnvilRecipe::getBase,
+            ByteBufCodecs.optional(Ingredient.CONTENTS_STREAM_CODEC), StygianAnvilRecipe::getFirstComplementary,
+            ByteBufCodecs.optional(Ingredient.CONTENTS_STREAM_CODEC), StygianAnvilRecipe::getSecondComplementary,
+            ByteBufCodecs.optional(Ingredient.CONTENTS_STREAM_CODEC), StygianAnvilRecipe::getThirdComplementary,
+            ByteBufCodecs.optional(Ingredient.CONTENTS_STREAM_CODEC), StygianAnvilRecipe::getFourthComplementary,
+            ItemStack.STREAM_CODEC, StygianAnvilRecipe::getOutput,
             StygianAnvilRecipe::new
     );
 
-    public StygianAnvilRecipe(@Nullable List<Ingredient> inputItems, @Nullable ItemStack outputItem) {
-        super(0, inputItems, null, outputItem, null);
+    private final Ingredient base;
+    private final Optional<Ingredient> firstComplementary;
+    private final Optional<Ingredient> secondComplementary;
+    private final Optional<Ingredient> thirdComplementary;
+    private final Optional<Ingredient> fourthComplementary;
+    private final ItemStack outputItem;
+
+    private final int complementaryCount;
+
+    public StygianAnvilRecipe(@NotNull Ingredient base, @NotNull Optional<Ingredient> firstComplementary, @NotNull Optional<Ingredient> secondComplementary, @NotNull Optional<Ingredient> thirdComplementary, @NotNull Optional<Ingredient> fourthComplementary, @NotNull ItemStack outputItem) {
+        this.base = base;
+        this.firstComplementary = firstComplementary;
+        this.secondComplementary = secondComplementary;
+        this.thirdComplementary = thirdComplementary;
+        this.fourthComplementary = fourthComplementary;
+        this.outputItem = outputItem;
+
+        this.complementaryCount =
+                Boolean.compare(firstComplementary.isPresent(), false) +
+                Boolean.compare(secondComplementary.isPresent(), false) +
+                Boolean.compare(thirdComplementary.isPresent(), false) +
+                Boolean.compare(fourthComplementary.isPresent(), false);
     }
 
     @Override
@@ -44,24 +71,34 @@ public class StygianAnvilRecipe extends WootRecipe {
         return RecipesRegistry.ANVIL_RECIPE_TYPE.get();
     }
 
-    public Ingredient getRecipeBaseIngredient(){
-        return inputItems.get(0);
+    public @NotNull Ingredient getBase(){
+        return base;
     }
 
-    public List<Ingredient> getRecipeIngredients(){
-        return inputItems.subList(1, Math.min(5, inputItems.size()));
+    public @NotNull Optional<Ingredient> getFirstComplementary(){
+        return firstComplementary;
     }
 
-    public ItemStack getOutputItem(){
-        return outputItem;
+    public @NotNull Optional<Ingredient> getSecondComplementary(){
+        return secondComplementary;
+    }
+
+    public @NotNull Optional<Ingredient> getThirdComplementary(){
+        return thirdComplementary;
+    }
+
+    public @NotNull Optional<Ingredient> getFourthComplementary(){
+        return fourthComplementary;
+    }
+
+    public @NotNull ItemStack getOutput(){
+        return outputItem.copy();
     }
 
     @Override
     public boolean matches(@NotNull WootRecipeInput input, @NotNull Level level) {
-        if(!getRecipeBaseIngredient().test(input.getItem(0)))
+        if(!getBase().test(input.getItem(0)))
             return false;
-
-        List<Ingredient> ingredients = getRecipeIngredients();
 
         int count = 0;
         for(int i = 1; i < input.size(); i++){
@@ -69,26 +106,38 @@ public class StygianAnvilRecipe extends WootRecipe {
                 count++;
         }
 
-        if(ingredients.size() != count)
+        if(complementaryCount != count)
             return false;
 
-        List<Integer> matchedSlots = new ArrayList<>();
-        for(Ingredient ingredient : ingredients){
-            for(int i = 1; i < input.size(); i++){
-                if(!matchedSlots.contains(i) && ingredient.test(input.getItem(i))){
-                    matchedSlots.add(i);
-                    break;
-                }
+        List<Integer> validatedSlots = new ArrayList<>();
+
+        return matchComplementary(input, validatedSlots, firstComplementary) &&
+                matchComplementary(input, validatedSlots, secondComplementary) &&
+                matchComplementary(input, validatedSlots, thirdComplementary) &&
+                matchComplementary(input, validatedSlots, fourthComplementary);
+    }
+
+    private boolean matchComplementary(WootRecipeInput container, List<Integer> validatedSlots, @NotNull Optional<Ingredient> complementary){
+        if(complementary.isEmpty())
+            return true;
+
+        boolean hasFound = false;
+
+        for(int i = 1; i < container.size(); i++){
+            if(!validatedSlots.contains(i) && complementary.get().test(container.getItem(i))){
+                validatedSlots.add(i);
+                hasFound = true;
+                break;
             }
         }
 
-        return matchedSlots.size() == ingredients.size();
+        return hasFound;
     }
 
     public static void loadRecipes(@NotNull RecipeManager manager){
         Validator.clear();
         for(RecipeHolder<StygianAnvilRecipe> recipeHolder : manager.getAllRecipesFor(RecipesRegistry.ANVIL_RECIPE_TYPE.get())) {
-            Validator.add(recipeHolder.value().getInputItems());
+            Validator.add(recipeHolder.value().base, recipeHolder.value().firstComplementary, recipeHolder.value().secondComplementary, recipeHolder.value().thirdComplementary, recipeHolder.value().fourthComplementary);
         }
     }
 
@@ -112,14 +161,37 @@ public class StygianAnvilRecipe extends WootRecipe {
             return false;
         }
 
-        protected static void add(List<Ingredient> items){
-            validBaseInputs.add(items.get(0));
-            validIngredients.addAll(items.subList(1, items.size()));
+        protected static void add(@NotNull Ingredient base, @NotNull Optional<Ingredient> firstComplementary, @NotNull Optional<Ingredient> secondComplementary, @NotNull Optional<Ingredient> thirdComplementary, @NotNull Optional<Ingredient> fourthComplementary){
+            validBaseInputs.add(base);
+            firstComplementary.ifPresent(validBaseInputs::add);
+            secondComplementary.ifPresent(validBaseInputs::add);
+            thirdComplementary.ifPresent(validBaseInputs::add);
+            fourthComplementary.ifPresent(validBaseInputs::add);
         }
 
         protected static void clear(){
             validBaseInputs.clear();
             validIngredients.clear();
         }
+    }
+
+    @Override
+    public @NotNull ItemStack assemble(WootRecipeInput input, HolderLookup.@NotNull Provider provider){
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean canCraftInDimensions(int i, int i1) {
+        return true;
+    }
+
+    @Override
+    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registryAccess) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean isSpecial() {
+        return true;
     }
 }

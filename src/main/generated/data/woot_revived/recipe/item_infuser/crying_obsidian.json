@@ -1,19 +1,14 @@
 {
   "type": "woot_revived:item_infuser",
   "energy": 1000,
-  "inputFluids": [
-    {
-      "amount": 1000,
-      "id": "woot_revived:mob_tears_fluid"
-    }
-  ],
-  "inputIngredients": [
-    {
-      "tag": "c:obsidians"
-    },
-    []
-  ],
-  "outputItem": {
+  "fluid": {
+    "amount": 1000,
+    "id": "woot_revived:mob_tears_fluid"
+  },
+  "ingredient": {
+    "tag": "c:obsidians"
+  },
+  "output": {
     "count": 1,
     "id": "minecraft:crying_obsidian"
   }

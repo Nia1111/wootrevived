@@ -264,12 +264,12 @@ public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements M
             return;
         }
 
-        DyeLiquifierRecipe finishedRecipe = recipe;
+        DyeLiquifierRecipe recipe = this.recipe;
 
-        red += finishedRecipe.getRed();
-        yellow += finishedRecipe.getYellow();
-        blue += finishedRecipe.getBlue();
-        white += finishedRecipe.getWhite();
+        red += recipe.getRed();
+        yellow += recipe.getYellow();
+        blue += recipe.getBlue();
+        white += recipe.getWhite();
 
         red = Mth.clamp(red, 0, DyeLiquifierConfig.RED_TANK_CAPACITY.get());
         yellow = Mth.clamp(yellow, 0, DyeLiquifierConfig.YELLOW_TANK_CAPACITY.get());

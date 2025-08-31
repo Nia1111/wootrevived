@@ -1,14 +1,12 @@
 {
   "type": "woot_revived:stygian_anvil",
-  "inputIngredients": [
-    {
-      "item": "woot_revived:dye_casing_mold"
-    },
-    {
-      "tag": "c:dyes/cyan"
-    }
-  ],
-  "outputItem": {
+  "base": {
+    "item": "woot_revived:dye_casing_mold"
+  },
+  "first_complementary": {
+    "tag": "c:dyes/cyan"
+  },
+  "output": {
     "count": 1,
     "id": "woot_revived:cyan_dye_casing"
   }

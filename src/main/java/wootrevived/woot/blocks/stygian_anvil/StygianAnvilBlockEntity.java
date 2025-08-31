@@ -124,10 +124,11 @@ public class StygianAnvilBlockEntity extends BlockEntity {
                         Either.left(inventoryHandler.getStackInSlot(INGREDIENT_4_SLOT))
                 ),
                 level).orElse(null);
+
         if (recipeHolder == null)
             return;
 
-        ItemStack output = recipeHolder.value().getOutputItem();
+        ItemStack output = recipeHolder.value().getOutput();
 
         if (inventoryHandler.getStackInSlot(BASE_SLOT).getItem() == ItemsRegistry.MOB_SHARD_ITEM.get()) {
             CompoundTag mobTag = MobShardItem.getProgrammedMob(inventoryHandler.getStackInSlot(BASE_SLOT));

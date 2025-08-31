@@ -1,18 +1,14 @@
 {
   "type": "woot_revived:fluid_infuser",
   "energy": 1000,
-  "inputFluids": [
-    {
-      "amount": 1000,
-      "id": "woot_revived:enchanted_fluid"
-    }
-  ],
-  "inputIngredients": [
-    {
-      "item": "minecraft:end_stone"
-    }
-  ],
-  "outputFluid": {
+  "ingredient": {
+    "item": "minecraft:end_stone"
+  },
+  "input_fluid": {
+    "amount": 1000,
+    "id": "woot_revived:enchanted_fluid"
+  },
+  "output_fluid": {
     "amount": 1450,
     "id": "woot_revived:vitality_fuel_fluid"
   }

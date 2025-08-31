@@ -1,18 +1,14 @@
 {
   "type": "woot_revived:fluid_infuser",
   "energy": 1000,
-  "inputFluids": [
-    {
-      "amount": 1000,
-      "id": "minecraft:water"
-    }
-  ],
-  "inputIngredients": [
-    {
-      "item": "minecraft:dragon_breath"
-    }
-  ],
-  "outputFluid": {
+  "ingredient": {
+    "item": "minecraft:dragon_breath"
+  },
+  "input_fluid": {
+    "amount": 1000,
+    "id": "minecraft:water"
+  },
+  "output_fluid": {
     "amount": 5000,
     "id": "woot_revived:mob_tears_fluid"
   }

@@ -4,23 +4,40 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.registries.RecipesRegistry;
-import wootrevived.woot.util.recipes.WootRecipe;
 import wootrevived.woot.util.recipes.WootRecipeInput;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // Recipe class for JEI
-public class EnchantedLiquifierRecipe extends WootRecipe {
-    public EnchantedLiquifierRecipe(int energy, @Nullable List<Ingredient> inputItems, FluidStack outputFluid) {
-        super(energy, inputItems, null, null, outputFluid);
+public class EnchantedLiquifierRecipe implements Recipe<WootRecipeInput> {
+    private final int energy;
+    private final Ingredient ingredient;
+    private final FluidStack output;
+
+    public EnchantedLiquifierRecipe(int energy, Ingredient ingredient, FluidStack output) {
+        this.energy = energy;
+        this.ingredient = ingredient;
+        this.output = output;
+    }
+
+    public Ingredient getIngredient(){
+        return ingredient;
+    }
+
+    public FluidStack getOutput(){
+        return this.output;
+    }
+
+    public int getEnergy() {
+        return energy;
     }
 
     @Override
@@ -31,10 +48,6 @@ public class EnchantedLiquifierRecipe extends WootRecipe {
     @Override
     public @NotNull RecipeType<?> getType() {
         return RecipesRegistry.ENCHANTED_LIQUIFIER_RECIPE_TYPE.get();
-    }
-
-    public Ingredient getInputIngredient(){
-        return inputItems.get(0);
     }
 
     @Override
@@ -53,5 +66,25 @@ public class EnchantedLiquifierRecipe extends WootRecipe {
         lookup.listElements().forEach(enchantment -> {
             enchantments.add(enchantment.value());
         });
+    }
+
+    @Override
+    public @NotNull ItemStack assemble(WootRecipeInput input, HolderLookup.@NotNull Provider provider){
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean canCraftInDimensions(int i, int i1) {
+        return true;
+    }
+
+    @Override
+    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registryAccess) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean isSpecial() {
+        return true;
     }
 }

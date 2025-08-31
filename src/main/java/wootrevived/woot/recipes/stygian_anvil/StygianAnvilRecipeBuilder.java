@@ -11,6 +11,7 @@ import wootrevived.woot.registries.BlocksRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class StygianAnvilRecipeBuilder {
     private Ingredient base;
@@ -50,7 +51,14 @@ public class StygianAnvilRecipeBuilder {
         itemInputs.addAll(ingredients);
         recipeOutput.accept(
                 ResourceLocation.tryBuild(Woot.MOD_ID, BlocksRegistry.STYGIAN_ANVIL_TAG + "/" + path),
-                new StygianAnvilRecipe(itemInputs, output),
+                new StygianAnvilRecipe(
+                        base,
+                        ingredients.isEmpty() ? Optional.empty() : Optional.of(ingredients.get(0)),
+                        ingredients.size() <= 1 ? Optional.empty() : Optional.of(ingredients.get(1)),
+                        ingredients.size() <= 2 ? Optional.empty() : Optional.of(ingredients.get(2)),
+                        ingredients.size() <= 3 ? Optional.empty() : Optional.of(ingredients.get(3)),
+                        output
+                ),
                 null
         );
     }
