@@ -7,6 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -103,6 +104,15 @@ public class DyeLiquifierRecipe implements Recipe<WootRecipeInput> {
 
     public int getEnergy() {
         return energy;
+    }
+
+    public int ingredientCount(Item item){
+        for(ItemStack stack : ingredient.getItems()){
+            if(stack.is(item))
+                return stack.getCount();
+        }
+
+        return 0;
     }
 
     @Override
