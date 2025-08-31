@@ -11,9 +11,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.api.enums.Tier;
+import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.registrations.WootFactoryMobRegistration;
 
 import java.util.List;

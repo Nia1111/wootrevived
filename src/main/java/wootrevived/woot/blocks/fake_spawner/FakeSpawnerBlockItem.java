@@ -14,14 +14,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import wootrevived.api.WootFactoryMob;
+import wootrevived.woot.blocks.factory.FactoryBlockItem;
 import wootrevived.woot.data.FakeSpawnerData;
 import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.registries.WootFactoryMobsRegistry;
-import wootrevived.woot.blocks.factory.FactoryBlockItem;
 import wootrevived.woot.util.common.WootTier;
-
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.helper.ModNameHelper;
 
 import java.util.List;

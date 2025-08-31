@@ -1,7 +1,10 @@
 package wootrevived.woot.blocks.enchanted_liquifier;
 
 import com.google.common.collect.Maps;
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -25,6 +28,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.client.render.enchanted_liquifier.EnchantedLiquifierContainerMenu;
 import wootrevived.woot.config.EnchantedLiquifierConfig;
 import wootrevived.woot.data.EnchantedLiquifierData;
@@ -33,11 +37,12 @@ import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.util.common.MachineSide;
 import wootrevived.woot.util.common.MachineSideProperty;
-import wootrevived.woot.util.handlers.*;
-import wootrevived.woot.util.entity.WootTags;
 import wootrevived.woot.util.entity.WootMachineBlockEntity;
+import wootrevived.woot.util.entity.WootTags;
+import wootrevived.woot.util.handlers.WootFluidHandlerWrapper;
+import wootrevived.woot.util.handlers.WootItemHandlerWrapper;
+import wootrevived.woot.util.handlers.WootItemStackHandler;
 
-import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;

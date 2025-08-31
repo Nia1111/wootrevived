@@ -5,12 +5,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootUpgradeItem;
-import wootrevived.api.registrations.WootUpgradeItemRegistration;
 import wootrevived.api.interfaces.WootSpawnProperties;
+import wootrevived.api.registrations.WootUpgradeItemRegistration;
 import wootrevived.woot.Woot;
 
 import java.util.List;

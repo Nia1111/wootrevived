@@ -13,9 +13,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
+import wootrevived.woot.blocks.enchanted_liquifier.EnchantedLiquifierBlockEntity;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.util.render.WootContainerMenu;
-import wootrevived.woot.blocks.enchanted_liquifier.EnchantedLiquifierBlockEntity;
 import wootrevived.woot.util.render.WootSlot;
 
 public class EnchantedLiquifierContainerMenu extends WootContainerMenu {

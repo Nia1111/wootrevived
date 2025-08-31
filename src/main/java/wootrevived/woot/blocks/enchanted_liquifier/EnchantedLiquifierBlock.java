@@ -30,12 +30,11 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.config.EnchantedLiquifierConfig;
 import wootrevived.woot.data.EnchantedLiquifierData;
 import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.ComponentsRegistry;
-
-import org.jetbrains.annotations.Nullable;
 import wootrevived.woot.util.render.WootContainerScreen;
 
 import java.util.List;

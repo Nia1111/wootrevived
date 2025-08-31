@@ -26,6 +26,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import wootrevived.woot.blocks.dye_liquifier.DyeLiquifierBlockEntity;
+import wootrevived.woot.client.render.dye_liquifier.DyeLiquifierContainerMenu;
 import wootrevived.woot.network.WootMachineUpdate;
 import wootrevived.woot.util.common.MachineSide;
 import wootrevived.woot.util.common.MachineSideProperty;
@@ -33,8 +35,6 @@ import wootrevived.woot.util.common.RedstoneMode;
 import wootrevived.woot.util.handlers.WootEnergyStorage;
 import wootrevived.woot.util.handlers.WootFluidTankHandler;
 import wootrevived.woot.util.render.WootContainerData;
-import wootrevived.woot.blocks.dye_liquifier.DyeLiquifierBlockEntity;
-import wootrevived.woot.client.render.dye_liquifier.DyeLiquifierContainerMenu;
 
 import java.util.EnumMap;
 import java.util.List;
