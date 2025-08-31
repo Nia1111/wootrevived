@@ -49,7 +49,7 @@ public class StygianAnvilRecipe extends WootRecipe {
     }
 
     public List<Ingredient> getRecipeIngredients(){
-        return inputItems.subList(1, inputItems.size());
+        return inputItems.subList(1, Math.min(5, inputItems.size()));
     }
 
     public ItemStack getOutputItem(){
