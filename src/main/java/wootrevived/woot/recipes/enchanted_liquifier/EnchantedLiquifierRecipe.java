@@ -48,6 +48,8 @@ public class EnchantedLiquifierRecipe extends WootRecipe {
         RegistryAccess accessor = level.registryAccess();
         HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
 
+        enchantments.clear();
+
         lookup.listElements().forEach(enchantment -> {
             enchantments.add(enchantment.value());
         });

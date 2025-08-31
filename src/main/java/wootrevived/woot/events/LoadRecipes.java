@@ -9,6 +9,7 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import wootrevived.woot.Woot;
 import wootrevived.woot.recipes.dye_liquifier.DyeLiquifierRecipe;
+import wootrevived.woot.recipes.enchanted_liquifier.EnchantedLiquifierRecipe;
 import wootrevived.woot.recipes.fluid_infuser.FluidInfuserRecipe;
 import wootrevived.woot.recipes.item_infuser.ItemInfuserRecipe;
 import wootrevived.woot.recipes.stygian_anvil.StygianAnvilRecipe;
@@ -33,5 +34,6 @@ public class LoadRecipes {
         DyeLiquifierRecipe.loadRecipes(recipeManager);
         FluidInfuserRecipe.loadRecipes(recipeManager);
         ItemInfuserRecipe.loadRecipes(recipeManager);
+        EnchantedLiquifierRecipe.loadRecipes(server.overworld());
     }
 }
