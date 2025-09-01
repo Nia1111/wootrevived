@@ -15,7 +15,7 @@ import wootrevived.woot.blocks.fake_spawner.FakeSpawnerBlockEntity;
 import wootrevived.woot.util.common.RedstoneMode;
 
 public record WootFakeSpawnerUpdate(BlockPos blockPos, RedstoneMode redstoneMode) implements CustomPacketPayload {
-    public static final ResourceLocation ID = ResourceLocation.tryBuild(Woot.MOD_ID, "woot_fake_spawner_update");
+    public static final ResourceLocation ID = Woot.location("woot_fake_spawner_update");
     public static final Type<WootFakeSpawnerUpdate> TYPE = new Type<>(ID);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, WootFakeSpawnerUpdate> STREAM_CODEC = StreamCodec.composite(

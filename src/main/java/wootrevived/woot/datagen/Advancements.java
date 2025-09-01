@@ -30,7 +30,7 @@ public class Advancements extends AdvancementProvider {
     }
 
     public static final class Generator implements AdvancementGenerator {
-        private static final ResourceLocation background = ResourceLocation.tryParse("textures/block/black_concrete_powder.png");
+        private static final ResourceLocation background = ResourceLocation.withDefaultNamespace("textures/block/black_concrete_powder.png");
 
         @Override
         public void generate(HolderLookup.@NotNull Provider registries, @NotNull Consumer<AdvancementHolder> saver, @NotNull ExistingFileHelper existingFileHelper) {

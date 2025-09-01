@@ -43,7 +43,7 @@ public class FluidsRegistry {
 
     /* Default Properties */
 
-    public static final ResourceLocation UNDERWATER_OVERLAY_RL = ResourceLocation.tryParse("misc/underwater");
+    public static final ResourceLocation UNDERWATER_OVERLAY_RL = ResourceLocation.withDefaultNamespace("misc/underwater");
 
     public static final FluidType.Properties defaultProperties = FluidType.Properties.create()
             .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
@@ -56,8 +56,8 @@ public class FluidsRegistry {
     /* Vitality Fuel */
 
     public static String VITALITY_FUEL_FLUID_TAG = "vitality_fuel_fluid";
-    public static final ResourceLocation VITALITY_FUEL_STILL_TEX = ResourceLocation.tryBuild(Woot.MOD_ID, "block/vitality_fuel_still");
-    public static final ResourceLocation VITALITY_FUEL_FLOW_TEX = ResourceLocation.tryBuild(Woot.MOD_ID, "block/vitality_fuel_flow");
+    public static final ResourceLocation VITALITY_FUEL_STILL_TEX = Woot.location("block/vitality_fuel_still");
+    public static final ResourceLocation VITALITY_FUEL_FLOW_TEX = Woot.location("block/vitality_fuel_flow");
     public static DeferredHolder<FluidType, WootFluidType> VITALITY_FUEL_FLUID_TYPE = FLUID_TYPES.register(VITALITY_FUEL_FLUID_TAG,
             () -> new WootFluidType(
                     VITALITY_FUEL_STILL_TEX, VITALITY_FUEL_FLOW_TEX, UNDERWATER_OVERLAY_RL,
@@ -76,8 +76,8 @@ public class FluidsRegistry {
     /* Pure Dye */
 
     public static String PURE_DYE_FLUID_TAG = "pure_dye_fluid";
-    public static final ResourceLocation PURE_DYE_STILL_TEX = ResourceLocation.tryBuild(Woot.MOD_ID, "block/pure_dye_still");
-    public static final ResourceLocation PURE_DYE_FLOW_TEX = ResourceLocation.tryBuild(Woot.MOD_ID, "block/pure_dye_flow");
+    public static final ResourceLocation PURE_DYE_STILL_TEX = Woot.location("block/pure_dye_still");
+    public static final ResourceLocation PURE_DYE_FLOW_TEX = Woot.location("block/pure_dye_flow");
     public static DeferredHolder<FluidType, WootFluidType> PURE_DYE_FLUID_TYPE = FLUID_TYPES.register(PURE_DYE_FLUID_TAG,
             () -> new WootFluidType(
                     PURE_DYE_STILL_TEX, PURE_DYE_FLOW_TEX, UNDERWATER_OVERLAY_RL,
@@ -96,8 +96,8 @@ public class FluidsRegistry {
     /* Enchanted */
 
     public static String ENCHANTED_FLUID_TAG = "enchanted_fluid";
-    public static final ResourceLocation ENCHANTED_STILL_TEX = ResourceLocation.tryBuild(Woot.MOD_ID, "block/enchanted_still");
-    public static final ResourceLocation ENCHANTED_FLOW_TEX = ResourceLocation.tryBuild(Woot.MOD_ID, "block/enchanted_flow");
+    public static final ResourceLocation ENCHANTED_STILL_TEX = Woot.location("block/enchanted_still");
+    public static final ResourceLocation ENCHANTED_FLOW_TEX = Woot.location("block/enchanted_flow");
     public static DeferredHolder<FluidType, WootFluidType> ENCHANTED_FLUID_TYPE = FLUID_TYPES.register(ENCHANTED_FLUID_TAG,
             () -> new WootFluidType(
                     ENCHANTED_STILL_TEX, ENCHANTED_FLOW_TEX, UNDERWATER_OVERLAY_RL,
@@ -121,8 +121,8 @@ public class FluidsRegistry {
     /* Mob Tears */
 
     public static String MOB_TEARS_FLUID_TAG = "mob_tears_fluid";
-    public static final ResourceLocation MOB_TEARS_STILL_TEX = ResourceLocation.tryBuild(Woot.MOD_ID, "block/mob_tears_still");
-    public static final ResourceLocation MOB_TEARS_FLOW_TEX = ResourceLocation.tryBuild(Woot.MOD_ID, "block/mob_tears_flow");
+    public static final ResourceLocation MOB_TEARS_STILL_TEX = Woot.location("block/mob_tears_still");
+    public static final ResourceLocation MOB_TEARS_FLOW_TEX = Woot.location("block/mob_tears_flow");
     public static DeferredHolder<FluidType, WootFluidType> MOB_TEARS_FLUID_TYPE = FLUID_TYPES.register(MOB_TEARS_FLUID_TAG,
             () -> new WootFluidType(
                     MOB_TEARS_STILL_TEX, MOB_TEARS_FLOW_TEX, UNDERWATER_OVERLAY_RL,

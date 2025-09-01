@@ -22,7 +22,7 @@ import java.util.List;
 
 public record WootMachineUpdate(BlockPos blockPos, RedstoneMode redstoneMode,
                                 List<EnumMap<MachineSide, MachineSideProperty>> listMachineProperties) implements CustomPacketPayload {
-    public static final ResourceLocation ID = ResourceLocation.tryBuild(Woot.MOD_ID, "woot_machine_update");
+    public static final ResourceLocation ID = Woot.location("woot_machine_update");
     public static final Type<WootMachineUpdate> TYPE = new Type<>(ID);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, WootMachineUpdate> STREAM_CODEC = StreamCodec.composite(

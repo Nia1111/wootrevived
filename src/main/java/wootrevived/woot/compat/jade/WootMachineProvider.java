@@ -41,7 +41,7 @@ public enum WootMachineProvider implements IBlockComponentProvider, StreamServer
 
     @Override
     public ResourceLocation getUid() {
-        return ResourceLocation.tryBuild(Woot.MOD_ID, "machines");
+        return Woot.location("machines");
     }
 
     public record Data(int progress) {
