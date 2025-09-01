@@ -100,7 +100,7 @@ dependencies {
 
     // KubeJS
     implementation "maven.modrinth:kubejs:${kubejs_version}+KubeJS-1.21.1"
-    localRuntime "maven.modrinth:rhino:${rhino_version}+Rhino-1.21"
+    implementation "maven.modrinth:rhino:${rhino_version}+Rhino-1.21"
 
     // Optimizations
     localRuntime "org.embeddedt:embeddium-${mc_version}:${embeddium_version}"
