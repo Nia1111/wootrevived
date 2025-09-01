@@ -34,7 +34,7 @@ public class Looting extends WootUpgradeItem {
             HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
 
             lookup.get(Enchantments.LOOTING).ifPresent(enchantment -> {
-                itemStack.enchant(enchantment.getDelegate(), getLevel());
+                itemStack.enchant(enchantment, getLevel());
             });
         }
     }

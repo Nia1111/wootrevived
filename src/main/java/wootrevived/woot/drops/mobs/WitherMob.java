@@ -38,7 +38,7 @@ public class WitherMob extends WootFactoryMob<WitherBoss> {
             HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
 
             lookup.get(Enchantments.LOOTING).ifPresent(enchantment -> {
-                looting.set(handStack.getEnchantmentLevel(enchantment.getDelegate()));
+                looting.set(handStack.getEnchantmentLevel(enchantment));
             });
         }
 

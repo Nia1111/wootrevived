@@ -40,7 +40,7 @@ public class EnderDragonMob extends WootFactoryMob<EnderDragon> {
             HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
 
             lookup.get(Enchantments.LOOTING).ifPresent(enchantment -> {
-                looting.set(stack.getEnchantmentLevel(enchantment.getDelegate()));
+                looting.set(stack.getEnchantmentLevel(enchantment));
             });
         }
 
