@@ -1,7 +1,6 @@
 package wootrevived.woot.upgrades;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -30,7 +29,7 @@ public class Looting extends WootUpgradeItem {
         ItemStack itemStack = properties.getMainHandItem();
 
         if(itemStack.getItem().isEnchantable(itemStack)) {
-            RegistryAccess accessor = properties.getLevel().registryAccess();
+            HolderLookup.Provider accessor = properties.getLookupProvider();
             HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
 
             lookup.get(Enchantments.LOOTING).ifPresent(enchantment -> {

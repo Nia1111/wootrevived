@@ -1,7 +1,6 @@
 package wootrevived.woot.drops.mobs;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
@@ -36,7 +35,7 @@ public class EnderDragonMob extends WootFactoryMob<EnderDragon> {
         AtomicInteger looting = new AtomicInteger();
         ItemStack stack = properties.getMainHandItem();
         if(EnchantmentHelper.hasAnyEnchantments(stack)){
-            RegistryAccess accessor = properties.getLevel().registryAccess();
+            HolderLookup.Provider accessor = properties.getLookupProvider();
             HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
 
             lookup.get(Enchantments.LOOTING).ifPresent(enchantment -> {
