@@ -3,7 +3,6 @@ package wootrevived.woot.recipes.enchanted_liquifier;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -60,7 +59,7 @@ public class EnchantedLiquifierRecipe implements Recipe<WootRecipeInput> {
 
     public static List<Enchantment> enchantments = new ArrayList<>();
 
-    public static void loadRecipes(@NotNull ServerLevel level){
+    public static void loadRecipes(@NotNull Level level){
         RegistryAccess accessor = level.registryAccess();
         HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
 

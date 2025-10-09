@@ -1,5 +1,6 @@
 package wootrevived.woot.events;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -25,12 +26,12 @@ public class LoadRecipes {
     @SubscribeEvent
     public static void onServerStarting(ServerStartingEvent event) {
         server = event.getServer();
-        loadRecipes(server.getRecipeManager());
+        loadRecipes(server.getRecipeManager(), server.overworld());
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDatapackSyncEvent(OnDatapackSyncEvent event) {
-        loadRecipes(server.getRecipeManager());
+        loadRecipes(server.getRecipeManager(), server.overworld());
     }
 
     @EventBusSubscriber(modid = Woot.MOD_ID, value = { Dist.CLIENT })
@@ -38,20 +39,20 @@ public class LoadRecipes {
         @SubscribeEvent
         public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
             Level level = event.getPlayer().level();
-            loadRecipes(level.getRecipeManager());
+            loadRecipes(level.getRecipeManager(), Minecraft.getInstance().level);
         }
 
         @SubscribeEvent
         public static void onRecipesUpdated(RecipesUpdatedEvent event) {
-            loadRecipes(event.getRecipeManager());
+            loadRecipes(event.getRecipeManager(), Minecraft.getInstance().level);
         }
     }
 
-    private static void loadRecipes(RecipeManager recipeManager) {
+    private static void loadRecipes(RecipeManager recipeManager, Level level) {
         StygianAnvilRecipe.loadRecipes(recipeManager);
         DyeLiquifierRecipe.loadRecipes(recipeManager);
         FluidInfuserRecipe.loadRecipes(recipeManager);
         ItemInfuserRecipe.loadRecipes(recipeManager);
-        EnchantedLiquifierRecipe.loadRecipes(server.overworld());
+        EnchantedLiquifierRecipe.loadRecipes(level);
     }
 }
