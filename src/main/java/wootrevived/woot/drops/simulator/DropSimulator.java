@@ -4,6 +4,8 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -18,6 +20,8 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.level.entity.EntityPersistentStorage;
 import net.minecraft.world.level.entity.PersistentEntitySectionManager;
@@ -38,6 +42,8 @@ public class DropSimulator {
 
     private final GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes(Woot.MOD_ID.getBytes()), Woot.MOD_ID);
     private ServerLevel dimensionLevel = null;
+    private ResourceKey<Level> dimension;
+    private Holder<DimensionType> dimensionTypeRegistration;
     private FakePlayer fakePlayer = null;
     private FakeEntityManager<Entity> fakeEntityManager = null;
     private Creeper chargedCreeper = null;
@@ -62,6 +68,18 @@ public class DropSimulator {
 
     public static @Nullable LivingEntity loadEntity(WootFactoryMob<?> entity, CompoundTag mobTag) {
         return entity.loadEntity(mobTag, INSTANCE.dimensionLevel);
+    }
+
+    public static void patchDimension(WootDropsProperties properties, boolean restore){
+        ServerLevel level = INSTANCE.dimensionLevel, dropsLevel;
+        MinecraftServer server = level.getServer();
+        if(!restore && (dropsLevel = server.getLevel(properties.getDimension())) != null){
+            level.dimension = dropsLevel.dimension;
+            level.dimensionTypeRegistration = dropsLevel.dimensionTypeRegistration;
+        } else {
+            level.dimension = INSTANCE.dimension;
+            level.dimensionTypeRegistration = INSTANCE.dimensionTypeRegistration;
+        }
     }
 
     private void simulate(WootDropsProperties properties){
@@ -206,6 +224,8 @@ public class DropSimulator {
 
     private void setDimensionLevel(ServerLevel level){
         dimensionLevel = level;
+        dimension = level.dimension;
+        dimensionTypeRegistration = level.dimensionTypeRegistration;
     }
 
     private void initFakePlayer(){
