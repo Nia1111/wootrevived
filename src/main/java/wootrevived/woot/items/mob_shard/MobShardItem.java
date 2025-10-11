@@ -16,6 +16,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootFactoryMob;
+import wootrevived.woot.config.MobShardConfig;
 import wootrevived.woot.data.MobShardData;
 import wootrevived.woot.registries.ComponentsRegistry;
 import wootrevived.woot.registries.ItemsRegistry;
@@ -145,7 +146,7 @@ public class MobShardItem extends Item {
         if(component.mobTag().isEmpty())
             return false;
 
-        return component.killCount() >= 5;
+        return component.killCount() >= MobShardConfig.NUM_OF_KILLS.get();
     }
 
     public static void setJEIShard(ItemStack itemStack) {
@@ -205,7 +206,7 @@ public class MobShardItem extends Item {
         if(isFull(stack)){
             tooltip.add(Component.translatable("info.woot_revived.mobshard.programmed").setStyle(SHARD_PROGRAM_STYLE));
         } else {
-            tooltip.add(Component.translatable("info.woot_revived.mobshard.remaining", killCount, 5).setStyle(SHARD_PROGRAM_STYLE));
+            tooltip.add(Component.translatable("info.woot_revived.mobshard.remaining", killCount, MobShardConfig.NUM_OF_KILLS.get()).setStyle(SHARD_PROGRAM_STYLE));
             if(mob != null) {
                 tooltip.add(Component.translatable("info.woot_revived.mobshard.remaining.desc", mob.getTooltipKillName(mobTag, ctx.level().registryAccess()).setStyle(DESCRIPTION_STYLE)).setStyle(DESCRIPTION_STYLE));
             } else {

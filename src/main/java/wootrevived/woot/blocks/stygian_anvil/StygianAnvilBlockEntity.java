@@ -27,7 +27,6 @@ import wootrevived.woot.blocks.fake_spawner.FakeSpawnerBlockEntity;
 import wootrevived.woot.items.mob_shard.MobShardItem;
 import wootrevived.woot.recipes.stygian_anvil.StygianAnvilRecipe;
 import wootrevived.woot.registries.BlocksRegistry;
-import wootrevived.woot.registries.ItemsRegistry;
 import wootrevived.woot.registries.RecipesRegistry;
 import wootrevived.woot.util.entity.WootTags;
 import wootrevived.woot.util.recipes.WootRecipeInput;
@@ -129,11 +128,16 @@ public class StygianAnvilBlockEntity extends BlockEntity {
             return;
 
         ItemStack output = recipeHolder.value().getOutput();
+        ItemStack baseStack = inventoryHandler.getStackInSlot(BASE_SLOT);
 
-        if (inventoryHandler.getStackInSlot(BASE_SLOT).getItem() == ItemsRegistry.MOB_SHARD_ITEM.get()) {
-            CompoundTag mobTag = MobShardItem.getProgrammedMob(inventoryHandler.getStackInSlot(BASE_SLOT));
+        if (baseStack.getItem() instanceof MobShardItem) {
+            if(!MobShardItem.isFullyProgrammed(baseStack))
+                return;
+
+            CompoundTag mobTag = MobShardItem.getProgrammedMob(baseStack);
             if(mobTag == null)
                 return;
+
             output = FakeSpawnerBlockEntity.getItemStack(mobTag);
         }
 
