@@ -9,7 +9,7 @@
     "id": "woot_revived:mob_tears_fluid"
   },
   "output_fluid": {
-    "amount": 8000,
+    "amount": 15000,
     "id": "woot_revived:vitality_fuel_fluid"
   }
 }

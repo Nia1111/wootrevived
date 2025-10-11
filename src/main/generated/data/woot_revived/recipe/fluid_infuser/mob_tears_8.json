@@ -1,15 +1,20 @@
 {
   "type": "woot_revived:fluid_infuser",
   "energy": 1000,
-  "ingredient": {
-    "item": "minecraft:dragon_breath"
-  },
+  "ingredient": [
+    {
+      "item": "minecraft:totem_of_undying"
+    },
+    {
+      "item": "minecraft:sculk_catalyst"
+    }
+  ],
   "input_fluid": {
     "amount": 1000,
     "id": "minecraft:water"
   },
   "output_fluid": {
-    "amount": 5000,
+    "amount": 15000,
     "id": "woot_revived:mob_tears_fluid"
   }
 }

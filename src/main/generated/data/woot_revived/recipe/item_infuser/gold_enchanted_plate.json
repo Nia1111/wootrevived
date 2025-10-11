@@ -3,7 +3,7 @@
   "augment": {
     "item": "woot_revived:gold_shard"
   },
-  "energy": 3000,
+  "energy": 15000,
   "fluid": {
     "amount": 3000,
     "id": "woot_revived:enchanted_fluid"
