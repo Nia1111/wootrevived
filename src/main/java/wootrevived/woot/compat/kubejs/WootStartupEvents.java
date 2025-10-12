@@ -5,7 +5,9 @@ import dev.latvian.mods.kubejs.script.ScriptType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.registrations.WootFactoryMobRegistration;
+import wootrevived.woot.compat.kubejs.mobs.WootDropsPropertiesJS;
 import wootrevived.woot.compat.kubejs.mobs.WootFactoryMobEventJS;
 
 public interface WootStartupEvents {
@@ -23,8 +25,11 @@ public interface WootStartupEvents {
     }
 
     TargetedEventHandler<ResourceLocation> MOBS = GROUP.startup("registerFactoryMob", () -> WootFactoryMobEventJS.class).requiredTarget(EventTargetType.ID.validator(WootStartupEvents::validateMob));
+    EventHandler DROPS = GROUP.startup("registerGlobalDropsModifier", () -> WootDropsPropertiesJS.class);
 
     static void postFactoryMobs(WootFactoryMobRegistration registration) {
+        registration.registerGlobalDropsModifier(WootStartupEvents::postGlobalDropsModifier);
+
         MOBS.forEachListener(ScriptType.STARTUP, handler -> {
             if(handler.target == null)
                 throw new IllegalArgumentException("Event handler '" + MOBS + "' requires extra id!");
@@ -38,5 +43,9 @@ public interface WootStartupEvents {
                 ScriptType.STARTUP.console.error("Internal Error in '" + MOBS + "'", error);
             }
         });
+    }
+
+    static void postGlobalDropsModifier(WootDropsProperties properties){
+        DROPS.post(new WootDropsPropertiesJS(properties));
     }
 }

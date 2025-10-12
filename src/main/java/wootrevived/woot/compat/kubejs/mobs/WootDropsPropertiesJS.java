@@ -1,5 +1,6 @@
 package wootrevived.woot.compat.kubejs.mobs;
 
+import dev.latvian.mods.kubejs.event.KubeStartupEvent;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -8,7 +9,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.neoforge.fluids.FluidStack;
 import wootrevived.api.interfaces.WootDropsProperties;
 
@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WootDropsPropertiesJS {
+public class WootDropsPropertiesJS implements KubeStartupEvent {
     private final WootDropsProperties properties;
 
     public WootDropsProperties getRawProperties(){
