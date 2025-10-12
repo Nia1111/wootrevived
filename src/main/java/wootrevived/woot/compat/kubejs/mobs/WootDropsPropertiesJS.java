@@ -112,4 +112,8 @@ public class WootDropsPropertiesJS implements KubeStartupEvent {
     public boolean isInFire(){
         return properties.isInFire();
     }
+
+    public String getDimension(){
+        return properties.getDimension().location().toString();
+    }
 }
