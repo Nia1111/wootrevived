@@ -82,6 +82,7 @@ public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements M
         if(level.isClientSide)
             return;
 
+        generatePureFluid();
         tickFluid(outputTankHandler, pos, side -> getProperties(side).getOutputFluidProperty());
     }
 
@@ -285,7 +286,6 @@ public class DyeLiquifierBlockEntity extends WootMachineBlockEntity implements M
             inventoryHandler.extractItem(INPUT_SLOT, ingredientAmount, false);
         }
 
-        generatePureFluid();
         setChanged();
     }
 
