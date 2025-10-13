@@ -283,7 +283,7 @@ public abstract class WootMachineBlockEntity extends BlockEntity implements Bloc
 
             @Override
             public boolean canExtract() {
-                return true;
+                return false;
             }
         };
     }

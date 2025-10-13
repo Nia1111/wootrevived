@@ -29,4 +29,17 @@ public class WootEnergyStorage extends EnergyStorage implements INBTSerializable
         onEnergyChanged();
         return res;
     }
+
+    public int internalExtractEnergy(int toExtract, boolean simulate) {
+        if (toExtract <= 0) {
+            return 0;
+        }
+
+        int energyExtracted = Math.min(this.energy, Math.min(this.maxExtract, toExtract));
+        if (!simulate) {
+            this.energy -= energyExtracted;
+            onEnergyChanged();
+        }
+        return energyExtracted;
+    }
 }
