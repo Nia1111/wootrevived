@@ -1,5 +1,6 @@
 package wootrevived.woot.items.mob_shard;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -192,9 +193,11 @@ public class MobShardItem extends Item {
             return;
         }
 
+        Level level = ctx.level() == null ? Minecraft.getInstance().level : ctx.level();
+
         WootFactoryMob<?> mob = WootFactoryMobsRegistry.getFactoryMob(mobTag);
         if(mob != null) {
-            tooltip.add(mob.getDisplayName(mobTag, ctx.level().registryAccess()).setStyle(CAPTURED_STYLE));
+            tooltip.add(mob.getDisplayName(mobTag, level.registryAccess()).setStyle(CAPTURED_STYLE));
             String modId = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getEntityType()).getNamespace();
             tooltip.add(ModNameHelper.getModName(modId).setStyle(MOD_NAME_STYLE));
         }
@@ -208,7 +211,7 @@ public class MobShardItem extends Item {
         } else {
             tooltip.add(Component.translatable("info.woot_revived.mobshard.remaining", killCount, MobShardConfig.NUM_OF_KILLS.get()).setStyle(SHARD_PROGRAM_STYLE));
             if(mob != null) {
-                tooltip.add(Component.translatable("info.woot_revived.mobshard.remaining.desc", mob.getTooltipKillName(mobTag, ctx.level().registryAccess()).setStyle(DESCRIPTION_STYLE)).setStyle(DESCRIPTION_STYLE));
+                tooltip.add(Component.translatable("info.woot_revived.mobshard.remaining.desc", mob.getTooltipKillName(mobTag, level.registryAccess()).setStyle(DESCRIPTION_STYLE)).setStyle(DESCRIPTION_STYLE));
             } else {
                 tooltip.add(Component.translatable("info.woot_revived.mobshard.remaining.desc_no_entity").setStyle(DESCRIPTION_STYLE));
             }
