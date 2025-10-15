@@ -1,5 +1,6 @@
 package wootrevived.woot.blocks.fake_spawner;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -41,8 +42,10 @@ public class FakeSpawnerBlockItem extends FactoryBlockItem {
 
         component.mobTag().ifPresent(mobTag -> {
             WootFactoryMob<?> mob = WootFactoryMobsRegistry.getFactoryMob(mobTag);
+
+            Level level = ctx.level() == null ? Minecraft.getInstance().level : ctx.level();
             if(mob != null) {
-                tooltip.add(mob.getDisplayName(mobTag, ctx.level().registryAccess()).setStyle(CAPTURED_STYLE));
+                tooltip.add(mob.getDisplayName(mobTag, level.registryAccess()).setStyle(CAPTURED_STYLE));
                 String modId = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getEntityType()).getNamespace();
                 tooltip.add(ModNameHelper.getModName(modId).setStyle(MOD_NAME_STYLE));
             }
