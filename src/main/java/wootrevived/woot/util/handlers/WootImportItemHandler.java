@@ -11,6 +11,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WootImportItemHandler implements IItemHandler {
     private final Map<Integer, List<ItemStack>> importItems = new HashMap<>();
@@ -26,8 +27,15 @@ public class WootImportItemHandler implements IItemHandler {
 
     public static final Codec<WootImportItemHandler> CODEC = RecordCodecBuilder.create(inst ->
             inst.group(
-                    Codec.unboundedMap(Codec.INT, ItemStack.OPTIONAL_CODEC.listOf()).fieldOf("ImportItems").forGetter(WootImportItemHandler::getImportItems),
-                    Codec.unboundedMap(Codec.INT, Codec.INT.listOf()).fieldOf("Items").forGetter(WootImportItemHandler::getItems)
+                    Codec.unboundedMap(Codec.STRING, ItemStack.OPTIONAL_CODEC.listOf())
+                            .xmap(
+                                    m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), Map.Entry::getValue)),
+                                    m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.toString(e.getKey()), Map.Entry::getValue))
+                                    ).fieldOf("ImportItems").forGetter(WootImportItemHandler::getImportItems),
+                    Codec.unboundedMap(Codec.STRING, Codec.INT.listOf()).xmap(
+                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), Map.Entry::getValue)),
+                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.toString(e.getKey()), Map.Entry::getValue))
+                    ).fieldOf("Items").forGetter(WootImportItemHandler::getItems)
             ).apply(inst, WootImportItemHandler::new)
     );
 
@@ -55,14 +63,22 @@ public class WootImportItemHandler implements IItemHandler {
     }
 
     public void setImportItem(int index, List<ItemStack> importItem){
+        if(importItem == null){
+            if(importItems.containsKey(index)){
+                importItems.remove(index);
+                items.remove(index);
+            }
+            return;
+        }
+
         if(isEqual(importItems.get(index), importItem)) return;
+
         importItems.put(index, importItem);
-        if(importItem != null) items.put(index, new ArrayList<>(Collections.nCopies(importItem.size(), 0)));
+        items.put(index, new ArrayList<>(Collections.nCopies(importItem.size(), 0)));
     }
 
     private boolean isEqual(List<ItemStack> list1, List<ItemStack> list2){
-        if(list1 == null && list2 == null) return true;
-        if(list1 == null || list2 == null) return false;
+        if(list1 == null) return false;
         if(list1.size() != list2.size()) return false;
 
         for(int i = 0; i < list1.size(); i++){

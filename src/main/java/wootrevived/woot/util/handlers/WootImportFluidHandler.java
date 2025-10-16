@@ -11,6 +11,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WootImportFluidHandler implements IFluidHandler {
     private final Map<Integer, List<FluidStack>> importFluids = new HashMap<>();
@@ -26,8 +27,14 @@ public class WootImportFluidHandler implements IFluidHandler {
 
     public static final Codec<WootImportFluidHandler> CODEC = RecordCodecBuilder.create(inst ->
             inst.group(
-                    Codec.unboundedMap(Codec.INT, FluidStack.OPTIONAL_CODEC.listOf()).fieldOf("ImportTanlks").forGetter(WootImportFluidHandler::getImportFluids),
-                    Codec.unboundedMap(Codec.INT, Codec.INT.listOf()).fieldOf("Tanks").forGetter(WootImportFluidHandler::getInternalTanks)
+                    Codec.unboundedMap(Codec.STRING, FluidStack.OPTIONAL_CODEC.listOf()).xmap(
+                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), Map.Entry::getValue)),
+                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.toString(e.getKey()), Map.Entry::getValue))
+                    ).fieldOf("ImportTanks").forGetter(WootImportFluidHandler::getImportFluids),
+                    Codec.unboundedMap(Codec.STRING, Codec.INT.listOf()).xmap(
+                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), Map.Entry::getValue)),
+                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.toString(e.getKey()), Map.Entry::getValue))
+                    ).fieldOf("Tanks").forGetter(WootImportFluidHandler::getInternalTanks)
             ).apply(inst, WootImportFluidHandler::new)
     );
 
@@ -55,14 +62,22 @@ public class WootImportFluidHandler implements IFluidHandler {
     }
 
     public void setImportFluid(int index, List<FluidStack> importFluid){
+        if(importFluid == null){
+            if(importFluids.containsKey(index)){
+                importFluids.remove(index);
+                tanks.remove(index);
+            }
+            return;
+        }
+
         if(isEqual(importFluids.get(index), importFluid)) return;
+
         importFluids.put(index, importFluid);
-        if(importFluid != null) tanks.put(index, new ArrayList<>(Collections.nCopies(importFluid.size(), 0)));
+        tanks.put(index, new ArrayList<>(Collections.nCopies(importFluid.size(), 0)));
     }
 
     private boolean isEqual(List<FluidStack> list1, List<FluidStack> list2){
-        if(list1 == null && list2 == null) return true;
-        if(list1 == null || list2 == null) return false;
+        if(list1 == null) return false;
         if(list1.size() != list2.size()) return false;
 
         for(int i = 0; i < list1.size(); i++){
