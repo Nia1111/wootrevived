@@ -37,5 +37,22 @@ public final class EnchantedLiquifierData {
             int energy,
             @NotNull FluidStack outputFluid,
             List<EnumMap<MachineSide, MachineSideProperty>> listMachineProperties
-    ) {}
+    ) {
+        @Override
+        public int hashCode() {
+            return energy +
+                    FluidStack.hashFluidAndComponents(outputFluid) +
+                    listMachineProperties.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(!(obj instanceof Component c))
+                return false;
+
+            return c.energy == energy &&
+                    FluidStack.isSameFluidSameComponents(c.outputFluid, outputFluid) &&
+                    c.listMachineProperties.equals(listMachineProperties);
+        }
+    }
 }

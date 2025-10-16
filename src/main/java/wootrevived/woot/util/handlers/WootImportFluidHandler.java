@@ -54,6 +54,43 @@ public class WootImportFluidHandler implements IFluidHandler {
             WootImportFluidHandler::new
     );
 
+    @Override
+    public int hashCode() {
+        int h = 0;
+        for(Map.Entry<Integer, List<FluidStack>> entry : importFluids.entrySet()) {
+            h += entry.getKey().hashCode();
+            if(entry.getValue() != null){
+                for(FluidStack stack : entry.getValue()){
+                    h += h * 31 + FluidStack.hashFluidAndComponents(stack);
+                }
+            }
+        }
+        return h + tanks.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof WootImportFluidHandler fluidHandler))
+            return false;
+
+        for(Map.Entry<Integer, List<FluidStack>> entry : importFluids.entrySet()) {
+            if(!fluidHandler.importFluids.containsKey(entry.getKey()))
+                return false;
+
+            List<FluidStack> list = fluidHandler.importFluids.get(entry.getKey());
+
+            if(list.size() != entry.getValue().size())
+                return false;
+
+            for(int i = 0; i < list.size(); i++){
+                if(!FluidStack.isSameFluidSameComponents(list.get(i), entry.getValue().get(i)))
+                    return false;
+            }
+        }
+
+        return tanks.equals(fluidHandler.tanks);
+    }
+
     public WootImportFluidHandler() {}
 
     private WootImportFluidHandler(Map<Integer, List<FluidStack>> importFluids, Map<Integer, List<Integer>> tanks) {

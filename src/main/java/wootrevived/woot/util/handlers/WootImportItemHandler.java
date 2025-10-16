@@ -55,6 +55,43 @@ public class WootImportItemHandler implements IItemHandler {
             WootImportItemHandler::new
     );
 
+    @Override
+    public int hashCode() {
+        int h = 0;
+        for(Map.Entry<Integer, List<ItemStack>> entry : importItems.entrySet()) {
+            h += entry.getKey().hashCode();
+            if(entry.getValue() != null){
+                for(ItemStack stack : entry.getValue()){
+                    h += h * 31 + ItemStack.hashItemAndComponents(stack);
+                }
+            }
+        }
+        return h + items.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof WootImportItemHandler itemHandler))
+            return false;
+
+        for(Map.Entry<Integer, List<ItemStack>> entry : importItems.entrySet()) {
+            if(!itemHandler.importItems.containsKey(entry.getKey()))
+                return false;
+
+            List<ItemStack> list = itemHandler.importItems.get(entry.getKey());
+
+            if(list.size() != entry.getValue().size())
+                return false;
+
+            for(int i = 0; i < list.size(); i++){
+                if(!ItemStack.isSameItemSameComponents(list.get(i), entry.getValue().get(i)))
+                    return false;
+            }
+        }
+
+        return items.equals(itemHandler.items);
+    }
+
     public WootImportItemHandler() {}
 
     private WootImportItemHandler(Map<Integer, List<ItemStack>> importItems, Map<Integer, List<Integer>> items) {

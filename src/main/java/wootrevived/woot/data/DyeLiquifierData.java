@@ -63,5 +63,26 @@ public final class DyeLiquifierData {
             int white,
             @NotNull FluidStack outputFluid,
             List<EnumMap<MachineSide, MachineSideProperty>> listMachineProperties
-    ) {}
+    ) {
+        @Override
+        public int hashCode() {
+            return energy + red + yellow + blue + white +
+                    FluidStack.hashFluidAndComponents(outputFluid) +
+                    listMachineProperties.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(!(obj instanceof Component c))
+                return false;
+
+            return c.energy == energy &&
+                    c.red == red &&
+                    c.yellow == yellow &&
+                    c.blue == blue &&
+                    c.white == white &&
+                    FluidStack.isSameFluidSameComponents(c.outputFluid, outputFluid) &&
+                    c.listMachineProperties.equals(listMachineProperties);
+        }
+    }
 }

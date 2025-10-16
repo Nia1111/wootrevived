@@ -24,5 +24,18 @@ public final class CreativeTankData {
 
     public record Component(
             @NotNull FluidStack tankFluid
-    ) {}
+    ) {
+        @Override
+        public int hashCode() {
+            return FluidStack.hashFluidAndComponents(tankFluid);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(!(obj instanceof Component c))
+                return false;
+
+            return FluidStack.isSameFluidSameComponents(c.tankFluid, tankFluid);
+        }
+    }
 }

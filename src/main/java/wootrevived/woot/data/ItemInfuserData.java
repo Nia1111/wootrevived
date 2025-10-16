@@ -37,5 +37,22 @@ public final class ItemInfuserData {
             int energy,
             @NotNull FluidStack inputFluid,
             List<EnumMap<MachineSide, MachineSideProperty>> listMachineProperties
-    ) {}
+    ) {
+        @Override
+        public int hashCode() {
+            return energy +
+                    FluidStack.hashFluidAndComponents(inputFluid) +
+                    listMachineProperties.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(!(obj instanceof Component c))
+                return false;
+
+            return c.energy == energy &&
+                    FluidStack.isSameFluidSameComponents(c.inputFluid, inputFluid) &&
+                    c.listMachineProperties.equals(listMachineProperties);
+        }
+    }
 }
