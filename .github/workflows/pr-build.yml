@@ -5,23 +5,36 @@ on:
     branches:
       - '1.20.*'
       - '1.21.*'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: pr-build-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  pr-build:
+    name: pr-build
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v1
+      - name: Check out PR head
+        uses: actions/checkout@v4
         with:
-          java-version: |
-            ${{ (startsWith(github.base_ref, '1.20') && '17') || '21' }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ startsWith(github.base_ref, '1.20') && '17' || '21' }}
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        
       - name: Build with Gradle
-        run: |
-          ./gradlew build
+        run: ./gradlew build
