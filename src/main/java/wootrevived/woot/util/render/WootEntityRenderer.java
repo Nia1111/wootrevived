@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import wootrevived.woot.events.client.GlobalClientTicker;
+import wootrevived.woot.mixins.impl.TesselatorMixin;
 
 public class WootEntityRenderer {
     public static void render(@NotNull GuiGraphics gui, int x, int y, @NotNull LivingEntity entity, double size, double padding, float max_entity_size){
@@ -56,8 +57,8 @@ public class WootEntityRenderer {
                 (int)Math.ceil(size * windowScale * poseScale.x),
                 (int)Math.ceil(size * windowScale * poseScale.y)
         );
-        Tesselator tesselator = Tesselator.getInstance();
-        MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(tesselator.buffer);
+        TesselatorMixin tesselator = (TesselatorMixin) Tesselator.getInstance();
+        MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(tesselator.woot$getBuffer());
         Lighting.setupForFlatItems();
 
         renderer.render(entity, 0F, 0F, pose, bufferSource, LightTexture.pack(15, 15));

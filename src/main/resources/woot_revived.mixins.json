@@ -1,11 +1,18 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "wootrevived.woot.mixin",
+  "package": "wootrevived.woot.mixins.impl",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "CreeperMixin",
+    "EndDragonFightMixin",
+    "EnderDragonMixin",
+    "GuiGraphicsMixin",
+    "LevelMixin",
     "LivingEntityMixin",
-    "EnderDragonMixin"
+    "PersistentEntitySectionManagerMixin",
+    "ServerLevelMixin",
+    "TesselatorMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -32,8 +32,9 @@ import org.jetbrains.annotations.Nullable;
 import wootrevived.api.WootFactoryMob;
 import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.woot.Woot;
-import wootrevived.woot.mixin.EnderDragonMixin;
-import wootrevived.woot.mixin.LivingEntityMixin;
+import wootrevived.woot.mixins.accessors.ServerLevelMixinAccessor;
+import wootrevived.woot.mixins.impl.*;
+import wootrevived.woot.mixins.accessors.LevelMixinAccessor;
 
 import java.util.*;
 
@@ -74,11 +75,15 @@ public class DropSimulator {
         ServerLevel level = INSTANCE.dimensionLevel, dropsLevel;
         MinecraftServer server = level.getServer();
         if(!restore && (dropsLevel = server.getLevel(properties.getDimension())) != null){
-            level.dimension = dropsLevel.dimension;
-            level.dimensionTypeRegistration = dropsLevel.dimensionTypeRegistration;
+            ((LevelMixinAccessor) level).woot$setDimension(
+                    dropsLevel.dimension(),
+                    dropsLevel.dimensionTypeRegistration()
+            );
         } else {
-            level.dimension = INSTANCE.dimension;
-            level.dimensionTypeRegistration = INSTANCE.dimensionTypeRegistration;
+            ((LevelMixinAccessor) level).woot$setDimension(
+                    INSTANCE.dimension,
+                    INSTANCE.dimensionTypeRegistration
+            );
         }
     }
 
@@ -114,10 +119,10 @@ public class DropSimulator {
         livingEntity.captureDrops(new java.util.ArrayList<>());
 
         LivingEntityMixin mixin = (LivingEntityMixin)livingEntity;
-        mixin.invokeDropFromLootTable(playerSource, true);
-        mixin.invokeDropCustomDeathLoot(dimensionLevel, playerSource, true);
-        mixin.invokeDropEquipment();
-        mixin.invokeDropExperience(fakePlayer);
+        mixin.woot$dropFromLootTable(playerSource, true);
+        mixin.woot$dropCustomDeathLoot(dimensionLevel, playerSource, true);
+        mixin.woot$dropEquipment();
+        mixin.woot$dropExperience(fakePlayer);
 
         Collection<ItemEntity> eventDrops = livingEntity.captureDrops(null);
         CommonHooks.onLivingDrops(livingEntity, playerSource, eventDrops, true);
@@ -148,12 +153,12 @@ public class DropSimulator {
         livingEntity.tickCount = 0;
         livingEntity.setLastHurtByPlayer(null);
 
-        chargedCreeper.droppedSkulls = 0;
+        ((CreeperMixin) chargedCreeper).woot$setDroppedSkulls(0);
 
         livingEntity.captureDrops(null);
 
         LivingEntityMixin mixin = (LivingEntityMixin)livingEntity;
-        mixin.invokeDropCustomDeathLoot(dimensionLevel, chargedCreeperSource, false);
+        mixin.woot$dropCustomDeathLoot(dimensionLevel, chargedCreeperSource, false);
 
         List<ItemStack> drops = new ArrayList<>();
 
@@ -177,19 +182,19 @@ public class DropSimulator {
         enderDragon.setSilent(true);
 
         EnderDragonMixin dragonMixin = (EnderDragonMixin)enderDragon;
-        dragonMixin.setUnlimitedLastHurtByPlayer(fakePlayer);
+        dragonMixin.woot$setUnlimitedLastHurtByPlayer(fakePlayer);
 
-        for(enderDragon.dragonDeathTime = 0; !enderDragon.getDragonFight().dragonKilled;){
-            enderDragon.tickDeath();
+        for(enderDragon.dragonDeathTime = 0; !((EndDragonFightMixin) enderDragon.getDragonFight()).woot$getDragonKilled();){
+            dragonMixin.woot$tickDeath();
         }
 
         enderDragon.captureDrops(new java.util.ArrayList<>());
 
         LivingEntityMixin mixin = (LivingEntityMixin)enderDragon;
-        mixin.invokeDropFromLootTable(playerSource, true);
-        mixin.invokeDropCustomDeathLoot(dimensionLevel, playerSource, true);
-        mixin.invokeDropEquipment();
-        mixin.invokeDropExperience(fakePlayer);
+        mixin.woot$dropFromLootTable(playerSource, true);
+        mixin.woot$dropCustomDeathLoot(dimensionLevel, playerSource, true);
+        mixin.woot$dropEquipment();
+        mixin.woot$dropExperience(fakePlayer);
 
         Collection<ItemEntity> eventDrops = enderDragon.captureDrops(null);
         CommonHooks.onLivingDrops(enderDragon, playerSource, eventDrops, true);
@@ -224,8 +229,8 @@ public class DropSimulator {
 
     private void setDimensionLevel(ServerLevel level){
         dimensionLevel = level;
-        dimension = level.dimension;
-        dimensionTypeRegistration = level.dimensionTypeRegistration;
+        dimension = level.dimension();
+        dimensionTypeRegistration = level.dimensionTypeRegistration();
     }
 
     private void initFakePlayer(){
@@ -245,11 +250,14 @@ public class DropSimulator {
     }
 
     private void patchDimensionLevel(){
-        EntityPersistentStorage<Entity> entityPersistentStorage = dimensionLevel.entityManager.permanentStorage;
-        PersistentEntitySectionManager<Entity> persistentEntitySectionManager = dimensionLevel.entityManager;
+        ServerLevelMixinAccessor level = (ServerLevelMixinAccessor)dimensionLevel;
 
-        fakeEntityManager = new FakeEntityManager<>(Entity.class, persistentEntitySectionManager.callbacks, entityPersistentStorage);
+        PersistentEntitySectionManager<Entity> persistentEntitySectionManager = level.woot$getEntityManager();
+        PersistentEntitySectionManagerMixin entitySectionMixin = (PersistentEntitySectionManagerMixin)persistentEntitySectionManager;
+        EntityPersistentStorage<Entity> entityPersistentStorage = entitySectionMixin.woot$getPermanentStorage();
 
-        dimensionLevel.entityManager = fakeEntityManager;
+        fakeEntityManager = new FakeEntityManager<>(Entity.class, entitySectionMixin.woot$getCallbacks(), entityPersistentStorage);
+
+        level.woot$setEntityManager(fakeEntityManager);
     }
 }
