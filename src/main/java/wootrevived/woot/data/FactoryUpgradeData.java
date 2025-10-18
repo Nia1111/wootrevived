@@ -2,6 +2,7 @@ package wootrevived.woot.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,16 +16,19 @@ public final class FactoryUpgradeData {
 
     public static final Codec<Component> CODEC = RecordCodecBuilder.create(inst ->
             inst.group(
-                    Codec.STRING.optionalFieldOf(WootTags.Factory.UPGRADE_ITEM).forGetter(Component::upgradeItem)
+                    Codec.STRING.optionalFieldOf(WootTags.Factory.UPGRADE_ITEM).forGetter(Component::upgradeItem),
+                    CompoundTag.CODEC.optionalFieldOf(WootTags.Factory.UPGRADE_ITEM_NBT).forGetter(Component::upgradeTag)
             ).apply(inst, Component::new)
     );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Component> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8), Component::upgradeItem,
+            ByteBufCodecs.OPTIONAL_COMPOUND_TAG, Component::upgradeTag,
             Component::new
     );
 
     public record Component(
-            @NotNull Optional<String> upgradeItem
+            @NotNull Optional<String> upgradeItem,
+            @NotNull Optional<CompoundTag> upgradeTag
     ) {}
 }
