@@ -2,7 +2,6 @@ package wootrevived.woot.util.handlers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -27,13 +26,12 @@ public class WootImportItemHandler implements IItemHandler {
 
     public static final Codec<WootImportItemHandler> CODEC = RecordCodecBuilder.create(inst ->
             inst.group(
-                    Codec.unboundedMap(Codec.STRING, ItemStack.OPTIONAL_CODEC.listOf())
-                            .xmap(
-                                    m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), Map.Entry::getValue)),
+                    Codec.unboundedMap(Codec.STRING, ItemStack.OPTIONAL_CODEC.listOf()).xmap(
+                                    m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> (List<ItemStack>)new ArrayList<>(e.getValue()))),
                                     m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.toString(e.getKey()), Map.Entry::getValue))
                                     ).fieldOf("ImportItems").forGetter(WootImportItemHandler::getImportItems),
                     Codec.unboundedMap(Codec.STRING, Codec.INT.listOf()).xmap(
-                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), Map.Entry::getValue)),
+                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> (List<Integer>)new ArrayList<>(e.getValue()))),
                             m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.toString(e.getKey()), Map.Entry::getValue))
                     ).fieldOf("Items").forGetter(WootImportItemHandler::getItems)
             ).apply(inst, WootImportItemHandler::new)
@@ -43,13 +41,13 @@ public class WootImportItemHandler implements IItemHandler {
             ByteBufCodecs.map(
                     HashMap::new,
                     ByteBufCodecs.INT,
-                    ItemStack.OPTIONAL_LIST_STREAM_CODEC
+                    ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.collection(ArrayList::new))
             ), WootImportItemHandler::getImportItems,
 
             ByteBufCodecs.map(
                     HashMap::new,
                     ByteBufCodecs.INT,
-                    ByteBufCodecs.INT.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity))
+                    ByteBufCodecs.INT.apply(ByteBufCodecs.collection(ArrayList::new))
             ), WootImportItemHandler::getItems,
 
             WootImportItemHandler::new

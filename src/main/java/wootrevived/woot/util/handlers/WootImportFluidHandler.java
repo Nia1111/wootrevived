@@ -2,7 +2,6 @@ package wootrevived.woot.util.handlers;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -28,11 +27,11 @@ public class WootImportFluidHandler implements IFluidHandler {
     public static final Codec<WootImportFluidHandler> CODEC = RecordCodecBuilder.create(inst ->
             inst.group(
                     Codec.unboundedMap(Codec.STRING, FluidStack.OPTIONAL_CODEC.listOf()).xmap(
-                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), Map.Entry::getValue)),
+                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> (List<FluidStack>)new ArrayList<>(e.getValue()))),
                             m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.toString(e.getKey()), Map.Entry::getValue))
                     ).fieldOf("ImportTanks").forGetter(WootImportFluidHandler::getImportFluids),
                     Codec.unboundedMap(Codec.STRING, Codec.INT.listOf()).xmap(
-                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), Map.Entry::getValue)),
+                            m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.parseInt(e.getKey()), e -> (List<Integer>)new ArrayList<>(e.getValue()))),
                             m -> m.entrySet().stream().collect(Collectors.toMap(e -> Integer.toString(e.getKey()), Map.Entry::getValue))
                     ).fieldOf("Tanks").forGetter(WootImportFluidHandler::getInternalTanks)
             ).apply(inst, WootImportFluidHandler::new)
@@ -42,13 +41,13 @@ public class WootImportFluidHandler implements IFluidHandler {
             ByteBufCodecs.map(
                     HashMap::new,
                     ByteBufCodecs.INT,
-                    FluidStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity))
+                    FluidStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.collection(ArrayList::new))
             ), WootImportFluidHandler::getImportFluids,
 
             ByteBufCodecs.map(
                     HashMap::new,
                     ByteBufCodecs.INT,
-                    ByteBufCodecs.INT.apply(ByteBufCodecs.collection(NonNullList::createWithCapacity))
+                    ByteBufCodecs.INT.apply(ByteBufCodecs.collection(ArrayList::new))
             ), WootImportFluidHandler::getInternalTanks,
 
             WootImportFluidHandler::new
