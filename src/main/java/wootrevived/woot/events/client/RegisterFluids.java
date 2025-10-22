@@ -12,7 +12,7 @@ import wootrevived.woot.Woot;
 import wootrevived.woot.registries.FluidsRegistry;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
+@EventBusSubscriber(modid = Woot.MOD_ID, value = { Dist.CLIENT })
 public class RegisterFluids {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event){

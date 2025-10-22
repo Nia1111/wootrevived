@@ -8,7 +8,7 @@ import wootrevived.woot.Woot;
 import wootrevived.woot.network.WootFakeSpawnerUpdate;
 import wootrevived.woot.network.WootMachineUpdate;
 
-@EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Woot.MOD_ID)
 public class RegisterPayloadHandlers {
     @SubscribeEvent
     public static void registerPayloadHandler(RegisterPayloadHandlersEvent event) {

@@ -19,7 +19,7 @@ import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.FluidsRegistry;
 import wootrevived.woot.util.entity.WootMachineBlockEntity;
 
-@EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Woot.MOD_ID)
 public class RegisterCapabilities {
     @SubscribeEvent
     public static void registerCapabilites(RegisterCapabilitiesEvent event) {

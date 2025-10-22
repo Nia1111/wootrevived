@@ -11,7 +11,7 @@ import wootrevived.woot.items.dye_plate.DyePlateItem;
 import wootrevived.woot.registries.ItemsRegistry;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
+@EventBusSubscriber(modid = Woot.MOD_ID, value = { Dist.CLIENT })
 public class RegisterItemColors {
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event){

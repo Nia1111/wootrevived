@@ -14,7 +14,7 @@ import wootrevived.woot.client.render.item_infuser.ItemInfuserContainerScreen;
 import wootrevived.woot.registries.BlocksRegistry;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
+@EventBusSubscriber(modid = Woot.MOD_ID, value = { Dist.CLIENT })
 public class RegisterMenus {
     @SubscribeEvent
     public static void registerMenus(RegisterMenuScreensEvent event) {

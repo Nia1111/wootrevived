@@ -18,7 +18,7 @@ import wootrevived.woot.registries.BlocksRegistry;
 import wootrevived.woot.registries.ItemsRegistry;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = Woot.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
+@EventBusSubscriber(modid = Woot.MOD_ID, value = { Dist.CLIENT })
 public class RegisterEntityRenderers {
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
