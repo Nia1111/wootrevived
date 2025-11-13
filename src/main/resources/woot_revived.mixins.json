@@ -11,8 +11,7 @@
     "LevelMixin",
     "LivingEntityMixin",
     "PersistentEntitySectionManagerMixin",
-    "ServerLevelMixin",
-    "TesselatorMixin"
+    "ServerLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

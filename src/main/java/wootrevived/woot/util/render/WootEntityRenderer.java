@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import wootrevived.woot.events.client.GlobalClientTicker;
-import wootrevived.woot.mixins.impl.TesselatorMixin;
 
 public class WootEntityRenderer {
     public static void render(@NotNull GuiGraphics gui, int x, int y, @NotNull LivingEntity entity, double size, double padding, float max_entity_size){
@@ -57,8 +55,7 @@ public class WootEntityRenderer {
                 (int)Math.ceil(size * windowScale * poseScale.x),
                 (int)Math.ceil(size * windowScale * poseScale.y)
         );
-        TesselatorMixin tesselator = (TesselatorMixin) Tesselator.getInstance();
-        MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(tesselator.woot$getBuffer());
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         Lighting.setupForFlatItems();
 
         renderer.render(entity, 0F, 0F, pose, bufferSource, LightTexture.pack(15, 15));
