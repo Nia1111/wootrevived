@@ -1,13 +1,13 @@
 package wootrevived.woot.upgrades;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.MutableDataComponentHolder;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class Decapitate extends WootUpgradeItem {
     public Decapitate(int level) { super(new Properties(), level); }
 
     @Override
-    public void applySpawnProperties(WootSpawnProperties properties, CompoundTag upgradeTag) {
+    public void applySpawnProperties(WootSpawnProperties properties, MutableDataComponentHolder dataComponentHolder) {
         properties.setDoSimulateChargedCreeper(true);
     }
 
@@ -39,7 +39,7 @@ public class Decapitate extends WootUpgradeItem {
     );
 
     @Override
-    public void modifyDrops(WootDropsProperties properties, CompoundTag upgradeTag) {
+    public void modifyDrops(WootDropsProperties properties, MutableDataComponentHolder dataComponentHolder) {
         List<ItemStack> drops = properties.getItemDrops();
 
         for(ItemStack drop : drops){

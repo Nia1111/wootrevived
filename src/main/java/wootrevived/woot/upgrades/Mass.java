@@ -1,11 +1,11 @@
 package wootrevived.woot.upgrades;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.neoforge.common.MutableDataComponentHolder;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ public class Mass extends WootUpgradeItem {
     public Mass(int level) { super(new Properties(), level); }
 
     @Override
-    public void applyGenerationProperties(WootGenerationProperties properties, CompoundTag upgradeTag) {
+    public void applyGenerationProperties(WootGenerationProperties properties, MutableDataComponentHolder dataComponentHolder) {
         properties.setNumberOfSimulations(2 * getLevel());
     }
 
