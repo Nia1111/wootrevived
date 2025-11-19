@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import wootrevived.api.internal.WootUpgradeComponent;
 import wootrevived.woot.Woot;
 import wootrevived.woot.data.*;
 
@@ -14,6 +15,13 @@ public class ComponentsRegistry {
     public static void register(IEventBus bus) {
         COMPONENTS.register(bus);
     }
+
+    /* Woot Upgrade Component API */
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WootUpgradeComponent>> WOOT_UPGRADE_COMPONENT =
+            COMPONENTS.register(WootUpgradeComponent.ID, WootUpgradeComponent::type);
+
+    /* Block Entity Data */
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CellData.Component>> CELL_DATA =
             COMPONENTS.registerComponentType(

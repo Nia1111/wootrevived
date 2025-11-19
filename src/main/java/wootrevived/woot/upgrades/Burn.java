@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootUpgradeItem;
+import wootrevived.api.enums.UpgradeNoVariant;
 import wootrevived.api.interfaces.WootSpawnProperties;
 import wootrevived.api.registrations.WootUpgradeItemRegistration;
 import wootrevived.woot.Woot;
@@ -18,11 +19,13 @@ import java.util.List;
 
 import static wootrevived.woot.util.render.WootStyles.DESCRIPTION_STYLE;
 
-public class Burn extends WootUpgradeItem {
-    public Burn(int level) { super(new Properties(), level); }
+public class Burn extends WootUpgradeItem<UpgradeNoVariant> {
+    public Burn() {
+        super(new Properties(), UpgradeNoVariant.NONE);
+    }
 
     @Override
-    public void applySpawnProperties(WootSpawnProperties properties, MutableDataComponentHolder dataComponentHolder) {
+    public void applySpawnProperties(@NotNull WootSpawnProperties properties, @NotNull MutableDataComponentHolder dataComponentHolder) {
         properties.setIsInFire(true);
     }
 
@@ -41,5 +44,5 @@ public class Burn extends WootUpgradeItem {
     }
 
     public static final String BURN_TAG = "burn_upgrade";
-    public static final DeferredHolder<Item, Burn> BURN_ITEM = ITEMS.register(BURN_TAG, () -> new Burn(1));
+    public static final DeferredHolder<Item, Burn> BURN_ITEM = ITEMS.register(BURN_TAG, Burn::new);
 }

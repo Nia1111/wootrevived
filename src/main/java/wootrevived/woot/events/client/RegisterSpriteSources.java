@@ -5,8 +5,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterSpriteSourceTypesEvent;
+import wootrevived.api.models.DynamicUpgradeItemModelBuilder;
 import wootrevived.woot.Woot;
-import wootrevived.woot.client.sprite.factory_upgrade.FactoryUpgradeDynamicSpriteSource;
+import wootrevived.woot.client.sprite.FactoryUpgradeDynamicSpriteSource;
+import wootrevived.woot.client.sprite.UpgradeItemDynamicSpriteSource;
 import wootrevived.woot.registries.BlocksRegistry;
 
 @OnlyIn(Dist.CLIENT)
@@ -14,6 +16,7 @@ import wootrevived.woot.registries.BlocksRegistry;
 public class RegisterSpriteSources {
     @SubscribeEvent
     public static void registerSpriteSourceTypes(RegisterSpriteSourceTypesEvent event){
+        event.register(Woot.location(DynamicUpgradeItemModelBuilder.ID), UpgradeItemDynamicSpriteSource.TYPE);
         event.register(Woot.location(BlocksRegistry.FACTORY_UPGRADE_TAG), FactoryUpgradeDynamicSpriteSource.TYPE);
     }
 }

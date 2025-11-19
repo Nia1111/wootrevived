@@ -14,6 +14,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootUpgradeItem;
+import wootrevived.api.enums.UpgradeDefaultVariant;
 import wootrevived.api.interfaces.WootSpawnProperties;
 import wootrevived.api.registrations.WootUpgradeItemRegistration;
 import wootrevived.woot.Woot;
@@ -22,11 +23,13 @@ import java.util.List;
 
 import static wootrevived.woot.util.render.WootStyles.DESCRIPTION_STYLE;
 
-public class Looting extends WootUpgradeItem {
-    public Looting(int level) { super(new Properties(), level); }
+public class Looting extends WootUpgradeItem<UpgradeDefaultVariant> {
+    public Looting(UpgradeDefaultVariant variant) {
+        super(new Properties(), variant);
+    }
 
     @Override
-    public void applySpawnProperties(WootSpawnProperties properties, MutableDataComponentHolder dataComponentHolder) {
+    public void applySpawnProperties(@NotNull WootSpawnProperties properties, @NotNull MutableDataComponentHolder dataComponentHolder) {
         ItemStack itemStack = properties.getMainHandItem();
 
         if(itemStack.getItem().isEnchantable(itemStack)) {
@@ -34,14 +37,14 @@ public class Looting extends WootUpgradeItem {
             HolderLookup.RegistryLookup<Enchantment> lookup = accessor.lookupOrThrow(Registries.ENCHANTMENT);
 
             lookup.get(Enchantments.LOOTING).ifPresent(enchantment -> {
-                itemStack.enchant(enchantment, getLevel());
+                itemStack.enchant(enchantment, getVariant(dataComponentHolder).level());
             });
         }
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext ctx, List<Component> tooltip, @NotNull TooltipFlag flag) {
-        tooltip.add(Component.translatable("info.woot_revived.upgrade.looting.desc.0", getLevel()).setStyle(DESCRIPTION_STYLE));
+        tooltip.add(Component.translatable("info.woot_revived.upgrade.looting.desc.0", getVariant(stack).level()).setStyle(DESCRIPTION_STYLE));
     }
 
     /* Upgrade Item registration */
@@ -58,17 +61,17 @@ public class Looting extends WootUpgradeItem {
     }
 
     public static final String COPPER_LOOTING_TAG = "copper_looting_upgrade";
-    public static final DeferredHolder<Item, Looting> COPPER_LOOTING_ITEM = ITEMS.register(COPPER_LOOTING_TAG, () -> new Looting(1));
+    public static final DeferredHolder<Item, Looting> COPPER_LOOTING_ITEM = ITEMS.register(COPPER_LOOTING_TAG, () -> new Looting(UpgradeDefaultVariant.COPPER));
 
     public static final String IRON_LOOTING_TAG = "iron_looting_upgrade";
-    public static final DeferredHolder<Item, Looting> IRON_LOOTING_ITEM = ITEMS.register(IRON_LOOTING_TAG, () -> new Looting(2));
+    public static final DeferredHolder<Item, Looting> IRON_LOOTING_ITEM = ITEMS.register(IRON_LOOTING_TAG, () -> new Looting(UpgradeDefaultVariant.IRON));
 
     public static final String GOLD_LOOTING_TAG = "gold_looting_upgrade";
-    public static final DeferredHolder<Item, Looting> GOLD_LOOTING_ITEM = ITEMS.register(GOLD_LOOTING_TAG, () -> new Looting(3));
+    public static final DeferredHolder<Item, Looting> GOLD_LOOTING_ITEM = ITEMS.register(GOLD_LOOTING_TAG, () -> new Looting(UpgradeDefaultVariant.GOLD));
 
     public static final String DIAMOND_LOOTING_TAG = "diamond_looting_upgrade";
-    public static final DeferredHolder<Item, Looting> DIAMOND_LOOTING_ITEM = ITEMS.register(DIAMOND_LOOTING_TAG, () -> new Looting(4));
+    public static final DeferredHolder<Item, Looting> DIAMOND_LOOTING_ITEM = ITEMS.register(DIAMOND_LOOTING_TAG, () -> new Looting(UpgradeDefaultVariant.DIAMOND));
 
     public static final String NETHERITE_LOOTING_TAG = "netherite_looting_upgrade";
-    public static final DeferredHolder<Item, Looting> NETHERITE_LOOTING_ITEM = ITEMS.register(NETHERITE_LOOTING_TAG, () -> new Looting(5));
+    public static final DeferredHolder<Item, Looting> NETHERITE_LOOTING_ITEM = ITEMS.register(NETHERITE_LOOTING_TAG, () -> new Looting(UpgradeDefaultVariant.NETHERITE));
 }

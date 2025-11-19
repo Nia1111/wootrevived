@@ -9,11 +9,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -37,22 +39,28 @@ public class FactoryUpgradeBlockEntity extends FactoryBlockBaseEntity {
         this.upgradeStack = ItemStack.EMPTY;
     }
 
-    private WootUpgradeItem upgradeItem;
+    private WootUpgradeItem<?> upgradeItem;
     private ItemStack upgradeStack;
 
     public void applyGenerationProperties(WootGenerationProperties properties){
-        if(upgradeItem != null)
+        if(upgradeItem != null) {
             upgradeItem.applyGenerationProperties(properties, upgradeStack);
+            setChanged();
+        }
     }
 
     public void applySpawnProperties(WootSpawnProperties properties){
-        if(upgradeItem != null)
+        if(upgradeItem != null) {
             upgradeItem.applySpawnProperties(properties, upgradeStack);
+            setChanged();
+        }
     }
 
     public void modifyDrops(WootDropsProperties properties){
-        if(upgradeItem != null)
+        if(upgradeItem != null) {
             upgradeItem.modifyDrops(properties, upgradeStack);
+            setChanged();
+        }
     }
 
     public String getUpgradeItemName() {
@@ -63,7 +71,16 @@ public class FactoryUpgradeBlockEntity extends FactoryBlockBaseEntity {
         return upgradeStack;
     }
 
-    public void addUpgrade(Level level, Player player, InteractionHand hand, ItemStack stack, WootUpgradeItem newUpgradeItem){
+    public ItemInteractionResult interactUpgrade(ItemStack stack, Level level, Player player, InteractionHand hand, BlockHitResult hit){
+        if(upgradeItem == null)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        ItemInteractionResult result = upgradeItem.interact(upgradeStack, stack, level, player, hand, hit);
+        setChanged();
+        return result;
+    }
+
+    public void addUpgrade(Level level, Player player, InteractionHand hand, ItemStack stack, WootUpgradeItem<?> newUpgradeItem){
         ItemStack oldStack = upgradeStack;
         if(upgradeItem != null)
             upgradeItem.deinitDataComponents(oldStack, level, getBlockPos());

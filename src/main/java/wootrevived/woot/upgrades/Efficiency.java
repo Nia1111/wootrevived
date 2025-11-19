@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootUpgradeItem;
+import wootrevived.api.enums.UpgradeDefaultVariant;
 import wootrevived.api.interfaces.WootGenerationProperties;
 import wootrevived.api.registrations.WootUpgradeItemRegistration;
 import wootrevived.woot.Woot;
@@ -18,21 +19,23 @@ import java.util.List;
 
 import static wootrevived.woot.util.render.WootStyles.DESCRIPTION_STYLE;
 
-public class Efficiency extends WootUpgradeItem {
-    public Efficiency(int level) { super(new Properties(), level); }
+public class Efficiency extends WootUpgradeItem<UpgradeDefaultVariant> {
+    public Efficiency(UpgradeDefaultVariant variant) {
+        super(new Properties(), variant);
+    }
 
     private static final float[] PERCENTAGES = new float[] { 10, 20, 30, 40, 50 };
 
     @Override
-    public void applyGenerationProperties(WootGenerationProperties properties, MutableDataComponentHolder dataComponentHolder) {
+    public void applyGenerationProperties(@NotNull WootGenerationProperties properties, @NotNull MutableDataComponentHolder dataComponentHolder) {
         int cost = properties.getVitalityFuelCost();
-        float ratio = 1F - PERCENTAGES[getLevel()-1] / 100F;
+        float ratio = 1F - PERCENTAGES[getVariant(dataComponentHolder).level()-1] / 100F;
         properties.setVitalityFuelCost((int)Math.ceil(cost * ratio));
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext ctx, List<Component> tooltip, @NotNull TooltipFlag flag) {
-        tooltip.add(Component.translatable("info.woot_revived.upgrade.efficiency.desc.0", PERCENTAGES[getLevel()-1]).setStyle(DESCRIPTION_STYLE));
+        tooltip.add(Component.translatable("info.woot_revived.upgrade.efficiency.desc.0", PERCENTAGES[getVariant(stack).level()-1]).setStyle(DESCRIPTION_STYLE));
     }
 
     /* Upgrade Item registration */
@@ -49,17 +52,17 @@ public class Efficiency extends WootUpgradeItem {
     }
 
     public static final String COPPER_EFFICIENCY_TAG = "copper_efficiency_upgrade";
-    public static final DeferredHolder<Item, Efficiency> COPPER_EFFICIENCY_ITEM = ITEMS.register(COPPER_EFFICIENCY_TAG, () -> new Efficiency(1));
+    public static final DeferredHolder<Item, Efficiency> COPPER_EFFICIENCY_ITEM = ITEMS.register(COPPER_EFFICIENCY_TAG, () -> new Efficiency(UpgradeDefaultVariant.COPPER));
 
     public static final String IRON_EFFICIENCY_TAG = "iron_efficiency_upgrade";
-    public static final DeferredHolder<Item, Efficiency> IRON_EFFICIENCY_ITEM = ITEMS.register(IRON_EFFICIENCY_TAG, () -> new Efficiency(2));
+    public static final DeferredHolder<Item, Efficiency> IRON_EFFICIENCY_ITEM = ITEMS.register(IRON_EFFICIENCY_TAG, () -> new Efficiency(UpgradeDefaultVariant.IRON));
 
     public static final String GOLD_EFFICIENCY_TAG = "gold_efficiency_upgrade";
-    public static final DeferredHolder<Item, Efficiency> GOLD_EFFICIENCY_ITEM = ITEMS.register(GOLD_EFFICIENCY_TAG, () -> new Efficiency(3));
+    public static final DeferredHolder<Item, Efficiency> GOLD_EFFICIENCY_ITEM = ITEMS.register(GOLD_EFFICIENCY_TAG, () -> new Efficiency(UpgradeDefaultVariant.GOLD));
 
     public static final String DIAMOND_EFFICIENCY_TAG = "diamond_efficiency_upgrade";
-    public static final DeferredHolder<Item, Efficiency> DIAMOND_EFFICIENCY_ITEM = ITEMS.register(DIAMOND_EFFICIENCY_TAG, () -> new Efficiency(4));
+    public static final DeferredHolder<Item, Efficiency> DIAMOND_EFFICIENCY_ITEM = ITEMS.register(DIAMOND_EFFICIENCY_TAG, () -> new Efficiency(UpgradeDefaultVariant.DIAMOND));
 
     public static final String NETHERITE_EFFICIENCY_TAG = "netherite_efficiency_upgrade";
-    public static final DeferredHolder<Item, Efficiency> NETHERITE_EFFICIENCY_ITEM = ITEMS.register(NETHERITE_EFFICIENCY_TAG, () -> new Efficiency(5));
+    public static final DeferredHolder<Item, Efficiency> NETHERITE_EFFICIENCY_ITEM = ITEMS.register(NETHERITE_EFFICIENCY_TAG, () -> new Efficiency(UpgradeDefaultVariant.NETHERITE));
 }
