@@ -21,7 +21,7 @@ import wootrevived.woot.util.fluid.WootFluidType;
 
 import java.util.Objects;
 
-public class Blocks extends BlockStateProvider {
+    public class Blocks extends BlockStateProvider {
     public Blocks(PackOutput output, ExistingFileHelper exFileHelper) {
         super(output, Woot.MOD_ID, exFileHelper);
     }
@@ -35,6 +35,12 @@ public class Blocks extends BlockStateProvider {
 
         cubeAll(BlocksRegistry.FACTORY_BASE_BLOCK);
         cubeAll(BlocksRegistry.STYGIAN_BLOCK);
+
+        cubeAll(BlocksRegistry.COPPER_MAGMATOR_BLOCK);
+        cubeAll(BlocksRegistry.IRON_MAGMATOR_BLOCK);
+        cubeAll(BlocksRegistry.GOLD_MAGMATOR_BLOCK);
+        cubeAll(BlocksRegistry.DIAMOND_MAGMATOR_BLOCK);
+        cubeAll(BlocksRegistry.NETHERITE_MAGMATOR_BLOCK);
 
         cubeColumn(BlocksRegistry.FAKE_SPAWNER_BLOCK);
 
