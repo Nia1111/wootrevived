@@ -6,14 +6,17 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import wootrevived.api.WootUpgradeItem;
 import wootrevived.api.enums.UpgradeDefaultVariant;
+import wootrevived.api.interfaces.WootDropsProperties;
 import wootrevived.api.interfaces.WootGenerationProperties;
 import wootrevived.api.registrations.WootUpgradeItemRegistration;
 import wootrevived.woot.Woot;
+import wootrevived.woot.config.UpgradesConfig;
 
 import java.util.List;
 
@@ -26,7 +29,21 @@ public class Mass extends WootUpgradeItem<UpgradeDefaultVariant> {
 
     @Override
     public void applyGenerationProperties(@NotNull WootGenerationProperties properties, @NotNull MutableDataComponentHolder dataComponentHolder) {
-        properties.setNumberOfSimulations(2 * getVariant(dataComponentHolder).level());
+        if(UpgradesConfig.MASS_REROLL_LOOT.get())
+            properties.setNumberOfSimulations(2 * getVariant(dataComponentHolder).level());
+    }
+
+    @Override
+    public void modifyDrops(@NotNull WootDropsProperties properties, @NotNull MutableDataComponentHolder dataComponentHolder) {
+        if(!UpgradesConfig.MASS_REROLL_LOOT.get()) {
+            int multiplier = 2 * getVariant(dataComponentHolder).level();
+
+            for(ItemStack stack : properties.getItemDrops())
+                stack.setCount(stack.getCount() * multiplier);
+
+            for(FluidStack stack : properties.getFluidDrops())
+                stack.setAmount(stack.getAmount() * multiplier);
+        }
     }
 
     @Override
