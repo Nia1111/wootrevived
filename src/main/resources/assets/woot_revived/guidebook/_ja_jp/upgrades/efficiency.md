@@ -19,30 +19,30 @@ navigation:
 
 ## 効率化アップグレード I
 
-消費量を10%軽減します。
+消費量を10%軽減
 
 <RecipeFor id="copper_efficiency_upgrade" />
 
 ## 効率化アップグレード II
 
-消費量を20%軽減します。
+消費量を20%軽減
 
 <RecipeFor id="iron_efficiency_upgrade" />
 
 ## 効率化アップグレード III
 
-消費量を30%軽減します。
+消費量を30%軽減
 
 <RecipeFor id="gold_efficiency_upgrade" />
 
 ## 効率化アップグレード IV
 
-消費量を40%軽減します。
+消費量を40%軽減
 
 <RecipeFor id="diamond_efficiency_upgrade" />
 
 ## 効率化アップグレード V
 
-消費量を50%軽減します。
+消費量を50%軽減
 
 <RecipeFor id="netherite_efficiency_upgrade" />

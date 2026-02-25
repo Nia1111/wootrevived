@@ -51,9 +51,9 @@ navigation:
 
 <RecipeFor id="factory_connect" />
 
-## 原材料搬入口
+## 原材料搬入機
 
-<ItemImage id="import" scale="0.5"/> [原材料搬入口](../machines-blocks/import.md)は、モブを生成するために必要なアイテムや流体を搬入できます。
+<ItemImage id="import" scale="0.5"/> [原材料搬入機](../machines-blocks/import.md)は、モブを生成するために必要なアイテムや流体を搬入できます。
 
 <RecipeFor id="import" />
 

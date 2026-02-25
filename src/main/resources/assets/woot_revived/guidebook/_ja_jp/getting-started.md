@@ -53,7 +53,7 @@ Woot Revivedを始めるには、まず<ItemImage id="stygian_dust" scale="0.5"/
     <IsometricCamera yaw="180" pitch="40" />
   </GameScene>
   <ItemImage id="dye_casing_mold" scale="2"/>
-  染料板の板の金型を作るには<ItemImage id="minecraft:white_dye" scale="0.5"/>何らかの染料が必要です
+  染料型の金型を作るには<ItemImage id="minecraft:white_dye" scale="0.5"/>何らかの染料が必要です
 </Row>
 
 ## ファクトリーベースの作成

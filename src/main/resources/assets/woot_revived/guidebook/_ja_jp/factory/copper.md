@@ -37,7 +37,7 @@ MODを始めるのにも、基本的なモブ1体用のファクトリーを作�
   <BlockImage id="copper_cell" scale="4" p:attached="true" />
 </Row>
 
-工場には、[共通ブロック](common-blocks.md)に加え、そのティア固有のブロックも必要です。
+工場には、[汎用ブロック](common-blocks.md)に加え、そのティア固有のブロックも必要です。
 
 これには、
 <ItemImage id="copper_pylon" scale="0.5"/>銅のパイロンが17個、
