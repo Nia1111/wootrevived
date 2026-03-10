@@ -22,7 +22,7 @@ navigation:
 
 ## 染料板
 
-染料板を入手する前に、特定の染料型を入手する必要があります。
+染料板を入手するには、対応する染料型を入手する必要があります。
 
 以下は<ItemImage id="white_dye_casing" scale="0.5"/>白色の染料型の作成例ですが、各色の染料で同様に作成可能です。
 
@@ -45,7 +45,7 @@ navigation:
 
 例えば、<ItemImage id="copper_cell" scale="0.5"/>銅のバイタリティセルを入手するには、<ItemImage id="copper_enchanted_plate" scale="0.5"/>エンチャントされた銅板が必要になります。
 
-これらのプレートを作成するには、<ItemImage id="enchanted_fluid_bucket" scale="0.5"/>エンチャント液とそれぞれの欠片も必要です。
+これらの板金を作成するには、<ItemImage id="enchanted_fluid_bucket" scale="0.5"/>エンチャント液と各種の欠片も必要です。
 
 <Row>
   <Recipe id="item_infuser/copper_enchanted_plate" />
