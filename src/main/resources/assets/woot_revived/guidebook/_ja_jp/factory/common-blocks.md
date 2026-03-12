@@ -36,7 +36,7 @@ navigation:
 
 ## プライマリベースとセカンダリベース
 
-<ItemImage id="factory_ctr_base_pri" scale="0.5"/>プライマリベースと<ItemImage id="factory_ctr_base_sec" scale="0.5"/>セカンダリベースは、<ItemImage id="fake_spawner" scale="0.5"/>疑似スポナーの土台です。
+<ItemImage id="factory_ctr_base_pri" scale="0.5"/>プライマリベースと<ItemImage id="factory_ctr_base_sec" scale="0.5"/>セカンダリベースは<ItemImage id="fake_spawner" scale="0.5"/>疑似スポナーの土台です。
 
 セカンダリベースの疑似スポナーの設置はオプションであることに注意してください。
 
@@ -47,7 +47,7 @@ navigation:
 
 ## ファクトリーコネクター
 
-<ItemImage id="factory_ctr_base_pri" scale="0.5"/>ファクトリーコネクターは原材料を工場に接続します。
+<ItemImage id="factory_ctr_base_pri" scale="0.5"/>ファクトリーコネクターは原材料をファクトリーに橋渡しします。
 
 <RecipeFor id="factory_connect" />
 

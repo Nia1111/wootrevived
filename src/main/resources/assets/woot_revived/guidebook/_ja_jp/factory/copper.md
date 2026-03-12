@@ -15,7 +15,7 @@ MODを始めるのにも、基本的なモブ1体用のファクトリーを作�
 
 まずファクトリーの中央を建設し、その後周囲の建設を完了させます。
 
-最初のティアに設定した<ItemImage id="layout" scale="0.5"/>[レイアウト](../machines-blocks/layout.md#copper)、は建設をするのに役に立ちます。
+最初のティアに設定した<ItemImage id="layout" scale="0.5"/>[レイアウト](../machines-blocks/layout.md#copper)は建設をするのに役に立ちます。
 
 <Row>
     <GameScene zoom="2.5" interactive={true}>
