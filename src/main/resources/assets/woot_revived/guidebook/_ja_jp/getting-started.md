@@ -15,7 +15,7 @@ Woot Revivedを始めるには、まず<ItemImage id="stygian_dust" scale="0.5"/
 
 ## 金型を入手する
 
-まず、<ItemImage id="stygian_anvil" scale="0.5"/>スティジアンの金床と<ItemImage id="stygian_hammer" scale="0.5"/>スティジアンのハンマーを作成する必要があります。
+まず、<ItemImage id="stygian_anvil" scale="0.5"/>スティジアンの金床と<ItemImage id="stygian_hammer" scale="0.5"/>スティジアンハンマーを作成する必要があります。
 <Row>
     <Recipe id="stygian_anvil" />
     <Recipe id="stygian_hammer" />
